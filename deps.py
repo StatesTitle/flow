@@ -35,18 +35,18 @@ class Vertex:
 
 def print_nodes_and_deps(to_visit, visited):
     visited.add(to_visit)
-    print('   ', to_visit)
+    yield f'    {to_visit}'
     for node in to_visit.depends_on:
         if node not in visited:
-            print_nodes_and_deps(node, visited)
-        print(f'    {node.name} -> {to_visit.name}')
+            yield from print_nodes_and_deps(node, visited)
+        yield f'    {node.name} -> {to_visit.name}'
 
-def print_digraph(goals):
-    print('digraph G {')
+def digraph(goals):
+    yield 'digraph G {'
     visited = set()
     for goal in goals:
-        print_nodes_and_deps(goal, visited)
-    print('}')
+        yield from print_nodes_and_deps(goal, visited)
+    yield '}'
 
 
 if __name__ == '__main__':
@@ -89,4 +89,5 @@ if __name__ == '__main__':
     mail_title_policy_with_remittance_to_underwriter = Vertex('Mail Policy with Remittance to Underwriter', 'ResWare', 'JV', [create_title_policy])
 
 
-    print_digraph([mail_title_policy_with_deed_to_lender, mail_title_policy_with_remittance_to_underwriter, notary_sends_scanned_package])
+    for line in digraph([mail_title_policy_with_deed_to_lender, mail_title_policy_with_remittance_to_underwriter, notary_sends_scanned_package]):
+        print(line)

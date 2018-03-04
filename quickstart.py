@@ -8,7 +8,7 @@ from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
 
-from deps import Vertex, print_digraph
+from deps import Vertex, digraph
 
 try:
     import argparse
@@ -78,8 +78,9 @@ def main():
     for row in deps:
         vertices[row[0]].depends_on.append(vertices[row[1]])
 
-    print_digraph([vertices[k] for k in ['Mail Policy with Remittance to Underwriter', 'Mail Policy with Deed to Lender', 'Notary Emails Signed Package']])
+    return digraph([vertices[k] for k in ['Mail Policy with Remittance to Underwriter', 'Mail Policy with Deed to Lender', 'Notary Emails Signed Package']])
 
 if __name__ == '__main__':
-    main()
+    for line in main():
+        print(line)
 
