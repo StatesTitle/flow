@@ -15,7 +15,7 @@ class Vertex:
             attrs['shape'] = 'box'
         if depends_on is None:
             depends_on = []
-        self.depends_on = depends_on
+        self.depends_on = set(depends_on)
         global row
         self.row = row
         row += 1
@@ -34,11 +34,12 @@ class Vertex:
 
 
 def print_nodes_and_deps(to_visit, visited):
+    if to_visit in visited:
+        return
     visited.add(to_visit)
     yield f'    {to_visit}'
     for node in to_visit.depends_on:
-        if node not in visited:
-            yield from print_nodes_and_deps(node, visited)
+        yield from print_nodes_and_deps(node, visited)
         yield f'    {node.name} -> {to_visit.name}'
 
 def digraph(goals):
@@ -58,14 +59,14 @@ if __name__ == '__main__':
     commitment_review = Vertex('Review Commitment', 'ResWare', 'JV')
     if happy_path:
         happy_path = Vertex('Happy Path', 'ResWare', 'Underwriter', [underwrite])
-        commitment_review.depends_on.append(happy_path)
+        commitment_review.depends_on.add(happy_path)
     if sad_path:
         sad_path = Vertex('Sad Path', 'ResWare', 'Underwriter', [underwrite])
         title_search = Vertex('Title Search', 'ResWare', 'FAB', [sad_path])
         tax_lookup = Vertex('Lookup Taxes', 'ResWare', 'JV', [sad_path])
         cpl_creation = Vertex('Create CPL', 'ResWare', 'JV', [sad_path])
         typing = Vertex('Typing', 'ResWare', 'JV', [title_search, tax_lookup, cpl_creation])
-        commitment_review.depends_on.append(typing)
+        commitment_review.depends_on.add(typing)
     payoff_info = Vertex('Gather Payoff Info', 'ResWare', 'JV', [place_order])
     cd_finalization = Vertex('Finalize CD', 'ResWare', 'JV', [payoff_info, commitment_review])
     schedule_borrower = Vertex('Schedule Closing w Borrower', 'ResWare', 'JV', [cd_finalization])

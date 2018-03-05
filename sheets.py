@@ -18,8 +18,8 @@ def fetch_digraph(credentials):
     for row in actions:
         vertices[row[0]] = Vertex(*row)
     for row in deps:
-        vertices[row[0]].depends_on.append(vertices[row[1]])
-    return digraph([vertices[k] for k in ['Mail Policy with Remittance to Underwriter', 'Mail Policy with Deed to Lender', 'Notary Emails Signed Package']])
+        vertices[row[0]].depends_on.add(vertices[row[1]])
+    return digraph(vertices.values())
 
 if __name__ == '__main__':
     credentials = service_account.Credentials.from_service_account_file('sheets.googleapis.service.json', scopes=[SCOPES])
