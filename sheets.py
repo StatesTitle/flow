@@ -3,10 +3,9 @@ from google.oauth2 import service_account
 from deps import Vertex, digraph
 
 SCOPES = 'https://www.googleapis.com/auth/spreadsheets.readonly'
-SERVICE_ACCOUNT_FILE = 'sheets.googleapis.service.json'
 
-def fetch_digraph():
-    credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=[SCOPES])
+
+def fetch_digraph(credentials):
     discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?version=v4')
     service = discovery.build('sheets', 'v4', credentials=credentials, discoveryServiceUrl=discoveryUrl)
 
@@ -23,6 +22,7 @@ def fetch_digraph():
     return digraph([vertices[k] for k in ['Mail Policy with Remittance to Underwriter', 'Mail Policy with Deed to Lender', 'Notary Emails Signed Package']])
 
 if __name__ == '__main__':
+    credentials = service_account.Credentials.from_service_account_file('sheets.googleapis.service.json', scopes=[SCOPES])
     for line in fetch_digraph():
         print(line)
 
