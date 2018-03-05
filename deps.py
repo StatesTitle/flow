@@ -5,6 +5,8 @@ row = 2
 class Vertex:
     def __init__(self, label, system, actor, depends_on=None):
         self.name = label.replace(' ', '_')
+        for c in './#?,!@$%^*()+=[]{}:"-\\':
+            self.name = self.name.replace(c, '_')
         self.system = system
         self.actor = actor
         nodes.append(self)
