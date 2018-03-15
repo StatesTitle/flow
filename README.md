@@ -2,7 +2,7 @@
 Converts a title insurance workflow from a [Google spreadsheet](https://docs.google.com/spreadsheets/d/1q0l55EY8FqM5ghJjwm1-Pbp3Nlnj0iFzWwwyXJxA53I/edit#gid=0) into Graphviz's dot language and renders it with [Graphviz](https://graphviz.gitlab.io/).
 
 * [deps.py](deps.py) builds a dependency tree and creates Graphviz digraphs from it
-* [sheet.py](sheet.py) fetches a spreadsheet from Google and builds a dependency graph using deps.py
+* [sheets.py](sheets.py) fetches a spreadsheet from Google and builds a dependency graph using deps.py
 * [web.py](web.py) uses sheet.py to get a dependency graph, renders it with Graphviz, and returns it over the web using flask
 
 ## Develop
