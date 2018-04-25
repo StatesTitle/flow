@@ -3,9 +3,11 @@ from collections import namedtuple
 nodes = []
 row = 2
 class Vertex:
-    def __init__(self, label, system, actor, depends_on=None):
+    def __init__(self, label, system, actor, depends_on=None, fill_color=None):
+        label = label.replace('"', '\\"')
         self.name = label.replace(' ', '_')
-        for c in './#?,!@$%^*()+=[]{}:"-\\':
+        self.name = self.name.replace('&', 'and')
+        for c in './#?,!@$%^*()+=[]{}:"-\\\'':
             self.name = self.name.replace(c, '_')
         self.system = system
         self.actor = actor
@@ -15,6 +17,9 @@ class Vertex:
             attrs['label'] = label
         if self.system == 'ResWare':
             attrs['shape'] = 'box'
+        if fill_color:
+            attrs['style'] = 'filled'
+            attrs['fillcolor'] = fill_color
         if depends_on is None:
             depends_on = []
         self.depends_on = set(depends_on)

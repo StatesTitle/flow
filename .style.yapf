@@ -1,0 +1,11 @@
+[style]
+# Up to 100 characters per line
+COLUMN_LIMIT = 100
+
+# For a multi-line bracketed statement, put the closing bracket on its own line, dedented.
+# Brackets include all bracketing characters e.g. (), {}, and []. That means this applies
+# to functions calls as well
+DEDENT_CLOSING_BRACKETS = true
+# For closing brackets dedented as above, if there are consecutive closing brackets,
+# they're all dedented and grouped to the outermost set of brackets
+COALESCE_BRACKETS = true
