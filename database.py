@@ -247,15 +247,15 @@ def _build_dependencies(vertices, actions, entity_key, entity, dependencies, ema
 
 def _add_notes(skipped_action_deps, skipped_trigger_deps):
     def _print_note(name, label):
-        print(f'{name}[label="{label}", shape="note", style="filled", fillcolor="yellow"]')
+        return f'{name}[label="{label}", shape="note", style="filled", fillcolor="yellow"]'
 
     if skipped_action_deps:
-        _print_note('skipped_action_deps', f'Skipped Action Dependencies:{skipped_action_deps}')
+        yield _print_note('skipped_action_deps', f'Skipped Action Dependencies:{skipped_action_deps}')
     if skipped_trigger_deps:
-        _print_note('skipped_trigger_deps', f'Skipped Trigger Dependencies:{skipped_trigger_deps}')
+        yield _print_note('skipped_trigger_deps', f'Skipped Trigger Dependencies:{skipped_trigger_deps}')
 
 
-def generate_digraph_from_action_list(action_list_def_id):
+def generate_digraph_from_action_list(action_list_def_id=ACTION_LIST_DEF_ID):
     skipped_action_dependencies = []
     skipped_trigger_dependencies = []
     all_actions = _get_action_list_actions_and_dependencies(action_list_def_id)
@@ -282,11 +282,11 @@ def generate_digraph_from_action_list(action_list_def_id):
     for line in digraph([
         vertex for vertex in vertices.collection.values() if len(vertex.depends_on)
     ]):
-        print(line)
+        yield line
         if not added_note:
             added_note = True
-            _add_notes(skipped_action_dependencies, skipped_trigger_dependencies)
+            yield from _add_notes(skipped_action_dependencies, skipped_trigger_dependencies)
 
 
 if __name__ == '__main__':
-    generate_digraph_from_action_list(ACTION_LIST_DEF_ID)
+    print('\n'.join(generate_digraph_from_action_list()))
