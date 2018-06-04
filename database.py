@@ -198,9 +198,7 @@ def _get_action_list_actions_and_dependencies(action_list_def_id):
                     a['ActionGroupAffectDef']
                 )
                 a['ActionDefActionEmailTemplateRel'] = _query(
-                    conn,
-                    _get_action_emails_by_action,
-                    action_def_id=a['ActionDefID']
+                    conn, _get_action_emails_by_action, action_def_id=a['ActionDefID']
                 )
     return all_actions
 
@@ -212,8 +210,15 @@ def _build_vertex_from_action(action, depends_on=set()):
 def _build_vertex_from_trigger(trigger, depends_on=set()):
     return Vertex(trigger['Name'], 'ResWare-Trigger', 'Unknown', depends_on, fill_color='grey')
 
+
 def _build_vertex_from_email(email, depends_on=set()):
-    return Vertex(f'Email: {email["ActionEmailTemplateName"]}', 'ResWare-Email', 'Unknown', depends_on, fill_color='cornflowerblue')
+    return Vertex(
+        f'Email: {email["ActionEmailTemplateName"]}',
+        'ResWare-Email',
+        'Unknown',
+        depends_on,
+        fill_color='cornflowerblue'
+    )
 
 
 class build_vertices:
@@ -232,7 +237,9 @@ class build_vertices:
         return vertex
 
 
-def _build_dependencies(vertices, actions, entity_key, entity, dependencies, email_actions, vertex_builder_fn):
+def _build_dependencies(
+    vertices, actions, entity_key, entity, dependencies, email_actions, vertex_builder_fn
+):
     skipped_dependencies = []
     vertex = vertices(entity_key, vertex_builder_fn, entity)
     for dependency_key in dependencies:
@@ -241,7 +248,10 @@ def _build_dependencies(vertices, actions, entity_key, entity, dependencies, ema
         else:
             vertices(dependency_key, vertex_builder_fn, actions[dependency_key], set([vertex]))
     for email_action in email_actions:
-        vertices(email_action['ActionEmailTemplateName'], _build_vertex_from_email, email_action, set([vertex]))
+        vertices(
+            email_action['ActionEmailTemplateName'], _build_vertex_from_email, email_action,
+            set([vertex])
+        )
     return skipped_dependencies
 
 
@@ -250,9 +260,13 @@ def _add_notes(skipped_action_deps, skipped_trigger_deps):
         return f'{name}[label="{label}", shape="note", style="filled", fillcolor="yellow"]'
 
     if skipped_action_deps:
-        yield _print_note('skipped_action_deps', f'Skipped Action Dependencies:{skipped_action_deps}')
+        yield _print_note(
+            'skipped_action_deps', f'Skipped Action Dependencies:{skipped_action_deps}'
+        )
     if skipped_trigger_deps:
-        yield _print_note('skipped_trigger_deps', f'Skipped Trigger Dependencies:{skipped_trigger_deps}')
+        yield _print_note(
+            'skipped_trigger_deps', f'Skipped Trigger Dependencies:{skipped_trigger_deps}'
+        )
 
 
 def generate_digraph_from_action_list(action_list_def_id=ACTION_LIST_DEF_ID):
@@ -276,7 +290,6 @@ def generate_digraph_from_action_list(action_list_def_id=ACTION_LIST_DEF_ID):
                     trigger, trigger['ActionDependency'], _build_vertex_from_trigger
                 )
             )
-
 
     added_note = False
     for line in digraph([
