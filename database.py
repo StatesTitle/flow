@@ -66,7 +66,17 @@ def _get_external_trigger_affects(cursor):
     cursor.execute(
         '''SELECT * FROM ActionListGroupExternalTriggerAffectsDef AS tad
             LEFT JOIN ExternalActionDef AS ead ON
-            ead.ExternalActionDefID = tad.ExternalActionDefID''',
+                ead.ExternalActionDefID = tad.ExternalActionDefID''',
+    )
+    return _extract_rows(cursor)
+
+
+def _get_action_emails_by_action(cursor, action_def_id):
+    cursor.execute(
+        '''SELECT * FROM ActionDefActionEmailTemplateRel AS adaetr
+            JOIN ActionEmailTemplate AS aet ON
+                adaetr.ActionEmailTemplateID = aet.ActionEmailTemplateID
+            WHERE adaetr.ActionDefID=%s''', action_def_id
     )
     return _extract_rows(cursor)
 
@@ -187,6 +197,11 @@ def _get_action_list_actions_and_dependencies(action_list_def_id):
                 a['ActionGroupAffectDefActions'] = _identify_affect_action_dependencies(
                     a['ActionGroupAffectDef']
                 )
+                a['ActionDefActionEmailTemplateRel'] = _query(
+                    conn,
+                    _get_action_emails_by_action,
+                    action_def_id=a['ActionDefID']
+                )
     return all_actions
 
 
@@ -196,6 +211,9 @@ def _build_vertex_from_action(action, depends_on=set()):
 
 def _build_vertex_from_trigger(trigger, depends_on=set()):
     return Vertex(trigger['Name'], 'ResWare-Trigger', 'Unknown', depends_on, fill_color='grey')
+
+def _build_vertex_from_email(email, depends_on=set()):
+    return Vertex(f'Email: {email["ActionEmailTemplateName"]}', 'ResWare-Email', 'Unknown', depends_on, fill_color='cornflowerblue')
 
 
 class build_vertices:
@@ -214,7 +232,7 @@ class build_vertices:
         return vertex
 
 
-def _build_dependencies(vertices, actions, entity_key, entity, dependencies, vertex_builder_fn):
+def _build_dependencies(vertices, actions, entity_key, entity, dependencies, email_actions, vertex_builder_fn):
     skipped_dependencies = []
     vertex = vertices(entity_key, vertex_builder_fn, entity)
     for dependency_key in dependencies:
@@ -222,6 +240,8 @@ def _build_dependencies(vertices, actions, entity_key, entity, dependencies, ver
             skipped_dependencies.append(dependency_key)
         else:
             vertices(dependency_key, vertex_builder_fn, actions[dependency_key], set([vertex]))
+    for email_action in email_actions:
+        vertices(email_action['ActionEmailTemplateName'], _build_vertex_from_email, email_action, set([vertex]))
     return skipped_dependencies
 
 
@@ -244,7 +264,7 @@ def generate_digraph_from_action_list(action_list_def_id):
         skipped_action_dependencies.extend(
             _build_dependencies(
                 vertices, all_actions, action_key, action, action['ActionGroupAffectDefActions'],
-                _build_vertex_from_action
+                action['ActionDefActionEmailTemplateRel'], _build_vertex_from_action
             )
         )
     if INCLUDE_TRIGGERS:
@@ -256,6 +276,7 @@ def generate_digraph_from_action_list(action_list_def_id):
                     trigger, trigger['ActionDependency'], _build_vertex_from_trigger
                 )
             )
+
 
     added_note = False
     for line in digraph([
