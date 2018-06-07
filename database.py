@@ -204,21 +204,15 @@ def _get_action_list_actions_and_dependencies(action_list_def_id):
 
 
 def _build_vertex_from_action(action, depends_on=set()):
-    return Vertex(action['DisplayName'], 'ResWare', 'Unknown', depends_on)
+    return Vertex(action['DisplayName'], depends_on, shape='box')
 
 
 def _build_vertex_from_trigger(trigger, depends_on=set()):
-    return Vertex(trigger['Name'], 'ResWare-Trigger', 'Unknown', depends_on, fill_color='grey')
+    return Vertex(trigger['Name'], depends_on, fill_color='grey')
 
 
 def _build_vertex_from_email(email, depends_on=set()):
-    return Vertex(
-        f'Email: {email["ActionEmailTemplateName"]}',
-        'ResWare-Email',
-        'Unknown',
-        depends_on,
-        fill_color='cornflowerblue'
-    )
+    return Vertex(email["ActionEmailTemplateName"], depends_on, fill_color='cornflowerblue')
 
 
 class build_vertices:
@@ -287,7 +281,7 @@ def generate_digraph_from_action_list(action_list_def_id=ACTION_LIST_DEF_ID):
             skipped_trigger_dependencies.extend(
                 _build_dependencies(
                     vertices, all_actions, ('ExternalTrigger', trigger['ExternalActionDefID']),
-                    trigger, trigger['ActionDependency'], _build_vertex_from_trigger
+                    trigger, trigger['ActionDependency'], [], _build_vertex_from_trigger
                 )
             )
 
