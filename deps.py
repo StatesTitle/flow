@@ -1,12 +1,17 @@
 from collections import namedtuple
 
+def escape_name(name):
+    name = name.replace('&', 'and')
+    for c in ' ./#?,!@$%^*()+=[]{}:"-\\\'':
+        name = name.replace(c, '_')
+    return name
+
 class Vertex:
-    def __init__(self, label, depends_on=None, fill_color=None, shape=None):
+    def __init__(self, label, depends_on=None, fill_color=None, shape=None, name=None):
         label = label.replace('"', '\\"')
-        self.name = label.replace(' ', '_')
-        self.name = self.name.replace('&', 'and')
-        for c in './#?,!@$%^*()+=[]{}:"-\\\'':
-            self.name = self.name.replace(c, '_')
+        if name is None:
+            name = escape_name(label)
+        self.name = name
         attrs = {}
         if self.name != label:
             attrs['label'] = label

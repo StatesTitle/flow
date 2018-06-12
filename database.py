@@ -1,16 +1,21 @@
 import builtins
 import enum
+import itertools
+import re
 
 import pymssql
 
 from contextlib import contextmanager
+from dataclasses import dataclass, field, fields
+from typing import Dict, List
 from typing import NamedTuple
 
-from deps import Vertex, digraph
+from deps import Vertex, digraph, escape_name
 from settings import (
     RESWARE_DATABASE_NAME, RESWARE_DATABASE_PASSWORD, RESWARE_DATABASE_PORT,
     RESWARE_DATABASE_SERVER, RESWARE_DATABASE_USER, ACTION_LIST_DEF_ID, INCLUDE_TRIGGERS
 )
+import sys
 
 
 @contextmanager
@@ -20,46 +25,296 @@ def _connect_to_db():
         RESWARE_DATABASE_USER,
         RESWARE_DATABASE_PASSWORD,
         RESWARE_DATABASE_NAME,
-        port=RESWARE_DATABASE_PORT
+        port=RESWARE_DATABASE_PORT,
+        as_dict=True
     ) as conn:
         yield conn
 
 
-def _query(conn, fn, **kwargs):
-    with conn.cursor(as_dict=True) as cursor:
-        return fn(cursor, **kwargs)
+def col(name, parser=None, nullable=False):
+    metadata = {'column': name, 'nullable': nullable}
+    if parser:
+        metadata['parser'] = parser
+    return field(metadata=metadata)
 
 
-def _extract_rows(cursor):
-    """Detach cursor, and return result set"""
-    return [row for row in cursor]
+class ColumnMissing(Exception):
+    pass
+
+class ParsingFailed(Exception):
+    pass
 
 
-def _get_action_list_group_by_action_list(cursor, action_list_def_id):
-    cursor.execute(
+def parse_col(dclass, field, row):
+    if field.metadata['column'] not in row:
+        raise ColumnMissing(f'{dclass} field {field.name} expected a column named {field.metadata["column"]} in the row')
+    val = row[field.metadata['column']]
+    if val is None and not field.metadata['nullable']:
+        raise ColumnMissing(f'{dclass} field {field.name} expected a column named {field.metadata["column"]} in the row but got NULL from the db')
+    parser = field.metadata.get('parser', field.type)
+    try:
+        return parser(val)
+    except ColumnMissing:
+        raise
+    except Exception as e:
+        raise ParsingFailed(f'{dclass} field {field.name} parser {parser} blew up on "{val}"') from e
+
+
+def create_from_db(dclass, row):
+    return dclass(*[parse_col(dclass, f, row) for f in fields(dclass) if 'column' in f.metadata])
+
+
+@dataclass
+class Email:
+    id: int = col('ActionEmailTemplateID')
+    name: str = col('ActionEmailTemplateName')
+
+    @property
+    def node_name(self):
+        return escape_name('Email ' + self.name)
+
+
+@dataclass
+class Action:
+    id: int = col('ActionDefID')
+    name: str = col('Name')
+    display_name: str = col('DisplayName')
+    description: str = col('Description', nullable=True)
+    emails: List[Email] = field(default_factory=list)
+
+
+class GroupActionProperties:
+    '''A mixin for classes that have group_id and action_id fields to add group and action properties that look them up'''
+    @property
+    def group(self):
+        return self._groups[self.group_id]
+
+    @property
+    def action(self):
+        return self._actions[self.action_id]
+
+
+
+# All actions in a group in ResWare have "start" and "complete" tasks. Those tasks can be marked
+# "done". All affects happen on either start or complete being marked done.  That's tracked in the
+# AffectTypeID column in the ActionGroupAffectDef table. If AffectTypeID is 1, that means the affect
+# happens on on the group action's start being marked done. If it's 2, it means the affect happens
+# on the complete being marked done.
+#
+# What an affect does is determined by which additional columns are set on the row in ActionGroupAffectDef:
+# 1. If AffectActionListGroupDefID and AffectActionDefID are set,  another GroupAction is being changed.
+#    AffectActionTypeID determines if it's the start or complete task that's being changed, just like with
+#    AffectTypeID. It can do one of two things:
+#     a. If AffectOffset is set, it's changing the due date offset
+#     b. If AffectAutoComplete is not null and true, it's marking a task as done. Despite Complete 
+#        being in the column name, this doesn't have anything to do with it targeting the start 
+#        or complete task. If this is not null and false, that means it's an offset affect
+# 2. If CreateActionActionListGroupDefID and CreateActionActionDefID are set, it's adding a new
+#    action on the file
+# 3. If CreateGroupActionListGroupDefID is set, it's adding a new action group to the file
+
+# Other known affect types and the required columns to identify them
+# ('DISPLAY_NAME', ['DisplayName']),
+# ('SET_VALUE', ['AffectResWareActionDefValuesID']),
+# ('SEND_XML', ['XMLSchemaID'], ['XMLToPartnerTypeID', 'ActionEventDefID']),
+# ('CREATE_RECORDING_DOCUMENT', ['RecordingDocumentTypeID']),
+# Ones that only require only one of the columns
+# ('CREATE_CURATIVE', ['CreateTitleReviewTypeID', 'CreatePolicyCurativeTypeID'],
+#         ['CreateTitleReviewTypeOnlyIfNotExists', 'CreatePolicyCurativeTypeOnlyIfNotExists'],
+# ('MARK_CURATIVE_INTERNALLY_CLEARED', ['ClearTitleReviewTypeID', 'ClearPolicyCurativeTypeID'],)
+
+
+class AffectTask(enum.IntEnum):
+    STARTED = 1
+    COMPLETED = 2
+
+    @property
+    def port(self):
+        return 'n' if self == AffectTask.STARTED else 's'
+
+
+@dataclass
+class Affect(GroupActionProperties):
+    group_id: int = col('ActionListGroupDefID')
+    action_id: int = col('ActionDefID')
+    task: AffectTask = col('ActionTypeID')
+
+    @property
+    def port(self):
+        return self.task.port
+
+
+@dataclass
+class ActionAffect(Affect):
+    affected_group_id: int = col('AffectActionListGroupDefID')
+    affected_action_id: int = col('AffectActionDefID')
+    affected_task: AffectTask = col('AffectActionTypeID')
+
+    @property
+    def affected_group_action(self):
+        return self._group_actions[(self.affected_group_id, self.affected_action_id)]
+
+    @property
+    def affected_port(self):
+        return self.affected_task.port
+
+
+@dataclass
+class OffsetAffect(ActionAffect):
+    offset: float = col('AffectOffset')
+
+
+def require_true(val):
+    if val:
+        return val
+    raise ColumnMissing('MarkDoneAffect requires column AffectAutoComplete to be true')
+
+
+@dataclass
+class MarkDoneAffect(ActionAffect):
+    auto_complete :bool = col('AffectAutoComplete', parser=require_true)
+
+@dataclass
+class CreateActionAffect(Affect):
+    created_group_id: int = col('CreateActionActionListGroupDefID')
+    created_action_id: int = col('CreateActionActionDefID')
+
+    @property
+    def affected_group_action(self):
+        return self._group_actions[(self.created_group_id, self.created_action_id)]
+
+    @property
+    def affected_port(self):
+        return AffectTask.STARTED.port
+
+
+@dataclass
+class CreateGroupAffect(Affect):
+    # What does CreateGroupActionListGroupDefActionTypeID mean here?
+    created_group_id: int = col('CreateGroupActionListGroupDefID')
+
+affect_types = [OffsetAffect, MarkDoneAffect, CreateActionAffect, CreateGroupAffect]
+
+@dataclass(unsafe_hash=True)
+class GroupAction(GroupActionProperties):
+    group_id: int = col('ActionListGroupDefID')
+    action_id: int = col('ActionDefID')
+    affects: List[Affect] = field(default_factory=list, compare=False)
+
+    @property
+    def node_name(self):
+        return escape_name('Group ' + self.group.name + ' Action ' + self.action.name)
+
+
+@dataclass
+class Group:
+    id: int = col('ActionListGroupDefID')
+    name: str = col('ActionListGroupName')
+    optional: bool = col('Optional')
+    actions: List[GroupAction] = field(default_factory=list)
+
+
+class Trigger(NamedTuple):
+    pass
+
+
+@dataclass
+class ActionList:
+    groups : List[Group]
+    triggers : List[Trigger]
+
+
+def load_action_list(conn, action_list_id):
+    @contextmanager
+    def execute(sql, params=None):
+        with conn.cursor() as cursor:
+            cursor.execute(sql, params)
+            yield cursor
+
+    def fetchone(sql, params=None):
+        with execute(sql, params) as cursor:
+            return cursor.fetchone()
+
+    def fetchall(sql, params=None):
+        with execute(sql, params) as cursor:
+            return cursor.fetchall()
+
+    class Cache(dict):
+        def __init__(self, load_fn):
+            self.load_fn = load_fn
+
+        def __missing__(self, key):
+            self[key] = self.load_fn(key)
+            return self[key]
+
+    def load_email(email_id):
+        row = fetchone('SELECT * FROM ActionEmailTemplate WHERE ActionEmailTemplateID=%s', email_id)
+        return create_from_db(Email, row)
+
+    def load_action(action_id):
+        row = fetchone('''SELECT * FROM ActionDef AS ad WHERE ad.ActionDefID=%s''', action_id)
+        action = create_from_db(Action, row)
+        rows = fetchall(
+            'SELECT * FROM ActionDefActionEmailTemplateRel WHERE ActionDefID=%s', action_id
+        )
+        action.emails = [load_email(row['ActionEmailTemplateID']) for row in rows]
+        return action
+
+    actions = Cache(load_action)
+    group_actions = {}
+
+    def load_affects(group_id, action_id):
+        rows = fetchall(
+            '''SELECT * FROM ActionGroupAffectDef
+                WHERE ActionListGroupDefID=%s AND ActionDefID=%s ORDER BY AffectOrder''',
+            (group_id, action_id)
+        )
+        for affect in rows:
+            found = []
+            for t in affect_types:
+                try:
+                    found.append(create_from_db(t, affect))
+                except ColumnMissing:
+                    continue
+            yield from found
+
+    def _setup_group_action_properties_fields(gap):
+        gap._actions = actions
+        gap._groups = groups_by_id
+        gap._group_actions = group_actions
+        return gap
+
+    def load_group_action(group, row):
+        ga = _setup_group_action_properties_fields(create_from_db(GroupAction, row))
+        group_actions[(ga.group_id, ga.action_id)] = ga
+        ga.affects = [_setup_group_action_properties_fields(a) for a in load_affects(group.id, ga.action.id)]
+        return ga
+
+    rows = fetchall(
         '''SELECT * FROM ActionListGroupsDef AS algs
             JOIN ActionListGroupDef AS alg ON alg.ActionListGroupDefID = algs.ActionListGroupDefID
-            WHERE algs.ActionListDefID=%s ORDER BY GroupOrder''', action_list_def_id
+            WHERE algs.ActionListDefID=%s ORDER BY GroupOrder''', action_list_id
     )
-    return _extract_rows(cursor)
+    groups = [create_from_db(Group, row) for row in rows]
+    groups_by_id = {g.id:g for g in groups}
+    for g in groups:
+        rows = fetchall(
+            '''SELECT * FROM ActionListGroupActionDef
+                WHERE ActionListGroupDefID=%s ORDER BY ActionOrder''', g.id
+        )
+        g.actions = [load_group_action(g, r) for r in rows]
+    affected_group_actions = set()
+    for g in groups:
+        for ga in g.actions:
+            for a in ga.affects:
+                affected_group_actions.add(a.affected_group_action)
 
+    for g in groups:
+        for ga in g.actions[:]:
+            if not ga in affected_group_actions and not ga.affects:
+                g.actions.remove(ga)
 
-def _get_actions_by_action_list_group(cursor, action_list_group_def_id):
-    cursor.execute(
-        '''SELECT * FROM ActionListGroupActionDef AS algad
-            JOIN ActionDef AS ad ON ad.ActionDefID = algad.ActionDefID
-            WHERE algad.ActionListGroupDefID=%s ORDER BY ActionOrder''', action_list_group_def_id
-    )
-    return _extract_rows(cursor)
-
-
-def _get_action_affects_by_action_list_group(cursor, action_list_group_def_id, action_def_id):
-    cursor.execute(
-        '''SELECT * FROM ActionGroupAffectDef
-            WHERE ActionListGroupDefID=%s AND ActionDefID=%s ORDER BY AffectOrder''',
-        (action_list_group_def_id, action_def_id)
-    )
-    return _extract_rows(cursor)
+    return ActionList(groups, [])
 
 
 def _get_external_trigger_affects(cursor):
@@ -71,229 +326,19 @@ def _get_external_trigger_affects(cursor):
     return _extract_rows(cursor)
 
 
-def _get_action_emails_by_action(cursor, action_def_id):
-    cursor.execute(
-        '''SELECT * FROM ActionDefActionEmailTemplateRel AS adaetr
-            JOIN ActionEmailTemplate AS aet ON
-                adaetr.ActionEmailTemplateID = aet.ActionEmailTemplateID
-            WHERE adaetr.ActionDefID=%s''', action_def_id
-    )
-    return _extract_rows(cursor)
-
-
-class AffectType(enum.IntEnum):
-    DISPLAY_NAME = 0
-    CREATE_ACTION = 1
-    CREATE_ACTION_GROUP = 2
-    AFFECTS_ACTION = 3
-    SET_VALUE = 4
-    SEND_XML = 5
-    CREATE_RECORDING_DOCUMENT = 6
-    CREATE_CURATIVE = 7
-    MARK_CURATIVE_INTERNALLY_CLEARED = 8
-
-
-class AffectColumnOperator(enum.Enum):
-    AND = 'all'
-    OR = 'any'
-
-
-class AffectColumns(NamedTuple):
-    required: list
-    optional: list = None
-    required_operator: AffectColumnOperator = AffectColumnOperator.AND
-
-    @staticmethod
-    def is_affect(affect_type, columns, required, required_operator):
-        operator = builtins.getattr(builtins, required_operator.value)
-        return operator([columns.get(column) for column in required])
-
-
-AffectTypeToAffectColumnsMapping = {
-    AffectType.DISPLAY_NAME:
-    AffectColumns(['DisplayName']),
-    AffectType.CREATE_ACTION:
-    AffectColumns(['CreateActionActionListGroupDefID', 'CreateActionActionDefID']),
-    AffectType.CREATE_ACTION_GROUP:
-    AffectColumns(['CreateGroupActionListGroupDefID', 'CreateGroupActionListGroupDefActionTypeID']),
-    AffectType.AFFECTS_ACTION:
-    AffectColumns(['AffectActionListGroupDefID', 'AffectActionDefID', 'AffectActionTypeID'],
-                  ['AffectOverwrites', 'AffectOffset', 'AffectAutoComplete']),
-    AffectType.SET_VALUE:
-    AffectColumns(['AffectResWareActionDefValuesID']),
-    AffectType.SEND_XML:
-    AffectColumns(['XMLSchemaID'], ['XMLToPartnerTypeID', 'ActionEventDefID']),
-    AffectType.CREATE_RECORDING_DOCUMENT:
-    AffectColumns(['RecordingDocumentTypeID']),
-    AffectType.CREATE_CURATIVE:
-    AffectColumns(
-        ['CreateTitleReviewTypeID', 'CreatePolicyCurativeTypeID'],
-        ['CreateTitleReviewTypeOnlyIfNotExists', 'CreatePolicyCurativeTypeOnlyIfNotExists'],
-        AffectColumnOperator.OR
-    ),
-    AffectType.MARK_CURATIVE_INTERNALLY_CLEARED:
-    AffectColumns(['ClearTitleReviewTypeID', 'ClearPolicyCurativeTypeID'], None,
-                  AffectColumnOperator.OR)
-}
-
-
-def _get_affect_types(columns, mapping):
-    return [
-        affect_type for (affect_type, affect_mapping) in mapping.items() if AffectColumns.
-        is_affect(affect_type, columns, affect_mapping.required, affect_mapping.required_operator)
-    ]
-
-
-def _identify_affect_action_dependencies(affects):
-    actions = set()
-    for affect in affects:
-        affect_types = _get_affect_types(affect, AffectTypeToAffectColumnsMapping)
-        for affect_type in affect_types:
-            if affect_type in [
-                AffectType.CREATE_ACTION, AffectType.AFFECTS_ACTION, AffectType.CREATE_ACTION_GROUP
-            ]:
-                actions.add((
-                    affect['CreateActionActionListGroupDefID']
-                    or affect['AffectActionListGroupDefID']
-                    or affect['CreateGroupActionListGroupDefID'], affect['CreateActionActionDefID']
-                    or affect['AffectActionDefID'] or None
-                ))
-    return actions
-
-
-def _get_action_trigger_and_dependencies(actions):
-    with _connect_to_db() as conn:
-        triggers = _query(conn, _get_external_trigger_affects)
-        for t in triggers:
-            t['ActionDependency'] = _identify_affect_action_dependencies([t])
-        return triggers
-
-
-def _get_action_list_actions_and_dependencies(action_list_def_id):
-    all_actions = {}
-    with _connect_to_db() as conn:
-        action_groups = _query(
-            conn, _get_action_list_group_by_action_list, action_list_def_id=action_list_def_id
-        )
-
-        for ag in action_groups:
-            actions = _query(
-                conn,
-                _get_actions_by_action_list_group,
-                action_list_group_def_id=ag['ActionListGroupDefID']
-            )
-
-            # Create a map
-            actions = {(ag['ActionListGroupDefID'], a['ActionDefID']): a for a in actions}
-            for k, a in actions.items():
-                if k not in all_actions:
-                    all_actions[k] = a
-                a['ActionGroupAffectDef'] = _query(
-                    conn,
-                    _get_action_affects_by_action_list_group,
-                    action_list_group_def_id=ag['ActionListGroupDefID'],
-                    action_def_id=a['ActionDefID']
-                )
-                a['ActionGroupAffectDefActions'] = _identify_affect_action_dependencies(
-                    a['ActionGroupAffectDef']
-                )
-                a['ActionDefActionEmailTemplateRel'] = _query(
-                    conn, _get_action_emails_by_action, action_def_id=a['ActionDefID']
-                )
-    return all_actions
-
-
-def _build_vertex_from_action(action, depends_on=set()):
-    return Vertex(action['DisplayName'], depends_on, shape='box')
-
-
-def _build_vertex_from_trigger(trigger, depends_on=set()):
-    return Vertex(trigger['Name'], depends_on, fill_color='grey')
-
-
-def _build_vertex_from_email(email, depends_on=set()):
-    return Vertex(email["ActionEmailTemplateName"], depends_on, fill_color='cornflowerblue')
-
-
-class build_vertices:
-    def __init__(self):
-        self.collection = {}
-
-    def get_vertex(self, key):
-        return self.collection[key] if key in self.collection else None
-
-    def __call__(self, key, builder_fn, entity, depends_on=set()):
-        vertex = self.get_vertex(key)
-        if not vertex:
-            vertex = self.collection[key] = builder_fn(entity, depends_on)
-        if depends_on:
-            vertex.depends_on |= depends_on
-        return vertex
-
-
-def _build_dependencies(
-    vertices, actions, entity_key, entity, dependencies, email_actions, vertex_builder_fn
-):
-    skipped_dependencies = []
-    vertex = vertices(entity_key, vertex_builder_fn, entity)
-    for dependency_key in dependencies:
-        if dependency_key not in actions:
-            skipped_dependencies.append(dependency_key)
-        else:
-            vertices(dependency_key, vertex_builder_fn, actions[dependency_key], set([vertex]))
-    for email_action in email_actions:
-        vertices(
-            email_action['ActionEmailTemplateName'], _build_vertex_from_email, email_action,
-            set([vertex])
-        )
-    return skipped_dependencies
-
-
-def _add_notes(skipped_action_deps, skipped_trigger_deps):
-    def _print_note(name, label):
-        return f'{name}[label="{label}", shape="note", style="filled", fillcolor="yellow"]'
-
-    if skipped_action_deps:
-        yield _print_note(
-            'skipped_action_deps', f'Skipped Action Dependencies:{skipped_action_deps}'
-        )
-    if skipped_trigger_deps:
-        yield _print_note(
-            'skipped_trigger_deps', f'Skipped Trigger Dependencies:{skipped_trigger_deps}'
-        )
-
+name_prefix = re.compile('^\w+: ')
 
 def generate_digraph_from_action_list(action_list_def_id=ACTION_LIST_DEF_ID):
-    skipped_action_dependencies = []
-    skipped_trigger_dependencies = []
-    all_actions = _get_action_list_actions_and_dependencies(action_list_def_id)
-    vertices = build_vertices()
-    for action_key, action in all_actions.items():
-        skipped_action_dependencies.extend(
-            _build_dependencies(
-                vertices, all_actions, action_key, action, action['ActionGroupAffectDefActions'],
-                action['ActionDefActionEmailTemplateRel'], _build_vertex_from_action
-            )
-        )
-    if INCLUDE_TRIGGERS:
-        triggers = _get_action_trigger_and_dependencies(all_actions)
-        for trigger in triggers:
-            skipped_trigger_dependencies.extend(
-                _build_dependencies(
-                    vertices, all_actions, ('ExternalTrigger', trigger['ExternalActionDefID']),
-                    trigger, trigger['ActionDependency'], [], _build_vertex_from_trigger
-                )
-            )
+    with _connect_to_db() as conn, conn.cursor(as_dict=True) as cursor:
+        action_list = load_action_list(conn, action_list_def_id)
 
-    added_note = False
-    for line in digraph([
-        vertex for vertex in vertices.collection.values() if len(vertex.depends_on)
-    ]):
-        yield line
-        if not added_note:
-            added_note = True
-            yield from _add_notes(skipped_action_dependencies, skipped_trigger_dependencies)
-
+    yield 'digraph G {'
+    for group in action_list.groups:
+        for group_action in group.actions:
+            yield str(Vertex(name_prefix.sub('', group_action.action.name), shape='box', name=group_action.node_name))
+            for affect in group_action.affects:
+                yield f'{group_action.node_name}:{affect.port} -> {affect.affected_group_action.node_name}:{affect.affected_port}'
+    yield '}'
 
 if __name__ == '__main__':
     print('\n'.join(generate_digraph_from_action_list()))
