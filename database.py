@@ -128,20 +128,12 @@ class AffectTask(enum.IntEnum):
     STARTED = 1
     COMPLETED = 2
 
-    @property
-    def port(self):
-        return 'n' if self == AffectTask.STARTED else 's'
-
 
 @dataclass
 class Affect(GroupActionProperties):
     group_id: int = col('ActionListGroupDefID')
     action_id: int = col('ActionDefID')
     task: AffectTask = col('ActionTypeID')
-
-    @property
-    def port(self):
-        return self.task.port
 
 
 @dataclass
@@ -153,10 +145,6 @@ class ActionAffect(Affect):
     @property
     def affected_group_action(self):
         return self._group_actions[(self.affected_group_id, self.affected_action_id)]
-
-    @property
-    def affected_port(self):
-        return self.affected_task.port
 
 
 @dataclass
@@ -182,10 +170,6 @@ class CreateActionAffect(Affect):
     @property
     def affected_group_action(self):
         return self._group_actions[(self.created_group_id, self.created_action_id)]
-
-    @property
-    def affected_port(self):
-        return AffectTask.STARTED.port
 
 
 @dataclass
@@ -337,7 +321,11 @@ def generate_digraph_from_action_list(action_list_def_id=ACTION_LIST_DEF_ID):
         for group_action in group.actions:
             yield str(Vertex(name_prefix.sub('', group_action.action.name), shape='box', name=group_action.node_name))
             for affect in group_action.affects:
-                yield f'{group_action.node_name}:{affect.port} -> {affect.affected_group_action.node_name}:{affect.affected_port}'
+                yield f'{group_action.node_name} -> {affect.affected_group_action.node_name}'
+            for email in group_action.action.emails:
+                yield str(Vertex(email.name, shape='oval', fill_color='cornflowerblue', name=email.node_name))
+                yield f'{group_action.node_name} -> {email.node_name}'
+
     yield '}'
 
 if __name__ == '__main__':
