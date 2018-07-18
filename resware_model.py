@@ -2,7 +2,7 @@ import enum
 
 from dataclasses import dataclass
 
-from db import col, tableclass, _connect_to_db, load
+from database import col, tableclass, _connect_to_db, load
 
 
 class Task(enum.IntEnum):

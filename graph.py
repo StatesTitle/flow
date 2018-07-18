@@ -250,7 +250,10 @@ def _walk(action :Action, reachable: Set[Action]):
         _walk(affect.action, reachable)
 
 
-def generate_digraph_from_action_list(action_list: ActionList, roots: Set[Action]):
+def generate_digraph_from_action_list(action_list: ActionList, roots: Set[Action]=None):
+    if roots is None:
+        roots = find_roots(action_list)
+
     # Find the actions reachable from the given roots
     reachable = set()
     for root in roots:
@@ -285,14 +288,18 @@ def generate_digraph_from_action_list(action_list: ActionList, roots: Set[Action
     yield '}'
 
 
+def find_roots(action_list, external_actions=None):
+    """Finds actions affected by the given external actions"""
+    if external_actions is None:
+        external_actions = { 121: 'Document Added', 14: 'File Created', 154:'Received Action Event'}
+    roots = set()
+    for group in action_list.groups:
+        for trigger in group.triggers:
+            if trigger.external_action.id in external_actions:
+                roots.add(trigger.affect.action)
+    return roots
+
+
 if __name__ == '__main__':
     alist = build_action_list(build_models(), ACTION_LIST_DEF_ID)
-    # Find any actions affected by these external actions
-    root_external_actions = { 121: 'Document Added', 14: 'File Created', 154:'Received Action Event'}
-    roots = set()
-    for group in alist.groups:
-        for trigger in group.triggers:
-            if trigger.external_action.id in root_external_actions:
-                roots.add(trigger.affect.action)
-
-    print('\n'.join(generate_digraph_from_action_list(alist, roots)))
+    print('\n'.join(generate_digraph_from_action_list(alist)))

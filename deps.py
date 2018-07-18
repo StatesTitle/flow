@@ -7,12 +7,12 @@ def escape_name(name):
     return name
 
 class Vertex:
-    def __init__(self, label, depends_on=None, fill_color=None, shape=None, name=None):
+    def __init__(self, label, depends_on=None, fill_color=None, shape=None, name=None, **dot_attrs):
         label = label.replace('"', '\\"')
         if name is None:
-            name = escape_name(label)
-        self.name = name
-        attrs = {}
+            name = label
+        self.name = escape_name(name)
+        attrs = {**dot_attrs}
         if self.name != label:
             attrs['label'] = label
         if shape:
