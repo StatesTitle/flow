@@ -9,6 +9,34 @@ class Task(enum.IntEnum):
     START = 1
     COMPLETE = 2
 
+# All actions in a group in ResWare have "start" and "complete" tasks. Those tasks can be marked "done". All affects
+# happen on either start or complete being marked done.  That's tracked in the ActionTypeID column in the
+# ActionGroupAffectDef and ActionListGroupExternalTriggerAffectsDef tables. If ActionTypeID is 1, that means the
+# affect happens on on the group action's start being marked done. If it's 2, it means the affect happens on the
+# complete being marked done.
+#
+# What an affect does is determined by which additional columns are set on the row in ActionGroupAffectDef:
+# 1. If AffectActionListGroupDefID and AffectActionDefID are set,  another GroupAction is being changed.
+#    AffectActionTypeID determines if it's the start or complete task that's being changed, just like with
+#    ActionTypeID. It can do one of two things:
+#     a. If AffectOffset is set, it's changing the due date offset
+#     b. If AffectAutoComplete is not null and true, it's marking a task as done. Despite Complete
+#        being in the column name, this doesn't have anything to do with it targeting the start
+#        or complete task. If this is not null and false, that means it's an offset affect
+# 2. If CreateActionActionListGroupDefID and CreateActionActionDefID are set, it's adding a new
+#    action on the file
+# 3. If CreateGroupActionListGroupDefID is set, it's adding a new action group to the file
+
+# Other known affect types and the required columns to identify them
+# ('DISPLAY_NAME', ['DisplayName']),
+# ('SET_VALUE', ['AffectResWareActionDefValuesID']),
+# ('SEND_XML', ['XMLSchemaID'], ['XMLToPartnerTypeID', 'ActionEventDefID']),
+# ('CREATE_RECORDING_DOCUMENT', ['RecordingDocumentTypeID']),
+# Ones that only require only one of the columns
+# ('CREATE_CURATIVE', ['CreateTitleReviewTypeID', 'CreatePolicyCurativeTypeID'],
+#         ['CreateTitleReviewTypeOnlyIfNotExists', 'CreatePolicyCurativeTypeOnlyIfNotExists'],
+# ('MARK_CURATIVE_INTERNALLY_CLEARED', ['ClearTitleReviewTypeID', 'ClearPolicyCurativeTypeID'],)
+
 
 @dataclass
 class Affect:
@@ -19,6 +47,7 @@ class Affect:
     auto_complete: bool = col('AffectAutoComplete', nullable=True)
     created_group_id: int = col('CreateActionActionListGroupDefID', nullable=True)
     created_action_id: int = col('CreateActionActionDefID', nullable=True)
+    # TODO CreateGroupActionListGroupDefID
 
 
 @tableclass('ExternalActionDef')
@@ -85,7 +114,7 @@ class Group:
     name: str = col('ActionListGroupName')
 
 
-@tableclass('ActionGroupAffectDef', lookup=('group_id', 'action_id'))
+@tableclass('ActionGroupAffectDef', lookup=('group_id', 'action_id'), one_to_many=True)
 class GroupActionAffect(Affect):
     group_id: int = col('ActionListGroupDefID')
     action_id: int = col('ActionDefID')

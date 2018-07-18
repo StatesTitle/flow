@@ -93,5 +93,6 @@ def load(conn, cls):
             if cls.one_to_many:
                 results[key].append(instance)
             else:
+                assert key not in results, f"Was expecting a single item for {key} but got {instance} and {results[key]}"
                 results[key] = instance
         return results
