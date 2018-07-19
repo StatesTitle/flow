@@ -1,26 +1,90 @@
+import codecs
 import collections
+import io
 import pymssql
-from contextlib import contextmanager
+import sys
 
+import paramiko
 from dataclasses import dataclass, field, fields
+from sshtunnel import SSHTunnelForwarder
 
 from settings import (
     RESWARE_DATABASE_NAME, RESWARE_DATABASE_PASSWORD, RESWARE_DATABASE_PORT,
-    RESWARE_DATABASE_SERVER, RESWARE_DATABASE_USER
-)
+    RESWARE_DATABASE_SERVER, RESWARE_DATABASE_USER,
+    SSH_TUNNEL_ENABLED, SSH_SERVER_HOST, SSH_SERVER_PORT, SSH_USERNAME, SSH_PRIVATE_KEY, SSH_REMOTE_BIND_ADDRESS,
+    SSH_REMOTE_BIND_PORT)
 
 
-@contextmanager
-def _connect_to_db():
-    with pymssql.connect(
-        RESWARE_DATABASE_SERVER,
-        RESWARE_DATABASE_USER,
-        RESWARE_DATABASE_PASSWORD,
-        RESWARE_DATABASE_NAME,
-        port=RESWARE_DATABASE_PORT,
-        as_dict=True
-    ) as conn:
-        yield conn
+class ResWareDatabaseConnection:
+    def __enter__(self):
+        # SSH tunnel is required to connect to a SQL server running behind a firewall
+        self.tunnel = None
+        if SSH_TUNNEL_ENABLED:
+            # Paramiko expects the key to be enclosed in a tagged block, but that's obnoxious to encode in .env and
+            # Heroku configs. If we don't have it in the config, wrap it here.
+            key = SSH_PRIVATE_KEY
+            if not key.startswith('-----'):
+                key = f'-----BEGIN RSA PRIVATE KEY-----\n{key}\n-----END RSA PRIVATE KEY-----'''
+
+            self.tunnel = SSHTunnelForwarder(
+                (SSH_SERVER_HOST, SSH_SERVER_PORT),
+                ssh_username=SSH_USERNAME,
+                ssh_private_key=paramiko.RSAKey.from_private_key(
+                    io.StringIO(codecs.decode(key, 'unicode_escape'))
+                ),
+                remote_bind_address=(SSH_REMOTE_BIND_ADDRESS, SSH_REMOTE_BIND_PORT)
+            )
+            self.tunnel.start()
+
+            # if an ssh tunnel is used, bind to the tunnel's localhost port
+            try:
+                self._db_connect('127.0.0.1', self.tunnel.local_bind_port)
+            except:
+                # Always close the tunnel if it's open so we don't leave a thread dangling
+                self._close_tunnel(True)
+                raise
+        else:
+            self._db_connect(
+                RESWARE_DATABASE_SERVER,
+                RESWARE_DATABASE_PORT
+            )
+
+        return self.connection
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        connection_close_raised = True
+        try:
+            self.connection.close()
+            connection_close_raised = False
+        finally:
+            self._close_tunnel(connection_close_raised)
+
+    def _close_tunnel(self, already_handling_exception):
+        # close ssh tunnel if it was created
+        if not self.tunnel:
+            return
+        try:
+            self.tunnel.close()
+        except:
+            if already_handling_exception:
+                print("Hit an exception closing the ssh tunnel, but we were already handling an exception. Swallowing the tunnel closing exception", file=sys.stderr)
+            else:
+                raise
+
+    def _db_connect(self, host, port):
+        # due to a pymssql bug, the database name cannot be specified on init if an ssh tunnel is used
+        # instead, it must be given to the connection's cursor object before a query
+        # this could also be an issue with paramiko, which sshtunnel uses for implementation
+        # for more details, see: https://github.com/pahaz/sshtunnel/issues/99
+        self.connection = pymssql.connect(
+            host=host,
+            user=RESWARE_DATABASE_USER,
+            password=RESWARE_DATABASE_PASSWORD,
+            port=port,
+            as_dict=True
+        )
+        with self.connection.cursor() as cursor:
+            cursor.execute(f"USE {RESWARE_DATABASE_NAME}")
 
 
 def tableclass(table, lookup=None, one_to_many=False, **kwargs):
