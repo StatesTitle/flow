@@ -1,10 +1,10 @@
-import codecs
 import collections
 import io
 import pymssql
 import sys
 
 import paramiko
+import sshtunnel
 from dataclasses import dataclass, field, fields
 from sshtunnel import SSHTunnelForwarder
 
@@ -29,10 +29,11 @@ class ResWareDatabaseConnection:
             self.tunnel = SSHTunnelForwarder(
                 (SSH_SERVER_HOST, SSH_SERVER_PORT),
                 ssh_username=SSH_USERNAME,
-                ssh_private_key=paramiko.RSAKey.from_private_key(
-                    io.StringIO(codecs.decode(key, 'unicode_escape'))
-                ),
-                remote_bind_address=(SSH_REMOTE_BIND_ADDRESS, SSH_REMOTE_BIND_PORT)
+                ssh_private_key=paramiko.RSAKey.from_private_key(io.StringIO(key)),
+                remote_bind_address=(SSH_REMOTE_BIND_ADDRESS, SSH_REMOTE_BIND_PORT),
+                # If the tunnel is failing, switch this to TRACE to figure out what it's trying. Checking the BitVise
+                # logs on the server can be helpful, too
+                logger=sshtunnel.create_logger(loglevel='WARNING')
             )
             self.tunnel.start()
 
