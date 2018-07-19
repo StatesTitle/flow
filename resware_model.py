@@ -1,3 +1,8 @@
+"""Raw in-memory representations of the data in ResWare's db relating to action list definitions and friends
+
+We make it easy to load all of that at once to make it easier to create an object graph without having to do
+complicated queries to only fetch the bits we once. Since the action lists will never be 1000s and 1000s of steps,
+loading all of this shouldn't be prohibitive."""
 import enum
 
 from dataclasses import dataclass

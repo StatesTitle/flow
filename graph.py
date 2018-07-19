@@ -1,3 +1,10 @@
+"""Takes the raw ResWare data from resware_model and turns that into a connected graph of objects
+
+Allows for the conversion of that graph into a dot language digraph
+
+For the dataclasses below, we've made them frozen when they need a __hash__ method to be put into a set or dict. All of
+the instances should be immutable after build_action_list returns, but we're not marking as frozen unless necessary to
+keep from dealing with setting compare=False on fields and how dataclass overrides setattr if frozen is true"""
 import re
 from typing import Dict, List, Tuple, Set
 
@@ -9,6 +16,7 @@ from settings import ACTION_LIST_DEF_ID
 
 
 def _node_name(*components):
+    # Prepend an 'N' for 'node' in case the first component starts with a number, which is a warning in dot
     return escape_name('N' + ' '.join([str(c) for c in components]))
 
 
@@ -48,6 +56,10 @@ class CreateActionAffect(Affect):
 
 @dataclass(frozen=True)
 class ExternalAction:
+    """Something happening outside of ResWare that ResWare can detect and use to trigger an affect
+
+    There are a fair number of specific actions that are instances of this class, and then for document addition and
+    action events receipt, we create an instance of the subclasses below"""
     id: int
     name: str
 
@@ -104,12 +116,14 @@ class ActionEventReceived(ExternalAction):
 
 @dataclass
 class Trigger:
+    """A combination of an external action that ResWare detects and the affect it performs when it detects it"""
     affect: Affect
     external_action: ExternalAction
 
 
 @dataclass
 class Email:
+    """An email template that's sent on the start or completion of an action"""
     action_id: int
     group_id: int
     name: str
@@ -127,6 +141,12 @@ class Email:
 
 @dataclass(frozen=True)
 class Action:
+    """An action in a group with the emails it sends and the affects its start or completion cause
+
+    ResWare itself has separate concepts for 'global actions' and instances of actions in a group. We only represent
+    the instance on a group here. That means it's possible for the same global action to be in the graph multiple times.
+    If that's the case, it'll always be a separate instance in the group. Since the affects are on the instance anyway,
+    the global action concept isn't very useful."""
     action_id: int
     group_id: int
     name: str = field(compare=False)
@@ -142,6 +162,7 @@ class Action:
 
 @dataclass
 class Group:
+    """A group of actions and triggers that can be added to a file"""
     id: int
     name: str
     optional: bool
