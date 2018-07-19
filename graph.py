@@ -20,19 +20,15 @@ def _node_name(*components):
     return escape_name('N' + ' '.join([str(c) for c in components]))
 
 
+@dataclass
 class Affect:
-    def _bind(self, actionarium):
-        raise NotImplementedError
+    group_id: int
+    action_id: int
 
 
 @dataclass
 class AffectTaskAffect(Affect):
-    group_id: int
-    action_id: int
     task: Task
-
-    def _bind(self, actionarium):
-        self.action = actionarium.actions[(self.group_id, self.action_id)]
 
 
 @dataclass
@@ -47,11 +43,7 @@ class OffsetActionAffect(AffectTaskAffect):
 
 @dataclass
 class CreateActionAffect(Affect):
-    group_id: int
-    action_id: int
-
-    def _bind(self, actionarium):
-        self.action = actionarium.actions[(self.group_id, self.action_id)]
+    pass
 
 
 @dataclass(frozen=True)
@@ -176,29 +168,16 @@ class ActionList:
     groups: List[Group] = field(default_factory=list, compare=False)
 
 
-@dataclass
-class Actionarium:
-    models: Models
-    action_list: ActionList
-    actions: Dict[Tuple[int, int], Action] = field(default_factory=dict, compare=False)
-    groups: Dict[int, Group] = field(default_factory=dict, compare=False)
-    external_actions: Dict[ExternalAction, ExternalAction] = field(default_factory=dict, compare=False)
-
-
-def _build_external_action(actionarium, model_trigger):
-    name = actionarium.models.external_actions[model_trigger.external_action_id].name
+def _build_external_action(models, model_trigger):
+    name = models.external_actions[model_trigger.external_action_id].name
     if model_trigger.document_type_id is not None:
-        doc = actionarium.models.document_types[model_trigger.document_type_id]
-        external_action = DocumentAdded(model_trigger.external_action_id, name, doc.id, doc.name)
+        doc = models.document_types[model_trigger.document_type_id]
+        return DocumentAdded(model_trigger.external_action_id, name, doc.id, doc.name)
     elif model_trigger.action_event_id is not None:
-        ae = actionarium.models.action_events[model_trigger.action_event_id]
-        external_action = ActionEventReceived(model_trigger.external_action_id, name, ae.id, ae.name)
+        ae = models.action_events[model_trigger.action_event_id]
+        return ActionEventReceived(model_trigger.external_action_id, name, ae.id, ae.name)
     else:
-        external_action = ExternalAction(model_trigger.external_action_id, name)
-    if external_action in actionarium.external_actions:
-        return actionarium.external_actions[external_action]
-    actionarium.external_actions[external_action] = external_action
-    return external_action
+        return ExternalAction(model_trigger.external_action_id, name)
 
 
 def _build_affects(model_affect):
@@ -211,32 +190,30 @@ def _build_affects(model_affect):
         yield CreateActionAffect(model_affect.created_group_id, model_affect.created_action_id)
 
 
-def _build_triggers(actionarium, model_trigger):
-    external_action = _build_external_action(actionarium, model_trigger)
+def _build_triggers(models, model_trigger):
+    external_action = _build_external_action(models, model_trigger)
     for affect in _build_affects(model_trigger):
         yield Trigger(affect, external_action)
 
 
-def _build_action(actionarium, model_group_action):
-    model_action = actionarium.models.actions[model_group_action.action_id]
+def _build_action(models, model_group_action):
+    model_action = models.actions[model_group_action.action_id]
     action = Action(model_action.id, model_group_action.group_id, model_action.name, model_action.display_name, model_action.description)
-    actionarium.actions[(action.group_id, action.action_id)] = action
     key = (action.group_id, action.action_id)
-    for affect in actionarium.models.group_action_affects[key]:
+    for affect in models.group_action_affects[key]:
         action.affects.extend(_build_affects(affect))
-    for model_action_email in actionarium.models.action_emails[action.action_id]:
-        action.emails.append(Email(action.group_id, action.action_id, actionarium.models.emails[model_action_email.email_id].name, model_action_email.task))
+    for model_action_email in models.action_emails[action.action_id]:
+        action.emails.append(Email(action.group_id, action.action_id, models.emails[model_action_email.email_id].name, model_action_email.task))
     return action
 
 
-def _build_group(actionarium, model_alist_group):
-    model_group = actionarium.models.groups[model_alist_group.group_id]
+def _build_group(models, model_alist_group):
+    model_group = models.groups[model_alist_group.group_id]
     group = Group(model_group.id, model_group.name, model_alist_group.optional)
-    actionarium.groups[group.id] = group
-    for model_group_action in actionarium.models.group_actions[group.id]:
-        group.actions.append(_build_action(actionarium, model_group_action))
-    for model_trigger in actionarium.models.triggers[group.id]:
-        group.triggers.extend(_build_triggers(actionarium, model_trigger))
+    for model_group_action in models.group_actions[group.id]:
+        group.actions.append(_build_action(models, model_group_action))
+    for model_trigger in models.triggers[group.id]:
+        group.triggers.extend(_build_triggers(models, model_trigger))
     return group
 
 
@@ -245,17 +222,27 @@ def build_action_list(models, action_list_id):
 
     # Build the structure of all the groups, actions, affects, triggers, and emails
     result = ActionList(model_alist.name)
-    actionarium = Actionarium(models, result)
     for model_alist_group in models.action_list_groups[action_list_id]:
-        result.groups.append(_build_group(actionarium, model_alist_group))
+        result.groups.append(_build_group(models, model_alist_group))
 
-    # Hook affects to the action and group instances they affect
+
+    def key(id_holder):
+        return id_holder.group_id, id_holder.action_id
+
+    # Build a dict from (group_id, action_id) to action for all actions in the action list
+    actions = {}
+    for group in result.groups:
+        for action in group.actions:
+            actions[key(action)] = action
+
+    # Hook affects to the action instances they affect. Do this in a second pass so all the instances will exist from
+    # the first pass.
     for group in result.groups:
         for trigger in group.triggers:
-            trigger.affect._bind(actionarium)
+            trigger.affect.action = actions[key(trigger.affect)]
         for action in group.actions:
             for affect in action.affects:
-                affect._bind(actionarium)
+                affect.action = actions[key(affect)]
 
     return result
 
@@ -263,7 +250,7 @@ def build_action_list(models, action_list_id):
 name_prefix = re.compile('^\w+: ')
 
 
-def _walk(action :Action, reachable: Set[Action]):
+def _walk(action: Action, reachable: Set[Action]):
     if action in reachable:
         return
     reachable.add(action)
@@ -281,6 +268,7 @@ def generate_digraph_from_action_list(action_list: ActionList, roots: Set[Action
         _walk(root, reachable)
 
     yielded = set()
+
     def emit(obj):
         # We're not distinguishing offset vs start vs complete affects in the arrows yet. That leads to dupe arrows, so
         # filter them out here
