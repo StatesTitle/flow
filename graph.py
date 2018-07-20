@@ -6,12 +6,12 @@ For the dataclasses below, we've made them frozen when they need a __hash__ meth
 the instances should be immutable after build_action_list returns, but we're not marking as frozen unless necessary to
 keep from dealing with setting compare=False on fields and how dataclass overrides setattr if frozen is true"""
 import re
-from typing import Dict, List, Tuple, Set
+from typing import List, Set
 
 from dataclasses import dataclass, field
 
 from deps import Vertex, escape_name
-from resware_model import Task, Models, build_models
+from resware_model import Task, build_models
 from settings import ACTION_LIST_DEF_ID
 
 

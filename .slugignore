@@ -1,0 +1,3 @@
+# Exclude .env from Heroku's slug compiler to keep it from being deployed.
+# That makes sure we do all configuration in Heroku settings
+.env

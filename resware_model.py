@@ -7,7 +7,7 @@ import enum
 
 from dataclasses import dataclass
 
-from database import col, tableclass, _connect_to_db, load
+from database import col, tableclass, ResWareDatabaseConnection, load
 
 
 class Task(enum.IntEnum):
@@ -156,7 +156,7 @@ class Models:
 
 
 def build_models():
-    with _connect_to_db() as conn:
+    with ResWareDatabaseConnection() as conn:
         return Models(conn)
 
 if __name__ == '__main__':
