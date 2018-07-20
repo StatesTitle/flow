@@ -2,10 +2,11 @@ import subprocess
 
 import flask
 import time
+from flask import request, abort
 
 from graph import generate_digraph_from_action_list, build_action_list
 from resware_model import build_models
-from settings import ACTION_LIST_DEF_ID
+from settings import ACTION_LIST_DEF_ID, WEB_TOKEN
 
 app = flask.Flask(__name__)
 
@@ -26,6 +27,8 @@ def get_model():
 
 @app.route('/')
 def stream():
+    if request.args.get('token', '') != WEB_TOKEN:
+        abort(401)
     alist = build_action_list(get_model(), ACTION_LIST_DEF_ID)
     digraph = '\n'.join(generate_digraph_from_action_list(alist))
     run = subprocess.run(['dot', '-Tsvg'], stdout=subprocess.PIPE, input=bytes(digraph, 'utf-8'))

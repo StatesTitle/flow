@@ -36,3 +36,5 @@ SSH_REMOTE_BIND_PORT = int(os.getenv('SSH_REMOTE_BIND_PORT', '1433'))
 
 # Action List To Graph
 ACTION_LIST_DEF_ID = int(os.getenv('ACTION_LIST_DEF_ID', 0))
+
+WEB_TOKEN = os.getenv('WEB_TOKEN')
