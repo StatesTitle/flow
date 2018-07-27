@@ -81,7 +81,6 @@ class DocumentAdded(ExternalAction):
     def node_name(self):
         return _node_name(self.document_name, self.id, self.document_type_id)
 
-
     @property
     def dot_attrs(self):
         return {'fillcolor': '#b2df8a', 'style': 'filled'}
@@ -99,7 +98,6 @@ class ActionEventReceived(ExternalAction):
     @property
     def node_name(self):
         return _node_name(self.action_event_name, self.id, self.action_event_id)
-
 
     @property
     def dot_attrs(self):
@@ -124,7 +122,6 @@ class Email:
     @property
     def node_name(self):
         return _node_name(self.name, self.group_id, self.action_id)
-
 
     @property
     def dot_attrs(self):
@@ -183,9 +180,15 @@ def _build_external_action(models, model_trigger):
 def _build_affects(model_affect):
     if model_affect.affected_group_id is not None:
         if model_affect.offset is not None:
-            yield OffsetActionAffect(model_affect.affected_group_id, model_affect.affected_action_id, model_affect.affected_task, model_affect.offset)
+            yield OffsetActionAffect(
+                model_affect.affected_group_id, model_affect.affected_action_id,
+                model_affect.affected_task, model_affect.offset
+            )
         if model_affect.auto_complete:
-            yield CompleteActionAffect(model_affect.affected_group_id, model_affect.affected_action_id, model_affect.affected_task)
+            yield CompleteActionAffect(
+                model_affect.affected_group_id, model_affect.affected_action_id,
+                model_affect.affected_task
+            )
     if model_affect.created_group_id is not None:
         yield CreateActionAffect(model_affect.created_group_id, model_affect.created_action_id)
 
@@ -198,12 +201,20 @@ def _build_triggers(models, model_trigger):
 
 def _build_action(models, model_group_action):
     model_action = models.actions[model_group_action.action_id]
-    action = Action(model_action.id, model_group_action.group_id, model_action.name, model_action.display_name, model_action.description)
+    action = Action(
+        model_action.id, model_group_action.group_id, model_action.name, model_action.display_name,
+        model_action.description
+    )
     key = (action.group_id, action.action_id)
     for affect in models.group_action_affects[key]:
         action.affects.extend(_build_affects(affect))
     for model_action_email in models.action_emails[action.action_id]:
-        action.emails.append(Email(action.group_id, action.action_id, models.emails[model_action_email.email_id].name, model_action_email.task))
+        action.emails.append(
+            Email(
+                action.group_id, action.action_id, models.emails[model_action_email.email_id].name,
+                model_action_email.task
+            )
+        )
     return action
 
 
@@ -224,7 +235,6 @@ def build_action_list(models, action_list_id):
     result = ActionList(model_alist.name)
     for model_alist_group in models.action_list_groups[action_list_id]:
         result.groups.append(_build_group(models, model_alist_group))
-
 
     def key(id_holder):
         return id_holder.group_id, id_holder.action_id
@@ -258,7 +268,7 @@ def _walk(action: Action, reachable: Set[Action]):
         _walk(affect.action, reachable)
 
 
-def generate_digraph_from_action_list(action_list: ActionList, roots: Set[Action]=None):
+def generate_digraph_from_action_list(action_list: ActionList, roots: Set[Action] = None):
     if roots is None:
         roots = find_roots(action_list)
 
@@ -283,12 +293,22 @@ def generate_digraph_from_action_list(action_list: ActionList, roots: Set[Action
         for trigger in group.triggers:
             if trigger.affect.action not in reachable:
                 continue
-            yield from emit(Vertex(trigger.external_action.label, name=trigger.external_action.node_name, **trigger.external_action.dot_attrs))
-            yield from emit(f'{trigger.external_action.node_name} -> {trigger.affect.action.node_name}')
+            yield from emit(
+                Vertex(
+                    trigger.external_action.label,
+                    name=trigger.external_action.node_name,
+                    **trigger.external_action.dot_attrs
+                )
+            )
+            yield from emit(
+                f'{trigger.external_action.node_name} -> {trigger.affect.action.node_name}'
+            )
         for action in group.actions:
             if action not in reachable:
                 continue
-            yield from emit(Vertex(name_prefix.sub('', action.name), shape='box', name=action.node_name))
+            yield from emit(
+                Vertex(name_prefix.sub('', action.name), shape='box', name=action.node_name)
+            )
             for affect in action.affects:
                 yield from emit(f'{action.node_name} -> {affect.action.node_name}')
             for email in action.emails:
@@ -300,7 +320,7 @@ def generate_digraph_from_action_list(action_list: ActionList, roots: Set[Action
 def find_roots(action_list, external_actions=None):
     """Finds actions affected by the given external actions"""
     if external_actions is None:
-        external_actions = { 121: 'Document Added', 14: 'File Created', 154:'Received Action Event'}
+        external_actions = {121: 'Document Added', 14: 'File Created', 154: 'Received Action Event'}
     roots = set()
     for group in action_list.groups:
         for trigger in group.triggers:

@@ -1,10 +1,12 @@
 from collections import namedtuple
 
+
 def escape_name(name):
     name = name.replace('&', 'and')
     for c in ' ./#?,!@$%^*()+=[]{}:;"-\\\'':
         name = name.replace(c, '_')
     return name
+
 
 class Vertex:
     def __init__(self, label, depends_on=None, fill_color=None, shape=None, name=None, **dot_attrs):
@@ -42,6 +44,7 @@ def print_nodes_and_deps(to_visit, visited):
         yield from print_nodes_and_deps(node, visited)
         yield f'    {node.name} -> {to_visit.name}'
 
+
 def digraph(goals):
     yield 'digraph G {'
     visited = set()
@@ -77,18 +80,31 @@ if __name__ == '__main__':
     prepare_affidavits = Vertex('Prepare Affidavits for Borrower', [receive_closing_documents])
     prepare_fedex = Vertex('Prepare FedEx Label', [schedule_notary])
     prepare_notary_instructions = Vertex('Prepare Notary Instructions', [prepare_affidavits])
-    prepare_settlement_statement = Vertex('Prepare ALTA Settlement Statement', [receive_closing_documents])
-    send_closing_to_notary = Vertex('Email Closing Docs to Notary', [prepare_fedex, prepare_notary_instructions, prepare_settlement_statement])
+    prepare_settlement_statement = Vertex(
+        'Prepare ALTA Settlement Statement', [receive_closing_documents]
+    )
+    send_closing_to_notary = Vertex(
+        'Email Closing Docs to Notary',
+        [prepare_fedex, prepare_notary_instructions, prepare_settlement_statement]
+    )
     notary_sends_scanned_package = Vertex('Notary Emails Signed Package', [send_closing_to_notary])
-    notary_sends_physical_pacakge = Vertex('Notary FedExes Signed Package', [send_closing_to_notary])
+    notary_sends_physical_pacakge = Vertex(
+        'Notary FedExes Signed Package', [send_closing_to_notary]
+    )
     send_lender_closing = Vertex('Send Lender Signed Package', [notary_sends_physical_pacakge])
     lender_funds_loan = Vertex('Lender Funds Loan', [send_lender_closing])
     disbursement_arrives = Vertex('Receive Disbursement sent via Wire', [lender_funds_loan])
     documents_sent_to_recording = Vertex('Send Documents to Recording', [disbursement_arrives])
     create_title_policy = Vertex('Complete Title Policy', [disbursement_arrives])
-    mail_title_policy_with_deed_to_lender = Vertex('Mail Policy with Deed to Lender', [create_title_policy, documents_sent_to_recording])
-    mail_title_policy_with_remittance_to_underwriter = Vertex('Mail Policy with Remittance to Underwriter', [create_title_policy])
+    mail_title_policy_with_deed_to_lender = Vertex(
+        'Mail Policy with Deed to Lender', [create_title_policy, documents_sent_to_recording]
+    )
+    mail_title_policy_with_remittance_to_underwriter = Vertex(
+        'Mail Policy with Remittance to Underwriter', [create_title_policy]
+    )
 
-
-    for line in digraph([mail_title_policy_with_deed_to_lender, mail_title_policy_with_remittance_to_underwriter, notary_sends_scanned_package]):
+    for line in digraph([
+        mail_title_policy_with_deed_to_lender, mail_title_policy_with_remittance_to_underwriter,
+        notary_sends_scanned_package
+    ]):
         print(line)

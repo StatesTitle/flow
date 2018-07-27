@@ -14,6 +14,7 @@ class Task(enum.IntEnum):
     START = 1
     COMPLETE = 2
 
+
 # All actions in a group in ResWare have "start" and "complete" tasks. Those tasks can be marked "done". All affects
 # happen on either start or complete being marked done.  That's tracked in the ActionTypeID column in the
 # ActionGroupAffectDef and ActionListGroupExternalTriggerAffectsDef tables. If ActionTypeID is 1, that means the
@@ -131,6 +132,7 @@ class ActionList:
     id: int = col('ActionListDefID')
     name: str = col('Name')
 
+
 @tableclass('ActionListGroupsDef', one_to_many=True)
 class ActionListGroups:
     id: int = col('ActionListDefId')
@@ -158,6 +160,7 @@ class Models:
 def build_models():
     with ResWareDatabaseConnection() as conn:
         return Models(conn)
+
 
 if __name__ == '__main__':
     build_models()

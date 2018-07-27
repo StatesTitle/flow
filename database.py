@@ -10,9 +10,9 @@ from sshtunnel import SSHTunnelForwarder
 
 from settings import (
     RESWARE_DATABASE_NAME, RESWARE_DATABASE_PASSWORD, RESWARE_DATABASE_PORT,
-    RESWARE_DATABASE_SERVER, RESWARE_DATABASE_USER,
-    SSH_TUNNEL_ENABLED, SSH_SERVER_HOST, SSH_SERVER_PORT, SSH_USERNAME, SSH_PRIVATE_KEY, SSH_REMOTE_BIND_ADDRESS,
-    SSH_REMOTE_BIND_PORT)
+    RESWARE_DATABASE_SERVER, RESWARE_DATABASE_USER, SSH_TUNNEL_ENABLED, SSH_SERVER_HOST,
+    SSH_SERVER_PORT, SSH_USERNAME, SSH_PRIVATE_KEY, SSH_REMOTE_BIND_ADDRESS, SSH_REMOTE_BIND_PORT
+)
 
 
 class ResWareDatabaseConnection:
@@ -24,7 +24,7 @@ class ResWareDatabaseConnection:
             # Heroku configs. If we don't have it in the config, wrap it here.
             key = SSH_PRIVATE_KEY
             if not key.startswith('-----'):
-                key = f'-----BEGIN RSA PRIVATE KEY-----\n{key}\n-----END RSA PRIVATE KEY-----'''
+                key = f'-----BEGIN RSA PRIVATE KEY-----\n{key}\n-----END RSA PRIVATE KEY-----' ''
 
             self.tunnel = SSHTunnelForwarder(
                 (SSH_SERVER_HOST, SSH_SERVER_PORT),
@@ -45,10 +45,7 @@ class ResWareDatabaseConnection:
                 self._close_tunnel(True)
                 raise
         else:
-            self._db_connect(
-                RESWARE_DATABASE_SERVER,
-                RESWARE_DATABASE_PORT
-            )
+            self._db_connect(RESWARE_DATABASE_SERVER, RESWARE_DATABASE_PORT)
 
         return self.connection
 
@@ -68,7 +65,10 @@ class ResWareDatabaseConnection:
             self.tunnel.close()
         except:
             if already_handling_exception:
-                print("Hit an exception closing the ssh tunnel, but we were already handling an exception. Swallowing the tunnel closing exception", file=sys.stderr)
+                print(
+                    "Hit an exception closing the ssh tunnel, but we were already handling an exception. Swallowing the tunnel closing exception",
+                    file=sys.stderr
+                )
             else:
                 raise
 
@@ -90,6 +90,7 @@ class ResWareDatabaseConnection:
 
 def tableclass(table, lookup=None, one_to_many=False, **kwargs):
     """Marks a dataclass as loadable from a specified SQL table"""
+
     def wrap(cls, lookup=lookup):
         dataclass(cls, **kwargs)
         cls.table = table
@@ -97,18 +98,23 @@ def tableclass(table, lookup=None, one_to_many=False, **kwargs):
             if any((f.name == 'id' for f in fields(cls))):
                 lookup = 'id'
             else:
-                raise Exception(f"Pass a lookup field into tableclass on {cls} if there isn't an id field")
+                raise Exception(
+                    f"Pass a lookup field into tableclass on {cls} if there isn't an id field"
+                )
 
         if isinstance(lookup, str):
+
             def create_key(self):
                 return getattr(self, lookup)
         else:
+
             def create_key(self):
                 return tuple((getattr(self, field) for field in lookup))
 
         cls.create_key = create_key
         cls.one_to_many = one_to_many
         return cls
+
     return wrap
 
 
@@ -132,12 +138,16 @@ class ParsingFailed(Exception):
 
 def _parse_col(dclass, field, row):
     if field.metadata['column'] not in row:
-        raise ColumnMissing(f'{dclass} field {field.name} expected a column named {field.metadata["column"]} in the row {row}')
+        raise ColumnMissing(
+            f'{dclass} field {field.name} expected a column named {field.metadata["column"]} in the row {row}'
+        )
     val = row[field.metadata['column']]
     parser = field.metadata.get('parser', field.type)
     if val is None:
         if not field.metadata['nullable']:
-            raise ColumnMissing(f'{dclass} field {field.name} expected a column named {field.metadata["column"]} in the row but got NULL from the db')
+            raise ColumnMissing(
+                f'{dclass} field {field.name} expected a column named {field.metadata["column"]} in the row but got NULL from the db'
+            )
         if parser == field.type:
             return None
     try:
@@ -145,7 +155,9 @@ def _parse_col(dclass, field, row):
     except ColumnMissing:
         raise
     except Exception as e:
-        raise ParsingFailed(f'{dclass} field {field.name} parser {parser} blew up on "{val}"') from e
+        raise ParsingFailed(
+            f'{dclass} field {field.name} parser {parser} blew up on "{val}"'
+        ) from e
 
 
 def _create_from_db(dclass, row):
