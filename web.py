@@ -43,9 +43,12 @@ def get_json(action_list):
         'description': action.description,
         'hidden': action.hidden,
         'dynamic': action.dynamic,
-        'emails': [{
+        'start_emails': [{
             'name': email.name
-        } for email in action.emails],
+        } for email in action.start_emails],
+        'complete_emails': [{
+            'name': email.name
+        } for email in action.complete_emails],
         'start_affects': [get_affect(affect) for affect in action.start_affects],
         'complete_affects': [get_affect(affect) for affect in action.complete_affects],
     } for action in action_list]

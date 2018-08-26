@@ -14,7 +14,6 @@ class Task(enum.IntEnum):
     START = 1
     COMPLETE = 2
 
-
 # All actions in a group in ResWare have "start" and "complete" tasks. Those tasks can be marked "done". All affects
 # happen on either start or complete being marked done.  That's tracked in the ActionTypeID column in the
 # ActionGroupAffectDef and ActionListGroupExternalTriggerAffectsDef tables. If ActionTypeID is 1, that means the

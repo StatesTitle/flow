@@ -143,7 +143,8 @@ class Action:
     description: str = field(compare=False)
     hidden: bool = field(compare=False)
     dynamic: bool = field(compare=False)
-    emails: List[Email] = field(default_factory=list, compare=False)
+    start_emails: List[Email] = field(default_factory=list, compare=False)
+    complete_emails: List[Email] = field(default_factory=list, compare=False)
     start_affects: List[Affect] = field(default_factory=list, compare=False)
     complete_affects: List[Affect] = field(default_factory=list, compare=False)
 
@@ -216,12 +217,20 @@ def _build_action(models, model_group_action):
             action.complete_affects.extend(_build_affects(affect))
 
     for model_action_email in models.action_emails[action.action_id]:
-        action.emails.append(
-            Email(
-                action.group_id, action.action_id, models.emails[model_action_email.email_id].name,
-                model_action_email.task
+        if model_action_email.task == Task.START:
+            action.start_emails.append(
+                Email(
+                    action.group_id, action.action_id, models.emails[model_action_email.email_id].name,
+                    model_action_email.task
+                )
             )
-        )
+        if model_action_email.task == Task.COMPLETE:
+            action.complete_emails.append(
+                Email(
+                    action.group_id, action.action_id, models.emails[model_action_email.email_id].name,
+                    model_action_email.task
+                )
+            )
     return action
 
 
@@ -320,11 +329,9 @@ def generate_digraph_from_action_list(action_list: ActionList, roots: Set[Action
             yield from emit(
                 Vertex(name_prefix.sub('', action.name), shape='box', name=action.node_name)
             )
-            for affect in action.start_affects:
+            for affect in action.start_affects + action.complete_affects:
                 yield from emit(f'{action.node_name} -> {affect.action.node_name}')
-            for affect in action.complete_affects:
-                yield from emit(f'{action.node_name} -> {affect.action.node_name}')
-            for email in action.emails:
+            for email in action.start_emails + action.complete_emails:
                 yield from emit(str(Vertex(email.name, name=email.node_name, **email.dot_attrs)))
                 yield from emit(f'{action.node_name} -> {email.node_name}')
     yield '}'
