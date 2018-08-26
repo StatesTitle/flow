@@ -13,7 +13,7 @@ app = flask.Flask(__name__)
 
 @app.route('/')
 def stream():
-    if request.args.get('token', '') != WEB_TOKEN:
+    if request.headers.get('Authorization', '') != WEB_TOKEN:
         abort(401)
     alist = build_action_list(build_models(), ACTION_LIST_DEF_ID)
     digraph = '\n'.join(generate_digraph_from_action_list(alist))
@@ -23,7 +23,7 @@ def stream():
 
 @app.route('/api/action_list')
 def api_action_list():
-    if request.args.get('token', '') != WEB_TOKEN:
+    if request.headers.get('Authorization', '') != WEB_TOKEN:
         abort(401)
 
     groups = build_action_list(build_models(), ACTION_LIST_DEF_ID).groups
