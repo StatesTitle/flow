@@ -141,8 +141,12 @@ class Action:
     name: str = field(compare=False)
     display_name: str = field(compare=False)
     description: str = field(compare=False)
+    hidden: bool = field(compare=False)
+    dynamic: bool = field(compare=False)
     emails: List[Email] = field(default_factory=list, compare=False)
     affects: List[Affect] = field(default_factory=list, compare=False)
+    start_affects: List[Affect] = field(default_factory=list, compare=False)
+    complete_affects: List[Affect] = field(default_factory=list, compare=False)
 
     @property
     def node_name(self):
@@ -202,12 +206,21 @@ def _build_triggers(models, model_trigger):
 def _build_action(models, model_group_action):
     model_action = models.actions[model_group_action.action_id]
     action = Action(
-        model_action.id, model_group_action.group_id, model_action.name, model_action.display_name,
-        model_action.description
+        model_action.id,
+        model_group_action.group_id,
+        model_action.name,
+        model_action.display_name,
+        model_action.description,
+        model_action.hidden,
+        model_group_action.dynamic
     )
     key = (action.group_id, action.action_id)
-    for affect in models.group_action_affects[key]:
-        action.affects.extend(_build_affects(affect))
+    for affect in models.group_action_affects[key] :
+        if affect.task == Task.START:
+            action.start_affects.extend(_build_affects(affect))
+        if affect.task == Task.COMPLETE:
+            action.complete_affects.extend(_build_affects(affect))
+
     for model_action_email in models.action_emails[action.action_id]:
         action.emails.append(
             Email(
@@ -245,13 +258,15 @@ def build_action_list(models, action_list_id):
         for action in group.actions:
             actions[key(action)] = action
 
-    # Hook affects to the action instances they affect. Do this in a second pass so all the instances will exist from
+    # Hook affects to the action instances they affect. Do this in a second pass so all the instances will exist fromction
     # the first pass.
     for group in result.groups:
         for trigger in group.triggers:
             trigger.affect.action = actions[key(trigger.affect)]
         for action in group.actions:
-            for affect in action.affects:
+            for affect in action.start_affects:
+                affect.action = actions[key(affect)]
+            for affect in action.complete_affects:
                 affect.action = actions[key(affect)]
 
     return result
@@ -264,7 +279,9 @@ def _walk(action: Action, reachable: Set[Action]):
     if action in reachable:
         return
     reachable.add(action)
-    for affect in action.affects:
+    for affect in action.start_affects:
+        _walk(affect.action, reachable)
+    for affect in action.complete_affects:
         _walk(affect.action, reachable)
 
 
@@ -309,7 +326,9 @@ def generate_digraph_from_action_list(action_list: ActionList, roots: Set[Action
             yield from emit(
                 Vertex(name_prefix.sub('', action.name), shape='box', name=action.node_name)
             )
-            for affect in action.affects:
+            for affect in action.start_affects:
+                yield from emit(f'{action.node_name} -> {affect.action.node_name}')
+            for affect in action.complete_affects:
                 yield from emit(f'{action.node_name} -> {affect.action.node_name}')
             for email in action.emails:
                 yield from emit(str(Vertex(email.name, name=email.node_name, **email.dot_attrs)))
