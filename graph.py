@@ -144,7 +144,6 @@ class Action:
     hidden: bool = field(compare=False)
     dynamic: bool = field(compare=False)
     emails: List[Email] = field(default_factory=list, compare=False)
-    affects: List[Affect] = field(default_factory=list, compare=False)
     start_affects: List[Affect] = field(default_factory=list, compare=False)
     complete_affects: List[Affect] = field(default_factory=list, compare=False)
 
@@ -206,16 +205,11 @@ def _build_triggers(models, model_trigger):
 def _build_action(models, model_group_action):
     model_action = models.actions[model_group_action.action_id]
     action = Action(
-        model_action.id,
-        model_group_action.group_id,
-        model_action.name,
-        model_action.display_name,
-        model_action.description,
-        model_action.hidden,
-        model_group_action.dynamic
+        model_action.id, model_group_action.group_id, model_action.name, model_action.display_name,
+        model_action.description, model_action.hidden, model_group_action.dynamic
     )
     key = (action.group_id, action.action_id)
-    for affect in models.group_action_affects[key] :
+    for affect in models.group_action_affects[key]:
         if affect.task == Task.START:
             action.start_affects.extend(_build_affects(affect))
         if affect.task == Task.COMPLETE:

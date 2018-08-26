@@ -4,8 +4,7 @@ import flask
 from flask import request, abort
 from flask import jsonify
 
-from graph import generate_digraph_from_action_list, build_action_list, CompleteActionAffect, \
-    AffectTaskAffect
+from graph import generate_digraph_from_action_list, build_action_list, AffectTaskAffect
 from resware_model import build_models, Task
 from settings import ACTION_LIST_DEF_ID, WEB_TOKEN
 
@@ -29,12 +28,12 @@ def api_action_list():
 
     groups = build_action_list(build_models(), ACTION_LIST_DEF_ID).groups
     actions = [action for action_group in groups for action in action_group.actions]
-    print(actions[0])
 
     response = jsonify(get_json(actions))
     response.headers.add('Access-Control-Allow-Origin', '*')
 
     return response
+
 
 def get_json(action_list):
     return [{
@@ -44,7 +43,9 @@ def get_json(action_list):
         'description': action.description,
         'hidden': action.hidden,
         'dynamic': action.dynamic,
-        'emails': [{'name': email.name} for email in action.emails],
+        'emails': [{
+            'name': email.name
+        } for email in action.emails],
         'start_affects': [get_affect(affect) for affect in action.start_affects],
         'complete_affects': [get_affect(affect) for affect in action.complete_affects],
     } for action in action_list]
@@ -58,6 +59,7 @@ def get_affect(affect):
         }
     else:
         return {}
+
 
 if __name__ == "__main__":
     app.run(debug=True)
