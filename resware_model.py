@@ -14,7 +14,6 @@ class Task(enum.IntEnum):
     START = 1
     COMPLETE = 2
 
-
 # All actions in a group in ResWare have "start" and "complete" tasks. Those tasks can be marked "done". All affects
 # happen on either start or complete being marked done.  That's tracked in the ActionTypeID column in the
 # ActionGroupAffectDef and ActionListGroupExternalTriggerAffectsDef tables. If ActionTypeID is 1, that means the
@@ -106,12 +105,14 @@ class Action:
     name: str = col('Name')
     display_name: str = col('DisplayName')
     description: str = col('Description', nullable=True)
+    hidden: bool = col('Hidden')
 
 
 @tableclass('ActionListGroupActionDef', lookup='group_id', one_to_many=True)
 class GroupAction:
     group_id: int = col('ActionListGroupDefID')
     action_id: int = col('ActionDefID')
+    dynamic: bool = col('Dynamic')
 
 
 @tableclass('ActionListGroupDef')
@@ -122,6 +123,7 @@ class Group:
 
 @tableclass('ActionGroupAffectDef', lookup=('group_id', 'action_id'), one_to_many=True)
 class GroupActionAffect(Affect):
+    task: Task = col('ActionTypeID', nullable=True)
     group_id: int = col('ActionListGroupDefID')
     action_id: int = col('ActionDefID')
     # TODO additional affect types
