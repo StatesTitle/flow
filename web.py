@@ -4,7 +4,8 @@ import flask
 from flask import request, abort
 from flask import jsonify
 
-from graph import generate_digraph_from_action_list, build_action_list, AffectTaskAffect
+from graph import generate_digraph_from_action_list, build_action_list, AffectTaskAffect, \
+    CreateActionAffect
 from resware_model import build_models, Task
 from settings import ACTION_LIST_DEF_ID, WEB_TOKEN
 
@@ -58,6 +59,11 @@ def get_affect(affect):
     if isinstance(affect, AffectTaskAffect):
         return {
             'type': 'complete' if affect.task == Task.COMPLETE else 'start',
+            'action': f'{affect.action_id}-{affect.group_id}',
+        }
+    elif isinstance(affect, CreateActionAffect):
+        return {
+            'type': 'create',
             'action': f'{affect.action_id}-{affect.group_id}',
         }
     else:
