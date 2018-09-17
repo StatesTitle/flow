@@ -23,6 +23,7 @@ All instructions below assume Mac. For other platforms, installing equivalent pa
     ```
 1. Setup a Python 3 virtualenv: `virtualenv -ppython3 venv`
 1. Activate the virtualenv: `. venv/bin/activate`
+1. Install Cython `pip install cython` (this is required as a workaround for a bug in pip's dependency resolution, see https://www.pivotaltracker.com/story/show/160182896)
 1. Install the Python requirements in the virtualenv: `pip install -r requirements.txt`
 1. Update the RESWARE_DATABASE keys in .env to point to your ResWare database and set
    ACTION_LIST_DEF_ID to the id of the action list you want to graph
