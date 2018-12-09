@@ -6,12 +6,14 @@ For the dataclasses below, we've made them frozen when they need a __hash__ meth
 the instances should be immutable after build_action_list returns, but we're not marking as frozen unless necessary to
 keep from dealing with setting compare=False on fields and how dataclass overrides setattr if frozen is true"""
 import re
-from typing import List, Set
+from collections import defaultdict
+
+from typing import List, Set, Tuple, Dict
 
 from dataclasses import dataclass, field
 
 from deps import Vertex, escape_name
-from resware_model import Task, build_models
+from resware_model import Task, build_models, PartnerType
 from settings import ACTION_LIST_DEF_ID
 
 
@@ -20,30 +22,60 @@ def _node_name(*components):
     return escape_name('N' + ' '.join([str(c) for c in components]))
 
 
+class GroupLookupMixin:
+    @property
+    def group(self):
+        return self._ctx.groups[self.group_id]
+
+class ActionLookupMixin:
+    @property
+    def action(self):
+        return self._ctx.actions[(self.group_id, self.action_id)]
+
 @dataclass
-class Affect:
+class Context:
+    actions: Dict[Tuple[int, int], 'Action'] = field(default_factory=dict)
+    groups: Dict[int, 'Group'] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
+class CtxHolder:
+    _ctx: Context = field(compare=False)
+
+
+@dataclass(frozen=True)
+class Affect(CtxHolder, ActionLookupMixin):
     group_id: int
     action_id: int
 
 
-@dataclass
+@dataclass(frozen=True)
 class AffectTaskAffect(Affect):
     task: Task
 
 
-@dataclass
+@dataclass(frozen=True)
 class CompleteActionAffect(AffectTaskAffect):
-    pass
+    @property
+    def desc(self):
+        return f'{self.task.name} {self.action.path}'
 
 
-@dataclass
+
+@dataclass(frozen=True)
 class OffsetActionAffect(AffectTaskAffect):
     offset: float
 
+    @property
+    def desc(self):
+        return f'Offset {self.task.name} on {self.action.path} by {self.offset} hours'
 
-@dataclass
+
+@dataclass(frozen=True)
 class CreateActionAffect(Affect):
-    pass
+    @property
+    def desc(self):
+        return f'Create {self.action.path}'
 
 
 @dataclass(frozen=True)
@@ -111,8 +143,8 @@ class Trigger:
     external_action: ExternalAction
 
 
-@dataclass
-class Email:
+@dataclass(frozen=True)
+class Email(CtxHolder, ActionLookupMixin):
     """An email template that's sent on the start or completion of an action"""
     action_id: int
     group_id: int
@@ -129,7 +161,7 @@ class Email:
 
 
 @dataclass(frozen=True)
-class Action:
+class Action(CtxHolder, GroupLookupMixin):
     """An action in a group with the emails it sends and the affects its start or completion cause
 
     ResWare itself has separate concepts for 'global actions' and instances of actions in a group. We only represent
@@ -151,6 +183,10 @@ class Action:
     @property
     def node_name(self):
         return _node_name(self.name, self.group_id, self.action_id)
+
+    @property
+    def path(self):
+        return f'{self.group.name}/{self.name}'
 
 
 @dataclass
@@ -181,52 +217,53 @@ def _build_external_action(models, model_trigger):
         return ExternalAction(model_trigger.external_action_id, name)
 
 
-def _build_affects(model_affect):
+def _build_affects(model_affect, ctx):
     if model_affect.affected_group_id is not None:
         if model_affect.offset is not None:
-            yield OffsetActionAffect(
+            yield OffsetActionAffect(ctx,
                 model_affect.affected_group_id, model_affect.affected_action_id,
                 model_affect.affected_task, model_affect.offset
             )
         if model_affect.auto_complete:
-            yield CompleteActionAffect(
+            yield CompleteActionAffect(ctx,
                 model_affect.affected_group_id, model_affect.affected_action_id,
                 model_affect.affected_task
             )
     if model_affect.created_group_id is not None:
-        yield CreateActionAffect(model_affect.created_group_id, model_affect.created_action_id)
+        yield CreateActionAffect(ctx, model_affect.created_group_id, model_affect.created_action_id)
 
 
-def _build_triggers(models, model_trigger):
+def _build_triggers(models, model_trigger, ctx):
     external_action = _build_external_action(models, model_trigger)
-    for affect in _build_affects(model_trigger):
+    for affect in _build_affects(model_trigger, ctx):
         yield Trigger(affect, external_action)
 
 
-def _build_action(models, model_group_action):
+def _build_action(models, model_group_action, ctx):
     model_action = models.actions[model_group_action.action_id]
     action = Action(
-        model_action.id, model_group_action.group_id, model_action.name, model_action.display_name,
+        ctx, model_action.id, model_group_action.group_id, model_action.name, model_action.display_name,
         model_action.description, model_action.hidden, model_group_action.dynamic
     )
     key = (action.group_id, action.action_id)
+    ctx.actions[key] = action
     for affect in models.group_action_affects[key]:
         if affect.task == Task.START:
-            action.start_affects.extend(_build_affects(affect))
+            action.start_affects.extend(_build_affects(affect, ctx))
         if affect.task == Task.COMPLETE:
-            action.complete_affects.extend(_build_affects(affect))
+            action.complete_affects.extend(_build_affects(affect, ctx))
 
     for model_action_email in models.action_emails[action.action_id]:
         if model_action_email.task == Task.START:
             action.start_emails.append(
-                Email(
+                Email(ctx,
                     action.group_id, action.action_id, models.emails[model_action_email.email_id].name,
                     model_action_email.task
                 )
             )
         if model_action_email.task == Task.COMPLETE:
             action.complete_emails.append(
-                Email(
+                Email(ctx,
                     action.group_id, action.action_id, models.emails[model_action_email.email_id].name,
                     model_action_email.task
                 )
@@ -234,13 +271,14 @@ def _build_action(models, model_group_action):
     return action
 
 
-def _build_group(models, model_alist_group):
+def _build_group(models, model_alist_group, ctx):
     model_group = models.groups[model_alist_group.group_id]
     group = Group(model_group.id, model_group.name, model_alist_group.optional)
+    ctx.groups[group.id] = group
     for model_group_action in models.group_actions[group.id]:
-        group.actions.append(_build_action(models, model_group_action))
+        group.actions.append(_build_action(models, model_group_action, ctx))
     for model_trigger in models.triggers[group.id]:
-        group.triggers.extend(_build_triggers(models, model_trigger))
+        group.triggers.extend(_build_triggers(models, model_trigger, ctx))
     return group
 
 
@@ -248,32 +286,40 @@ def build_action_list(models, action_list_id):
     model_alist = models.action_lists[action_list_id]
 
     # Build the structure of all the groups, actions, affects, triggers, and emails
+    ctx = Context()
     result = ActionList(model_alist.name)
     for model_alist_group in models.action_list_groups[action_list_id]:
-        result.groups.append(_build_group(models, model_alist_group))
-
-    def key(id_holder):
-        return id_holder.group_id, id_holder.action_id
-
-    # Build a dict from (group_id, action_id) to action for all actions in the action list
-    actions = {}
-    for group in result.groups:
-        for action in group.actions:
-            actions[key(action)] = action
-
-    # Hook affects to the action instances they affect. Do this in a second pass so all the instances will exist fromction
-    # the first pass.
-    for group in result.groups:
-        for trigger in group.triggers:
-            trigger.affect.action = actions[key(trigger.affect)]
-        for action in group.actions:
-            for affect in action.start_affects:
-                affect.action = actions[key(affect)]
-            for affect in action.complete_affects:
-                affect.action = actions[key(affect)]
+        result.groups.append(_build_group(models, model_alist_group, ctx))
 
     return result
 
+
+def _defaultdict_list_factory():
+    return defaultdict(list)
+
+
+@dataclass
+class Partner:
+    id: int
+    name: str
+    types: List[PartnerType] = field(default_factory=list, compare=False)
+    auto_adds: Dict[PartnerType, List[Tuple['Partner', PartnerType]]] = field(default_factory=_defaultdict_list_factory, compare=False)
+
+
+def build_partners(models):
+    partners = {}
+    for model_partner in models.partners.values():
+        partner = Partner(model_partner.id, model_partner.name)
+        for model_partner_type in models.partners_types[partner.id]:
+            partner.types.append(models.partner_types[model_partner_type.type_id])
+        partners[partner.id] = partner
+
+    for partner in partners.values():
+        for model_auto_add in models.partners_auto_adds[partner.id]:
+            our_model_type = models.partner_types[model_auto_add.type_id]
+            to_add = (partners[model_auto_add.auto_add_id], models.partner_types[model_auto_add.auto_add_type_id])
+            partner.auto_adds[our_model_type].append(to_add)
+    return partners, models.partner_types
 
 name_prefix = re.compile('^\w+: ')
 
@@ -350,5 +396,22 @@ def find_roots(action_list, external_actions=None):
 
 
 if __name__ == '__main__':
-    alist = build_action_list(build_models(), ACTION_LIST_DEF_ID)
-    print('\n'.join(generate_digraph_from_action_list(alist)))
+    models = build_models()
+    #print(build_partners(models))
+    alist = build_action_list(models, ACTION_LIST_DEF_ID)
+    for group in alist.groups:
+        print('Group:', group.name)
+        for trigger in group.triggers:
+            print('  Trigger:', trigger.external_action.label, '->', trigger.affect.desc)
+        for action in group.actions:
+            print('  Action:', action.path)
+            emails = action.start_emails + action.complete_emails
+            if emails:
+                print('    Emails:', ', '.join([email.name for email in emails]))
+            affects = action.start_affects + action.complete_affects
+            if affects:
+                print('    Affects:')
+                for affect in affects:
+                    print('   ', affect.desc)
+
+    #print('\n'.join(generate_digraph_from_action_list(alist)))

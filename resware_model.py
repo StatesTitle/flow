@@ -143,8 +143,38 @@ class ActionListGroups:
     optional: bool = col('Optional')
 
 
+@tableclass('PartnerCompany')
+class Partner:
+    id: int = col('PartnerCompanyID')
+    name: str = col('Name')
+
+
+@tableclass('PartnerCompanyPartnerTypeRel', one_to_many=True)
+class PartnerTypes:
+    id: int = col('PartnerCompanyID')
+    type_id: int = col('PartnerTypeID')
+
+
+@tableclass('PartnerAutoAddPartnerRel', one_to_many=True)
+class PartnerAutoAdds:
+    id: int = col('PartnerCompanyID')
+    type_id: int = col('PartnerTypeId')
+    auto_add_id: int = col('AutoAddPartnerCompanyID')
+    auto_add_type_id: int = col('AutoAddPartnerTypeID')
+
+
+@tableclass('PartnerType', frozen=True)
+class PartnerType:
+    id: int = col('PartnerTypeID')
+    name: str = col('Name')
+
+
 class Models:
     def __init__(self, conn):
+        self.partners = load(conn, Partner)
+        self.partners_types = load(conn, PartnerTypes)
+        self.partners_auto_adds = load(conn, PartnerAutoAdds)
+        self.partner_types = load(conn, PartnerType)
         self.triggers = load(conn, Trigger)
         self.external_actions = load(conn, ExternalAction)
         self.emails = load(conn, Email)
