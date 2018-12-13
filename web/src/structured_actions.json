@@ -1,0 +1,5276 @@
+{
+  "name": "Standard (Refinance TBD Purchase)",
+  "groups": [
+    {
+      "id": 1,
+      "name": "Default External Triggers",
+      "optional": false,
+      "actions": [
+        {
+          "action_id": 2,
+          "group_id": 1,
+          "name": "Internal: Review Default Settlement Statement Fee Overlap",
+          "display_name": "Review Default Settlement Statement Fee Overlap",
+          "description": "A default settlement fee for a partner can't be added because a settlement fee with a different amount exists on the same line.",
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 3,
+          "group_id": 1,
+          "name": "Internal: Patriot Act Hit",
+          "display_name": "Patriot Act Hit",
+          "description": "This file has a Patriot Act hit.  Please review the information.",
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 4,
+          "group_id": 1,
+          "name": "Internal: Review Curative Action",
+          "display_name": "_Name_",
+          "description": "A curative has been cleared via the website.  This action will auto complete when the curative is either internally cleared or re-worked.",
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 5,
+          "group_id": 1,
+          "name": "Internal: Settlement Statement Change Request",
+          "display_name": "Settlement Statement Change Request",
+          "description": "A change to the Settlement Statement has been requested on the website.",
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 6,
+          "group_id": 1,
+          "name": "Internal: New File Note Review",
+          "display_name": "Review note from _Name_",
+          "description": "A new note that comes from the user on the website when placing the order.",
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 7,
+          "group_id": 1,
+          "name": "Internal: Email Failure",
+          "display_name": "Email Failure: When sending action email from _Name_",
+          "description": "When an email fails within ResWare (not outside of ResWare) this action will appear.",
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 8,
+          "group_id": 1,
+          "name": "Internal: Possible duplicate order",
+          "display_name": "Review for possible duplicate order",
+          "description": "The system has found a file that has a similar address.  Please review to avoid duplicate work.",
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 9,
+          "group_id": 1,
+          "name": "Internal: File Blacklisted",
+          "display_name": "Review File Blacklisted",
+          "description": "This file has something that has been found on the blacklist.  Please consult with the Admin to review the to see if the hit is positive.",
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 10,
+          "group_id": 1,
+          "name": "Internal: Incoming Email",
+          "display_name": "Incoming email from _Name_",
+          "description": "This is an incoming email.",
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 11,
+          "group_id": 1,
+          "name": "Internal: File Information Updated",
+          "display_name": "File Information Updated",
+          "description": "A website user has saved the update file info/fees page.",
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 12,
+          "group_id": 1,
+          "name": "Internal: Closing Ordered",
+          "display_name": "Closing Ordered",
+          "description": "A closing has been ordered via the website.",
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 13,
+          "group_id": 1,
+          "name": "Internal: Closing Modified",
+          "display_name": "Closing Modified",
+          "description": "The signing has been modified via the website.",
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 14,
+          "group_id": 1,
+          "name": "Internal: Search Data - Multiple Prior Liens/Reqs Added",
+          "display_name": "Search Data - Multiple Prior Liens/Reqs Added",
+          "description": "When more than one lien is added to the Search Data tab and the automation to add the prior loan information on the Policy tab is in play.  You will need to add the applicable prior loan information on the policy tab manually.",
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 15,
+          "group_id": 1,
+          "name": "Internal: Underwriter Maximum Coverage Amount Exceeded",
+          "display_name": "Internal: Underwriter Maximum Coverage Amount Exceeded",
+          "description": "This loan amount and/or sales price has been raised higher than the maximum coverage amount programmed on the U/W and state for this file.  Please note this will only trigger on existing files where the loan/sales price are initially under the max amount but are changed above.",
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 16,
+          "group_id": 1,
+          "name": "Internal: Signing: Canceled via Website",
+          "display_name": "Internal: Signing: Canceled via Website",
+          "description": "The signing has been cancelled via the website.",
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 17,
+          "group_id": 1,
+          "name": "Simplifile: Documents Rejected",
+          "display_name": "Simplifile:  Documents Rejected",
+          "description": "Simplifile has rejected some documents.",
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 18,
+          "group_id": 1,
+          "name": "Internal: No Rate Type Assigned - Over Max Coverage Amount",
+          "display_name": "No Rate Type Assigned - Over Max Coverage Amount",
+          "description": "This action appears when a rate type has a max coverage amount.  When the max coverage amount is met, the system has removed all rate type and nothing is assigned.",
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 19,
+          "group_id": 1,
+          "name": "Internal: Tracked Document Downloaded",
+          "display_name": "Tracked document downloaded by _Name_",
+          "description": "This action is to advise when a tracked document has been downloaded from the recipient.",
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 20,
+          "group_id": 1,
+          "name": "CLO: Import and Review UCD",
+          "display_name": "Import and Review UCD",
+          "description": "Please go to the document tab and change the doc type to UCD.",
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 93,
+          "group_id": 1,
+          "name": "Product Changed",
+          "display_name": "Product Changed",
+          "description": "Product was modified and changed by an Admin",
+          "hidden": true,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 94,
+          "group_id": 1,
+          "name": "Product Type Partner Missing",
+          "display_name": "Product Type Partner Missing",
+          "description": "Please remove the Product Type partner type placeholder on the General Tab and add the correct partner type for this file.",
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        }
+      ],
+      "triggers": [
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 2
+          },
+          "external_action": {
+            "id": 40,
+            "name": "Default HUD Fee Conflict"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 3
+          },
+          "external_action": {
+            "id": 41,
+            "name": "Patriot Act Hit"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 4
+          },
+          "external_action": {
+            "id": 42,
+            "name": "Curative Action"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 5
+          },
+          "external_action": {
+            "id": 43,
+            "name": "HUD Change Request"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 6
+          },
+          "external_action": {
+            "id": 44,
+            "name": "Website: File Creation: Note Created"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 7
+          },
+          "external_action": {
+            "id": 45,
+            "name": "Email Failure"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 8
+          },
+          "external_action": {
+            "id": 46,
+            "name": "Duplicate Order Review"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 9
+          },
+          "external_action": {
+            "id": 47,
+            "name": "File Blacklisted"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 10
+          },
+          "external_action": {
+            "id": 48,
+            "name": "Incoming Email"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 11
+          },
+          "external_action": {
+            "id": 62,
+            "name": "File Information Updated"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 12
+          },
+          "external_action": {
+            "id": 9,
+            "name": "Signing: Created via Website"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 13
+          },
+          "external_action": {
+            "id": 17,
+            "name": "Signing: Information Changed via Website"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 14
+          },
+          "external_action": {
+            "id": 111,
+            "name": "Search Data: Multiple Prior Liens Added"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 15
+          },
+          "external_action": {
+            "id": 122,
+            "name": "Underwriter Coverage Amount Exceeded"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 16
+          },
+          "external_action": {
+            "id": 123,
+            "name": "Signing: Canceled via Website"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 17
+          },
+          "external_action": {
+            "id": 127,
+            "name": "Simplifile: Documents Rejected"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 18
+          },
+          "external_action": {
+            "id": 181,
+            "name": "No Rate Type Assigned"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 19
+          },
+          "external_action": {
+            "id": 187,
+            "name": "Tracked Document Downloaded"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 93
+          },
+          "external_action": {
+            "id": 159,
+            "name": "Product Changed"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 94
+          },
+          "external_action": {
+            "id": 159,
+            "name": "Product Changed"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 1,
+            "action_id": 20
+          },
+          "external_action": {
+            "id": 197,
+            "name": "UCD: Import: Action Items"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 1,
+            "action_id": 20,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 976,
+            "document_name": "UCD"
+          }
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "name": "JD - Order Entry",
+      "optional": false,
+      "actions": [
+        {
+          "action_id": 96,
+          "group_id": 16,
+          "name": "OE: Order Received",
+          "display_name": "Order Received",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [
+            {
+              "action_id": 16,
+              "group_id": 96,
+              "name": "FORM: Vesting Certificate",
+              "task": 1
+            },
+            {
+              "action_id": 16,
+              "group_id": 96,
+              "name": "FORM: Order Entry Docs",
+              "task": 1
+            }
+          ],
+          "complete_emails": [],
+          "start_affects": [
+            {
+              "type": "complete",
+              "group_id": 16,
+              "action_id": 96,
+              "task": 2
+            }
+          ],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 16,
+              "action_id": 97,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 16,
+              "action_id": 100,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 16,
+              "action_id": 101,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 17,
+              "action_id": 102,
+              "task": 1
+            },
+            {
+              "type": "offset",
+              "group_id": 20,
+              "action_id": 148,
+              "task": 2,
+              "offset": 16.0
+            }
+          ]
+        },
+        {
+          "action_id": 97,
+          "group_id": 16,
+          "name": "OE: Receive Underwriting Decision",
+          "display_name": "Receive Underwriting Decision",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 16,
+              "group_id": 97,
+              "name": "*To Client: Preliminary Closing Disclosure",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "create",
+              "group_id": 16,
+              "action_id": 99
+            },
+            {
+              "type": "create",
+              "group_id": 16,
+              "action_id": 98
+            },
+            {
+              "type": "complete",
+              "group_id": 37,
+              "action_id": 179,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 98,
+          "group_id": 16,
+          "name": "IT: Add Underwriter - Non Direct",
+          "display_name": "Add Underwriter - Non Direct",
+          "description": null,
+          "hidden": true,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 16,
+              "group_id": 98,
+              "name": "*To Client: Order Confirmation - Sad Path",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "create",
+              "group_id": 16,
+              "action_id": 178
+            }
+          ]
+        },
+        {
+          "action_id": 99,
+          "group_id": 16,
+          "name": "IT: Add Underwriter - Direct",
+          "display_name": "Add Underwriter - Direct",
+          "description": null,
+          "hidden": true,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 100,
+          "group_id": 16,
+          "name": "OE: Receive Borrower's Authorization",
+          "display_name": "Receive Borrower's Authorization",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 17,
+              "action_id": 102,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 101,
+          "group_id": 16,
+          "name": "OE: Receive 1003",
+          "display_name": "Receive 1003",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 17,
+              "action_id": 102,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 160,
+          "group_id": 16,
+          "name": "OE: Request Lender's Borrower's Auth",
+          "display_name": "Request Lender's Borrower's Auth",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 16,
+              "group_id": 160,
+              "name": "*To Client: Borrower's Auth Request",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 178,
+          "group_id": 16,
+          "name": "IT: Add Searcher",
+          "display_name": "Add Searcher",
+          "description": null,
+          "hidden": true,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 36,
+              "action_id": 104,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 183,
+          "group_id": 16,
+          "name": "OE: Enter Payoffs from 1003",
+          "display_name": "Enter Payoffs from 1003",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        }
+      ],
+      "triggers": [
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 16,
+            "action_id": 96,
+            "task": 1
+          },
+          "external_action": {
+            "id": 14,
+            "name": "File Created"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 16,
+            "action_id": 97,
+            "task": 2
+          },
+          "external_action": {
+            "id": 154,
+            "name": "XML: Received Action Event",
+            "action_event_id": 2,
+            "action_event_name": "Non Direct Underwriting"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 16,
+            "action_id": 98
+          },
+          "external_action": {
+            "id": 154,
+            "name": "XML: Received Action Event",
+            "action_event_id": 2,
+            "action_event_name": "Non Direct Underwriting"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 16,
+            "action_id": 100,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 1007,
+            "document_name": "Borrower's Authorization"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 16,
+            "action_id": 97,
+            "task": 2
+          },
+          "external_action": {
+            "id": 154,
+            "name": "XML: Received Action Event",
+            "action_event_id": 1,
+            "action_event_name": "Direct Underwriting - Taxes Included"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 16,
+            "action_id": 99
+          },
+          "external_action": {
+            "id": 154,
+            "name": "XML: Received Action Event",
+            "action_event_id": 1,
+            "action_event_name": "Direct Underwriting - Taxes Included"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 16,
+            "action_id": 101,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 1008,
+            "document_name": "1003"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 16,
+            "action_id": 97,
+            "task": 2
+          },
+          "external_action": {
+            "id": 154,
+            "name": "XML: Received Action Event",
+            "action_event_id": 7,
+            "action_event_name": "Order Taxes"
+          }
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "name": "*Payoff - 1st",
+      "optional": false,
+      "actions": [
+        {
+          "action_id": 102,
+          "group_id": 17,
+          "name": "CUR: Order Payoff - 1st",
+          "display_name": "Order Payoff - 1st",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 17,
+              "group_id": 102,
+              "name": "*To Payoff Lender 1 - Order Payoff",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 17,
+              "action_id": 103,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 103,
+          "group_id": 17,
+          "name": "CUR: Receive Payoff - 1st",
+          "display_name": "Receive Payoff - 1st",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 20,
+              "action_id": 114,
+              "task": 1
+            }
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 17,
+            "action_id": 103,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 969,
+            "document_name": "Payoff - 1st"
+          }
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "name": "JD - Title",
+      "optional": false,
+      "actions": [
+        {
+          "action_id": 106,
+          "group_id": 20,
+          "name": "TC: Review & Enter Commitment Data",
+          "display_name": "Review & Enter Commitment Data",
+          "description": "Enter vesting, mortgages, property taxes, etc.",
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 20,
+              "action_id": 114,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 20,
+              "action_id": 148,
+              "task": 1
+            },
+            {
+              "type": "create",
+              "group_id": 20,
+              "action_id": 147
+            }
+          ]
+        },
+        {
+          "action_id": 114,
+          "group_id": 20,
+          "name": "TC: Review for Clear to Close",
+          "display_name": "Review for Clear to Close",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 20,
+              "group_id": 114,
+              "name": "*To Lender: CTC Notification",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 23,
+              "action_id": 141,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 251,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 148,
+          "group_id": 20,
+          "name": "TC: Deliver Commitment Package",
+          "display_name": "Deliver Commitment Package",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [
+            {
+              "action_id": 20,
+              "group_id": 148,
+              "name": "FORM: Commitment Merge",
+              "task": 1
+            }
+          ],
+          "complete_emails": [
+            {
+              "action_id": 20,
+              "group_id": 148,
+              "name": "*To Client: Commitment Package",
+              "task": 2
+            },
+            {
+              "action_id": 20,
+              "group_id": 148,
+              "name": "*To Client: Commitment Doc (Real EC)",
+              "task": 2
+            },
+            {
+              "action_id": 20,
+              "group_id": 148,
+              "name": "*To Client: Commitment Accessory Docs  (Real EC)",
+              "task": 2
+            }
+          ],
+          "start_affects": [
+            {
+              "type": "complete",
+              "group_id": 20,
+              "action_id": 148,
+              "task": 2
+            }
+          ],
+          "complete_affects": [
+            {
+              "type": "offset",
+              "group_id": 20,
+              "action_id": 114,
+              "task": 2,
+              "offset": 21.0
+            },
+            {
+              "type": "create",
+              "group_id": 37,
+              "action_id": 181
+            }
+          ]
+        },
+        {
+          "action_id": 147,
+          "group_id": 20,
+          "name": "TC: Receive Vesting Issue Response",
+          "display_name": "TC: Receive Vesting Issue Response",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [
+            {
+              "action_id": 20,
+              "group_id": 147,
+              "name": "*To Lender: Vesting Issue",
+              "task": 1
+            }
+          ],
+          "complete_emails": [],
+          "start_affects": [
+            {
+              "type": "offset",
+              "group_id": 20,
+              "action_id": 147,
+              "task": 2,
+              "offset": 8.0
+            }
+          ],
+          "complete_affects": []
+        },
+        {
+          "action_id": 154,
+          "group_id": 20,
+          "name": "CUR: Clear to Close Delay Notification",
+          "display_name": "Clear to Close Delay Notification",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 20,
+              "group_id": 154,
+              "name": "**To Client: CTC Delay",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 113,
+          "group_id": 20,
+          "name": "TC: Receive Commitment",
+          "display_name": "Receive Commitment",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 20,
+              "action_id": 106,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 20,
+              "action_id": 148,
+              "task": 1
+            }
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 20,
+            "action_id": 154
+          },
+          "external_action": {
+            "id": 138,
+            "name": "Action Overdue"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 20,
+            "action_id": 106,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 1043,
+            "document_name": "Commitment Schedules"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 20,
+            "action_id": 113,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 99,
+            "document_name": "Commitment"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 20,
+            "action_id": 113,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 984,
+            "document_name": "CPL"
+          }
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "name": "*Payoff - 2nd",
+      "optional": true,
+      "actions": [
+        {
+          "action_id": 115,
+          "group_id": 22,
+          "name": "CUR: Order Payoff - 2nd",
+          "display_name": "Order Payoff - 2nd",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 22,
+              "action_id": 116,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 116,
+          "group_id": 22,
+          "name": "CUR: Receive Payoff - 2nd",
+          "display_name": "Receive Payoff - 2nd",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 20,
+              "action_id": 114,
+              "task": 1
+            }
+          ]
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "id": 23,
+      "name": "JD - Scheduling",
+      "optional": false,
+      "actions": [
+        {
+          "action_id": 117,
+          "group_id": 23,
+          "name": "SCH: Scheduling Closing with Borrower",
+          "display_name": "Scheduling Closing with Borrower",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 23,
+              "action_id": 118,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 118,
+          "group_id": 23,
+          "name": "SCH: Schedule Closing with Notary",
+          "display_name": "Schedule Closing with Notary",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 23,
+              "group_id": 118,
+              "name": "*To Notary: Scheduling Request",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 23,
+              "action_id": 119,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 23,
+              "action_id": 120,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 119,
+          "group_id": 23,
+          "name": "VEN: Accept Scheduling Request",
+          "display_name": "Accept Scheduling Request",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 23,
+              "action_id": 120,
+              "task": 2
+            }
+          ]
+        },
+        {
+          "action_id": 120,
+          "group_id": 23,
+          "name": "SCH: Receive Notary Scheduling Confirmation",
+          "display_name": "Receive Notary Scheduling Confirmation",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 23,
+              "group_id": 120,
+              "name": "*To Client: Scheduling Confirmation",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 23,
+              "action_id": 119,
+              "task": 2
+            },
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 142,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 122,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 40,
+              "action_id": 239,
+              "task": 2
+            },
+            {
+              "type": "complete",
+              "group_id": 41,
+              "action_id": 239,
+              "task": 2
+            },
+            {
+              "type": "create",
+              "group_id": 23,
+              "action_id": 257
+            }
+          ]
+        },
+        {
+          "action_id": 141,
+          "group_id": 23,
+          "name": "SCH: Receive Lender Scheduling Request",
+          "display_name": "Receive Lender Scheduling Request",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [
+            {
+              "type": "offset",
+              "group_id": 23,
+              "action_id": 141,
+              "task": 2,
+              "offset": 120.0
+            }
+          ],
+          "complete_affects": [
+            {
+              "type": "offset",
+              "group_id": 23,
+              "action_id": 120,
+              "task": 2,
+              "offset": 4.0
+            },
+            {
+              "type": "complete",
+              "group_id": 23,
+              "action_id": 118,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 40,
+              "action_id": 239,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 41,
+              "action_id": 239,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 257,
+          "group_id": 23,
+          "name": "SCH: Reschedule Closing",
+          "display_name": "Reschedule Closing",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 40,
+              "action_id": 241,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 41,
+              "action_id": 241,
+              "task": 1
+            }
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 23,
+            "action_id": 117,
+            "task": 2
+          },
+          "external_action": {
+            "id": 135,
+            "name": "Signing: Created via Windows Client"
+          }
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "name": "JD - Closing",
+      "optional": false,
+      "actions": [
+        {
+          "action_id": 121,
+          "group_id": 24,
+          "name": "CLO: Receive Lender Package - Unsigned",
+          "display_name": "Receive Lender Package - Unsigned",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 123,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 124,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 39,
+              "action_id": 221,
+              "task": 2
+            }
+          ]
+        },
+        {
+          "action_id": 122,
+          "group_id": 24,
+          "name": "CLO: Prepare Shipping Label",
+          "display_name": "Prepare Shipping Label",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 125,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 123,
+          "group_id": 24,
+          "name": "CLO: Prepare Affidavits for Borrower",
+          "display_name": "Prepare Affidavits for Borrower",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 125,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 124,
+          "group_id": 24,
+          "name": "CLO: Prepare ALTA Statement",
+          "display_name": "Prepare ALTA Statement",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 125,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 125,
+          "group_id": 24,
+          "name": "CLO: Send Docs to Notary for Signing",
+          "display_name": "Send Docs to Notary for Signing",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 24,
+              "group_id": 125,
+              "name": "*To Notary: Closing Package",
+              "task": 2
+            }
+          ],
+          "start_affects": [
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 253,
+              "task": 1
+            }
+          ],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 126,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 126,
+          "group_id": 24,
+          "name": "CLO: Receive Closing Confirmation",
+          "display_name": "Receive Closing Confirmation",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 25,
+              "action_id": 127,
+              "task": 1
+            },
+            {
+              "type": "create",
+              "group_id": 24,
+              "action_id": 163
+            }
+          ]
+        },
+        {
+          "action_id": 142,
+          "group_id": 24,
+          "name": "CLO: Receive Closing Instructions",
+          "display_name": "Receive Closing Instructions",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 143,
+              "task": 1
+            },
+            {
+              "type": "offset",
+              "group_id": 24,
+              "action_id": 149,
+              "task": 2,
+              "offset": 4.0
+            }
+          ]
+        },
+        {
+          "action_id": 143,
+          "group_id": 24,
+          "name": "CLO: Prepare CD for Approval",
+          "display_name": "Prepare CD for Approval",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 144,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 144,
+          "group_id": 24,
+          "name": "CLO: Send CD to Lender for Approval",
+          "display_name": "Send CD to Lender for Approval",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 24,
+              "group_id": 144,
+              "name": "*To Lender; CD for Approval",
+              "task": 2
+            }
+          ],
+          "start_affects": [
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 125,
+              "task": 1
+            }
+          ],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 145,
+              "task": 1
+            },
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 215
+            }
+          ]
+        },
+        {
+          "action_id": 145,
+          "group_id": 24,
+          "name": "CLO: Receive CD Approval",
+          "display_name": "Receive CD Approval",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 149,
+              "task": 1
+            },
+            {
+              "type": "create",
+              "group_id": 24,
+              "action_id": 146
+            }
+          ]
+        },
+        {
+          "action_id": 146,
+          "group_id": 24,
+          "name": "CLO: Revise CD",
+          "display_name": "Revise CD",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 24,
+              "group_id": 146,
+              "name": "*To Lender: Revised CD Approval",
+              "task": 2
+            }
+          ],
+          "start_affects": [
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 145,
+              "task": 2
+            }
+          ],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 145,
+              "task": 1
+            },
+            {
+              "type": "create",
+              "group_id": 24,
+              "action_id": 145
+            },
+            {
+              "type": "complete",
+              "group_id": 39,
+              "action_id": 216,
+              "task": 2
+            }
+          ]
+        },
+        {
+          "action_id": 149,
+          "group_id": 24,
+          "name": "CLO: CD Approved",
+          "display_name": "CD Approved",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 149,
+              "task": 2
+            }
+          ],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 121,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 252,
+              "task": 2
+            },
+            {
+              "type": "create",
+              "group_id": 25,
+              "action_id": 131
+            },
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 254,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 163,
+          "group_id": 24,
+          "name": "CLO: Send Closing Incomplete Notification",
+          "display_name": "Send Closing Incomplete Notification",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 24,
+              "group_id": 163,
+              "name": "*To Client: Closing Incomplete Notification",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 164,
+          "group_id": 24,
+          "name": "CLO: Waiting on No Sign Resolution",
+          "display_name": "Waiting on No Sign Resolution",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 251,
+          "group_id": 24,
+          "name": "CLO: Receive UCD for Fee Collaboration",
+          "display_name": "Receive UCD for Fee Collaboration",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 252,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 252,
+          "group_id": 24,
+          "name": "CLO: Fee Collaboration In Progress",
+          "display_name": "Fee Collaboration In Progress",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 23,
+              "action_id": 141,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 253,
+          "group_id": 24,
+          "name": "CLO: Post CD Approval QC Checklist",
+          "display_name": "Post CD Approval QC Checklist",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 253,
+              "task": 2
+            }
+          ],
+          "complete_affects": []
+        },
+        {
+          "action_id": 254,
+          "group_id": 24,
+          "name": "CLO: Finalize Fees in Simplifile",
+          "display_name": "Finalize Fees in Simplifile",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        }
+      ],
+      "triggers": [
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 24,
+            "action_id": 121,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 1014,
+            "document_name": "Lender Package - Unsigned"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 24,
+            "action_id": 122,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 997,
+            "document_name": "FedEx Label"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 24,
+            "action_id": 142,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 972,
+            "document_name": "Closing Instructions"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 24,
+            "action_id": 251,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 976,
+            "document_name": "UCD"
+          }
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "name": "JD - Post Closing",
+      "optional": false,
+      "actions": [
+        {
+          "action_id": 127,
+          "group_id": 25,
+          "name": "PC: Receive Lender Package - Signed",
+          "display_name": "Receive Lender Package - Signed",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [
+            {
+              "type": "complete",
+              "group_id": 28,
+              "action_id": 177,
+              "task": 1
+            }
+          ],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 126,
+              "task": 2
+            },
+            {
+              "type": "complete",
+              "group_id": 25,
+              "action_id": 131,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 25,
+              "action_id": 128,
+              "task": 1
+            },
+            {
+              "type": "offset",
+              "group_id": 25,
+              "action_id": 128,
+              "task": 2,
+              "offset": 8.0
+            },
+            {
+              "type": "complete",
+              "group_id": 25,
+              "action_id": 182,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 128,
+          "group_id": 25,
+          "name": "PC: Send Funding Docs to Lender",
+          "display_name": "Send Funding Docs to Lender",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 25,
+              "group_id": 128,
+              "name": "*To Lender: Funding Docs",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 25,
+              "action_id": 129,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 25,
+              "action_id": 249,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 129,
+          "group_id": 25,
+          "name": "PC: Receive Lender Wire",
+          "display_name": "Receive Lender Wire",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 25,
+              "action_id": 130,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 25,
+              "action_id": 150,
+              "task": 2
+            }
+          ]
+        },
+        {
+          "action_id": 130,
+          "group_id": 25,
+          "name": "PC: Balance Funds",
+          "display_name": "Balance Funds",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [
+            {
+              "type": "offset",
+              "group_id": 25,
+              "action_id": 132,
+              "task": 2,
+              "offset": 1.0
+            }
+          ],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 25,
+              "action_id": 132,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 131,
+          "group_id": 25,
+          "name": "PC: Receive Borrower Funds",
+          "display_name": "Receive Borrower Funds",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 25,
+              "action_id": 130,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 132,
+          "group_id": 25,
+          "name": "PC: Disburse Funds",
+          "display_name": "Disburse Funds",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [
+            {
+              "type": "offset",
+              "group_id": 25,
+              "action_id": 132,
+              "task": 2,
+              "offset": 1.0
+            }
+          ],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 27,
+              "action_id": 133,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 26,
+              "action_id": 134,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 27,
+              "action_id": 140,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 25,
+              "action_id": 153,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 39,
+              "action_id": 231,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 150,
+          "group_id": 25,
+          "name": "PC: *** URGENT - NO LENDER WIRE FOR TODAY'S DISBURSEMENT",
+          "display_name": "*** URGENT - NO LENDER WIRE FOR TODAY'S DISBURSEMENT",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 152,
+          "group_id": 25,
+          "name": "PC: Refund Overage Post Closing",
+          "display_name": "Refund Overage Post Closing",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 153,
+          "group_id": 25,
+          "name": "PC: Confirm Payoff Lender Received Wire",
+          "display_name": "Confirm Payoff Lender Received Wire",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 182,
+          "group_id": 25,
+          "name": "PC: Attach Executed Note",
+          "display_name": "Attach Executed Note",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 25,
+              "group_id": 182,
+              "name": "FORM: Pennymac Note Coversheet Merge",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 249,
+          "group_id": 25,
+          "name": "PC: Receive Disbursemet Authorization",
+          "display_name": "Receive Disbursemet Authorization",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 25,
+              "action_id": 132,
+              "task": 1
+            }
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 25,
+            "action_id": 127,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 1015,
+            "document_name": "Lender Package - Signed"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 25,
+            "action_id": 128,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 1016,
+            "document_name": "Funding Docs"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 25,
+            "action_id": 131,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 1017,
+            "document_name": "Borrower Funds"
+          }
+        },
+        {
+          "affect": {
+            "type": "offset",
+            "group_id": 25,
+            "action_id": 132,
+            "task": 1,
+            "offset": 0.0
+          },
+          "external_action": {
+            "id": 23,
+            "name": "Disbursement is Today"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 25,
+            "action_id": 150,
+            "task": 1
+          },
+          "external_action": {
+            "id": 23,
+            "name": "Disbursement is Today"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 25,
+            "action_id": 182,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 1046,
+            "document_name": "Lender Package - Executed Note"
+          }
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "name": "JD - Recording",
+      "optional": false,
+      "actions": [
+        {
+          "action_id": 134,
+          "group_id": 26,
+          "name": "REC: Prepare Docs for Recording",
+          "display_name": "Prepare Docs for Recording",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 26,
+              "action_id": 135,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 135,
+          "group_id": 26,
+          "name": "REC: Submit Docs for Recording",
+          "display_name": "Submit Docs for Recording",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 26,
+              "action_id": 136,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 136,
+          "group_id": 26,
+          "name": "REC: Receive Recording Confirmation",
+          "display_name": "Receive Recording Confirmation",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 26,
+              "action_id": 137,
+              "task": 1
+            },
+            {
+              "type": "create",
+              "group_id": 26,
+              "action_id": 138
+            }
+          ]
+        },
+        {
+          "action_id": 137,
+          "group_id": 26,
+          "name": "REC: Recording Complete",
+          "display_name": "Recording Complete",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 26,
+              "group_id": 137,
+              "name": "**To Client: Recording Confirms",
+              "task": 2
+            }
+          ],
+          "start_affects": [
+            {
+              "type": "complete",
+              "group_id": 26,
+              "action_id": 137,
+              "task": 2
+            }
+          ],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 27,
+              "action_id": 258,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 138,
+          "group_id": 26,
+          "name": "REC: Correct Rejected Recording",
+          "display_name": "Correct Rejected Recording",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 26,
+              "action_id": 136,
+              "task": 1
+            },
+            {
+              "type": "create",
+              "group_id": 26,
+              "action_id": 136
+            }
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 26,
+            "action_id": 137,
+            "task": 1
+          },
+          "external_action": {
+            "id": 215,
+            "name": "CSC: Package Recorded",
+            "document_type_id": 1018,
+            "document_name": "Recorded Docs - Mortgage"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 26,
+            "action_id": 138
+          },
+          "external_action": {
+            "id": 214,
+            "name": "CSC: Package Rejected"
+          }
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "name": "JD - Policy",
+      "optional": false,
+      "actions": [
+        {
+          "action_id": 133,
+          "group_id": 27,
+          "name": "POL: Prepare Policy - Loan",
+          "display_name": "Prepare Policy - Loan",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 27,
+              "group_id": 133,
+              "name": "*To Client: Policy - Loan",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 140,
+          "group_id": 27,
+          "name": "POL: Receive Policy from Underwriter",
+          "display_name": "Receive Policy from Underwriter",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 27,
+              "group_id": 140,
+              "name": "*To Client: Policy - Loan",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 27,
+              "action_id": 139,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 139,
+          "group_id": 27,
+          "name": "POL: Send Final Docs to Lender",
+          "display_name": "Send Final Docs to Lender",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 27,
+              "group_id": 139,
+              "name": "*To Lender: Final Docs",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 38,
+              "action_id": 198,
+              "task": 2
+            }
+          ]
+        },
+        {
+          "action_id": 258,
+          "group_id": 27,
+          "name": "POL: Verify Policy Information",
+          "display_name": "Verify Policy Information",
+          "description": "Validate the parameters that go into policy generation.\r\n - loan amount\r\n - endorsements\r\n - legal description and vesting\r\n - curative items have been cured\r\n - mortgage date and effective date are filled in on the policy tab",
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 27,
+              "action_id": 139,
+              "task": 1
+            }
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 27,
+            "action_id": 139,
+            "task": 1
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 103,
+            "document_name": "Policy Package"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 27,
+            "action_id": 133,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 1026,
+            "document_name": "Policy - Short Form"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 27,
+            "action_id": 133,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 1027,
+            "document_name": "Policy - Lenders"
+          }
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "name": "*Subordination",
+      "optional": true,
+      "actions": [
+        {
+          "action_id": 174,
+          "group_id": 28,
+          "name": "CUR: Request Sub Docs",
+          "display_name": "Request Sub Docs",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 28,
+              "action_id": 175,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 175,
+          "group_id": 28,
+          "name": "CUR: Receive Sub Docs",
+          "display_name": "Receive Sub Docs",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 28,
+              "action_id": 176,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 176,
+          "group_id": 28,
+          "name": "CUR: Prep Subordination",
+          "display_name": "Prep Subordination",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 28,
+              "action_id": 177,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 177,
+          "group_id": 28,
+          "name": "REC: Record Subordination",
+          "display_name": "Record Subordination",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        }
+      ],
+      "triggers": [
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 28,
+            "action_id": 174,
+            "task": 1
+          },
+          "external_action": {
+            "id": 116,
+            "name": "Pre-closing Curative Added"
+          }
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "name": "*Request Mortgage Statement",
+      "optional": true,
+      "actions": [
+        {
+          "action_id": 158,
+          "group_id": 30,
+          "name": "CUR: Request Mortgage Statement(s)",
+          "display_name": "Request Mortgage Statement(s)",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 30,
+              "group_id": 158,
+              "name": "**To Client: Request Mortgage Statement",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 30,
+              "action_id": 159,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 159,
+          "group_id": 30,
+          "name": "CUR: Receive Mortgage Statement(s)",
+          "display_name": "Receive Mortgage Statement(s)",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        }
+      ],
+      "triggers": [
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 30,
+            "action_id": 159,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 1022,
+            "document_name": "Mortgage Statement"
+          }
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "name": "*Disbursement Delay",
+      "optional": true,
+      "actions": [
+        {
+          "action_id": 161,
+          "group_id": 31,
+          "name": "PC: Send Disb Delay Notification",
+          "display_name": "Send Disb Delay Notification",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 31,
+              "group_id": 161,
+              "name": "*To Client: Disbursement Delay",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 31,
+              "action_id": 162,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 162,
+          "group_id": 31,
+          "name": "PC: Receive Disb Delay Response",
+          "display_name": "Receive Disb Delay Response",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "id": 33,
+      "name": "*Title Update",
+      "optional": true,
+      "actions": [
+        {
+          "action_id": 166,
+          "group_id": 33,
+          "name": "TC: Review for Title Update",
+          "display_name": "Review for Title Update",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 33,
+              "action_id": 167,
+              "task": 1
+            },
+            {
+              "type": "create",
+              "group_id": 33,
+              "action_id": 168
+            }
+          ]
+        },
+        {
+          "action_id": 167,
+          "group_id": 33,
+          "name": "TC: Send Final Title to Client",
+          "display_name": "Send Final Title to Client",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 168,
+          "group_id": 33,
+          "name": "TC: Order Updated Search",
+          "display_name": "Order Updated Search",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [
+            {
+              "type": "create",
+              "group_id": 33,
+              "action_id": 169
+            },
+            {
+              "type": "create",
+              "group_id": 33,
+              "action_id": 170
+            }
+          ],
+          "complete_affects": []
+        },
+        {
+          "action_id": 169,
+          "group_id": 33,
+          "name": "TC: Receive Updated Search",
+          "display_name": "Receive Updated Search",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 170,
+          "group_id": 33,
+          "name": "TC: Prepare Updated Commitment",
+          "display_name": "Prepare Updated Commitment",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "id": 34,
+      "name": "*Deed",
+      "optional": true,
+      "actions": [
+        {
+          "action_id": 171,
+          "group_id": 34,
+          "name": "TC: Order Deed",
+          "display_name": "Order Deed",
+          "description": "Order through doc prep website",
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 34,
+              "action_id": 172,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 172,
+          "group_id": 34,
+          "name": "TC: Receive Deed",
+          "display_name": "Receive Deed",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        }
+      ],
+      "triggers": [
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 34,
+            "action_id": 172,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 5,
+            "document_name": "Deed"
+          }
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "name": "JD - Abstract",
+      "optional": false,
+      "actions": [
+        {
+          "action_id": 104,
+          "group_id": 36,
+          "name": "TC: Order Search Package",
+          "display_name": "Order Search Package",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [
+            {
+              "action_id": 36,
+              "group_id": 104,
+              "name": "FORM: Wiring, Jacket, Legal",
+              "task": 1
+            }
+          ],
+          "complete_emails": [
+            {
+              "action_id": 36,
+              "group_id": 104,
+              "name": "*To Searcher: Order Search",
+              "task": 2
+            }
+          ],
+          "start_affects": [
+            {
+              "type": "complete",
+              "group_id": 36,
+              "action_id": 104,
+              "task": 2
+            }
+          ],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 36,
+              "action_id": 105,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 105,
+          "group_id": 36,
+          "name": "TC: Receive Search Package",
+          "display_name": "Receive Search Package",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 36,
+              "action_id": 111,
+              "task": 1
+            },
+            {
+              "type": "complete",
+              "group_id": 20,
+              "action_id": 106,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 107,
+          "group_id": 36,
+          "name": "TC: Run Bankruptcy Search",
+          "display_name": "Run Bankruptcy Search",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "create",
+              "group_id": 36,
+              "action_id": 108
+            }
+          ]
+        },
+        {
+          "action_id": 108,
+          "group_id": 36,
+          "name": "TC: Clear Bankruptcy Hit",
+          "display_name": "Clear Bankruptcy Hit",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 109,
+          "group_id": 36,
+          "name": "TC: Run Patriot Search",
+          "display_name": "Run Patriot Search",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 111,
+          "group_id": 36,
+          "name": "TC: Create CPL",
+          "display_name": "Create CPL",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 178,
+          "group_id": 36,
+          "name": "IT: Add Searcher",
+          "display_name": "Add Searcher",
+          "description": null,
+          "hidden": true,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 36,
+              "action_id": 104,
+              "task": 1
+            }
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 36,
+            "action_id": 105,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 27,
+            "document_name": "Search Package"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 36,
+            "action_id": 107,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 982,
+            "document_name": "Bankruptcy Search"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 36,
+            "action_id": 111,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 984,
+            "document_name": "CPL"
+          }
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "name": "JD - Taxes",
+      "optional": false,
+      "actions": [
+        {
+          "action_id": 173,
+          "group_id": 37,
+          "name": "IT: Add Tax Prep",
+          "display_name": "Add Tax Prep",
+          "description": null,
+          "hidden": true,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 179,
+          "group_id": 37,
+          "name": "OE: Receive Taxes",
+          "display_name": "Receive Taxes",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 37,
+              "action_id": 181,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 180,
+          "group_id": 37,
+          "name": "OE: Order Taxes",
+          "display_name": "Order Taxes",
+          "description": null,
+          "hidden": false,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 37,
+              "group_id": 180,
+              "name": "*To Tax Prep: Order Taxes",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "offset",
+              "group_id": 37,
+              "action_id": 179,
+              "task": 2,
+              "offset": 8.0
+            }
+          ]
+        },
+        {
+          "action_id": 181,
+          "group_id": 37,
+          "name": "TC: Send Taxes to Client",
+          "display_name": "Send Taxes to Client",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 37,
+              "group_id": 181,
+              "name": "*To Client: Taxes",
+              "task": 2
+            }
+          ],
+          "start_affects": [
+            {
+              "type": "complete",
+              "group_id": 37,
+              "action_id": 181,
+              "task": 2
+            }
+          ],
+          "complete_affects": []
+        }
+      ],
+      "triggers": [
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 37,
+            "action_id": 173
+          },
+          "external_action": {
+            "id": 154,
+            "name": "XML: Received Action Event",
+            "action_event_id": 7,
+            "action_event_name": "Order Taxes"
+          }
+        },
+        {
+          "affect": {
+            "type": "complete",
+            "group_id": 37,
+            "action_id": 179,
+            "task": 2
+          },
+          "external_action": {
+            "id": 121,
+            "name": "Document Added",
+            "document_type_id": 9,
+            "document_name": "Tax Statement"
+          }
+        }
+      ]
+    },
+    {
+      "id": 42,
+      "name": "RealEC: General",
+      "optional": false,
+      "actions": [
+        {
+          "action_id": 244,
+          "group_id": 42,
+          "name": "RealEC: Review File for Closing Collaboration Conflict",
+          "display_name": "RealEC: Review File for Closing Collaboration Conflict",
+          "description": null,
+          "hidden": true,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 248,
+          "group_id": 42,
+          "name": "RealEC: Schema Validation Report",
+          "display_name": "RealEC: Schema Validation Report",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 245,
+          "group_id": 42,
+          "name": "RealEC: ERROR: Schema Validation",
+          "display_name": "RealEC: ERROR: Schema Validation",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        }
+      ],
+      "triggers": [
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 42,
+            "action_id": 244
+          },
+          "external_action": {
+            "id": 195,
+            "name": "RealEC: Closing Collaboration Settlement Type Conflict"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 42,
+            "action_id": 245
+          },
+          "external_action": {
+            "id": 204,
+            "name": "RealEC 1001: Error: Schema Validation"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 42,
+            "action_id": 248
+          },
+          "external_action": {
+            "id": 213,
+            "name": "RealEC 4502: Schema Validation Report"
+          }
+        }
+      ]
+    },
+    {
+      "id": 38,
+      "name": "RealEC: Title Order",
+      "optional": true,
+      "actions": [
+        {
+          "action_id": 184,
+          "group_id": 38,
+          "name": "RealEC: Title-Title Order Received",
+          "display_name": "RealEC: Title Order Received",
+          "description": null,
+          "hidden": true,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [
+            {
+              "type": "complete",
+              "group_id": 38,
+              "action_id": 184,
+              "task": 2
+            }
+          ],
+          "complete_affects": []
+        },
+        {
+          "action_id": 185,
+          "group_id": 38,
+          "name": "RealEC: Title-Title Service Cancelled",
+          "display_name": "RealEC: Title Service Cancelled",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 186,
+          "group_id": 38,
+          "name": "RealEC: Review Comments",
+          "display_name": "RealEC: Review Comments",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 187,
+          "group_id": 38,
+          "name": "RealEC: Title-Review Comments, Send Response",
+          "display_name": "RealEC: Review Comments, Send Response",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 38,
+              "group_id": 187,
+              "name": "RealEC: Title-220 Comment",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 188,
+          "group_id": 38,
+          "name": "RealEC: Review Documents",
+          "display_name": "RealEC: Review Documents",
+          "description": null,
+          "hidden": true,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 38,
+              "action_id": 194,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 189,
+          "group_id": 38,
+          "name": "RealEC: Review New Loan Contact Info.",
+          "display_name": "RealEC: Review New Loan Contact Info.",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 190,
+          "group_id": 38,
+          "name": "RealEC: Title-Deliver Commitment",
+          "display_name": "RealEC: Deliver Commitment",
+          "description": null,
+          "hidden": true,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [
+            {
+              "type": "complete",
+              "group_id": 38,
+              "action_id": 190,
+              "task": 2
+            }
+          ],
+          "complete_affects": [
+            {
+              "type": "create",
+              "group_id": 38,
+              "action_id": 191
+            },
+            {
+              "type": "create",
+              "group_id": 38,
+              "action_id": 192
+            },
+            {
+              "type": "create",
+              "group_id": 38,
+              "action_id": 193
+            },
+            {
+              "type": "create",
+              "group_id": 38,
+              "action_id": 196
+            }
+          ]
+        },
+        {
+          "action_id": 191,
+          "group_id": 38,
+          "name": "RealEC: Title-Deliver Tax Document (OPT)",
+          "display_name": "RealEC: Deliver Tax Document",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 38,
+              "group_id": 191,
+              "name": "RealEC: Title-Deliver Tax Document",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 192,
+          "group_id": 38,
+          "name": "RealEC: Title-Deliver Fee Sheet (OPT)",
+          "display_name": "RealEC: Deliver Fee Sheet",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 38,
+              "group_id": 192,
+              "name": "RealEC: Title-Deliver Fee Sheet",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 193,
+          "group_id": 38,
+          "name": "RealEC: Title-Lender Curative Items (OPT)",
+          "display_name": "RealEC: Lender Curative Items",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 38,
+              "group_id": 193,
+              "name": "RealEC: Title-Lender Items for Curative Clearance",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "create",
+              "group_id": 38,
+              "action_id": 194
+            }
+          ]
+        },
+        {
+          "action_id": 194,
+          "group_id": 38,
+          "name": "RealEC: Title-Review Clearance Docs from Lender (OPT)",
+          "display_name": "RealEC: Review Clearance Documents from Lender",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 38,
+              "action_id": 196,
+              "task": 2
+            },
+            {
+              "type": "create",
+              "group_id": 38,
+              "action_id": 195
+            }
+          ]
+        },
+        {
+          "action_id": 195,
+          "group_id": 38,
+          "name": "RealEC: Title-Lender Curative Docs Not Sufficient",
+          "display_name": "RealEC: Lender Curative Docs Not Sufficient",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 38,
+              "group_id": 195,
+              "name": "RealEC: Title-Lender Curative Docs Not Sufficient",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "create",
+              "group_id": 38,
+              "action_id": 194
+            }
+          ]
+        },
+        {
+          "action_id": 196,
+          "group_id": 38,
+          "name": "RealEC: Title-Curative Cleared",
+          "display_name": "RealEC: Curative Cleared",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 197,
+          "group_id": 38,
+          "name": "RealEC: Title-Send Curative Documents to Lender",
+          "display_name": "RealEC: Send Curative Documents to Lender",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 38,
+              "group_id": 197,
+              "name": "RealEC: Title-Send Curative Documents to Lender",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 198,
+          "group_id": 38,
+          "name": "RealEC: Title-Final Title Policy",
+          "display_name": "RealEC: Final Title Policy",
+          "description": null,
+          "hidden": true,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [
+            {
+              "type": "complete",
+              "group_id": 38,
+              "action_id": 198,
+              "task": 2
+            }
+          ],
+          "complete_affects": []
+        }
+      ],
+      "triggers": [
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 38,
+            "action_id": 188
+          },
+          "external_action": {
+            "id": 83,
+            "name": "RealEC 460: Title Doc Attached By Customer"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 38,
+            "action_id": 186
+          },
+          "external_action": {
+            "id": 95,
+            "name": "RealEC 220: Title Comment Rcvd"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 38,
+            "action_id": 185
+          },
+          "external_action": {
+            "id": 77,
+            "name": "RealEC 240: Title Service Cancelled"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 38,
+            "action_id": 189
+          },
+          "external_action": {
+            "id": 80,
+            "name": "RealEC 325: Title Loan Contact Update"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 38,
+            "action_id": 187
+          },
+          "external_action": {
+            "id": 64,
+            "name": "RealEC 222: Title Comment Action  Rqrd Rcvd"
+          }
+        }
+      ]
+    },
+    {
+      "id": 39,
+      "name": "RealEC: Closing Order",
+      "optional": true,
+      "actions": [
+        {
+          "action_id": 199,
+          "group_id": 39,
+          "name": "RealEC: Closing-Closing Order Received",
+          "display_name": "RealEC: Closing Order Received",
+          "description": null,
+          "hidden": true,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 200,
+          "group_id": 39,
+          "name": "RealEC: Closing-Closing Service Cancelled",
+          "display_name": "RealEC: Closing Service Cancelled",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 186,
+          "group_id": 39,
+          "name": "RealEC: Review Comments",
+          "display_name": "RealEC: Review Comments",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 201,
+          "group_id": 39,
+          "name": "RealEC: Closing-Review Comments, Send Response",
+          "display_name": "RealEC: Review Comments, Send Response",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 202
+            },
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 202
+            },
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 202
+            },
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 210
+            },
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 212
+            },
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 228
+            },
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 227
+            }
+          ]
+        },
+        {
+          "action_id": 202,
+          "group_id": 39,
+          "name": "RealEC: Closing-Respond to Comment Action Required",
+          "display_name": "RealEC: Respond to Comment Action Required",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 39,
+              "group_id": 202,
+              "name": "RealEC: Closing-220 Comment",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 188,
+          "group_id": 39,
+          "name": "RealEC: Review Documents",
+          "display_name": "RealEC: Review Documents",
+          "description": null,
+          "hidden": true,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 189,
+          "group_id": 39,
+          "name": "RealEC: Review New Loan Contact Info.",
+          "display_name": "RealEC: Review New Loan Contact Info.",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 203,
+          "group_id": 39,
+          "name": "RealEC: Closing-Closing Collaboration Conflict",
+          "display_name": "RealEC: Closing Collaboration Conflict",
+          "description": null,
+          "hidden": true,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 204,
+          "group_id": 39,
+          "name": "RealEC: Closing-Provider Requests Payoff (HIDDEN)",
+          "display_name": "RealEC: Provider Requests Payoff",
+          "description": null,
+          "hidden": true,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [
+            {
+              "type": "complete",
+              "group_id": 39,
+              "action_id": 204,
+              "task": 2
+            }
+          ],
+          "complete_affects": [
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 205
+            },
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 206
+            }
+          ]
+        },
+        {
+          "action_id": 205,
+          "group_id": 39,
+          "name": "RealEC: Closing-Send Payoff Req Info Lender Resp (OPT)",
+          "display_name": "RealEC: Send Payoff Request Info. to Lender",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 39,
+              "group_id": 205,
+              "name": "RealEC: Closing-Payoff Request Info. Lender Responsible",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 206,
+          "group_id": 39,
+          "name": "RealEC: Closing-Send Payoff Req Info Provider Resp (OPT)",
+          "display_name": "RealEC: Send Payoff Request Info. to Lender",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 39,
+              "group_id": 206,
+              "name": "RealEC: Closing-Payoff Request Info. Provider Responsible",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 210
+            }
+          ]
+        },
+        {
+          "action_id": 207,
+          "group_id": 39,
+          "name": "RealEC: Closing-Provider Request Sub. Agreement (HIDDEN)",
+          "display_name": "RealEC: Provider Request Sub. Agreement",
+          "description": null,
+          "hidden": true,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [
+            {
+              "type": "complete",
+              "group_id": 39,
+              "action_id": 207,
+              "task": 2
+            }
+          ],
+          "complete_affects": [
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 208
+            },
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 209
+            }
+          ]
+        },
+        {
+          "action_id": 208,
+          "group_id": 39,
+          "name": "RealEC: Closing-Send Sub Agr Request Info Lender Resp (OPT)",
+          "display_name": "RealEC: Send Subordination Agreement Request Info. to Lender",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 39,
+              "group_id": 208,
+              "name": "RealEC: Closing-Subordination Request Info. Lender Responsible",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 209,
+          "group_id": 39,
+          "name": "RealEC: Closing-Send Sub Agr Reqest Info Provider Resp (OPT)",
+          "display_name": "RealEC: Send Sub. Agr. Reqest Info. to Lender",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 39,
+              "group_id": 209,
+              "name": "RealEC: Closing-Subordination Request Info. Provider Responsible",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 212
+            }
+          ]
+        },
+        {
+          "action_id": 210,
+          "group_id": 39,
+          "name": "RealEC: Closing-Order Payoff (OPT)",
+          "display_name": "RealEC: Order Payoff",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 211
+            }
+          ],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 39,
+              "action_id": 211,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 211,
+          "group_id": 39,
+          "name": "RealEC: Closing-Receive Payoff",
+          "display_name": "RealEC: Receive Payoff",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 39,
+              "group_id": 211,
+              "name": "RealEC: Closing-Deliver Payoff",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 212,
+          "group_id": 39,
+          "name": "RealEC: Closing-Order Subordination Agreement (OPT)",
+          "display_name": "RealEC: Order Subordination Agreement",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 213
+            }
+          ],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 39,
+              "action_id": 213,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 213,
+          "group_id": 39,
+          "name": "RealEC: Closing-Receive Subordination Agreement",
+          "display_name": "RealEC: Receive Subordination Agreement",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 39,
+              "group_id": 213,
+              "name": "RealEC: Closing-Deliver Subordination Agreement",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 214,
+          "group_id": 39,
+          "name": "RealEC: Closing-Receive Closing Instructions",
+          "display_name": "RealEC: Receive Closing Instructions (431)",
+          "description": null,
+          "hidden": true,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 215
+            }
+          ]
+        },
+        {
+          "action_id": 215,
+          "group_id": 39,
+          "name": "RealEC: Closing-Deliver Preliminary Settlement Statement",
+          "display_name": "RealEC: Deliver Preliminary Settlement Statement (406)",
+          "description": null,
+          "hidden": true,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 216,
+          "group_id": 39,
+          "name": "RealEC: Closing-Modify Settlement Statement",
+          "display_name": "RealEC: Modify Settlement Statement (433)",
+          "description": "Need incoming trigger for event 432 to add this action to file.",
+          "hidden": true,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [
+            {
+              "type": "create",
+              "group_id": 24,
+              "action_id": 146
+            }
+          ],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 24,
+              "action_id": 146,
+              "task": 2
+            }
+          ]
+        },
+        {
+          "action_id": 217,
+          "group_id": 39,
+          "name": "RealEC: Closing-Receive Analytics & Closing Insight Report",
+          "display_name": "RealEC: Receive Analytics & Closing Insight Report",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 218,
+          "group_id": 39,
+          "name": "RealEC: Closing-Settlement Statement Approved by Lender",
+          "display_name": "RealEC: Settlement Statement Approved by Lender (434)",
+          "description": null,
+          "hidden": true,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 39,
+              "action_id": 220,
+              "task": 1
+            }
+          ]
+        },
+        {
+          "action_id": 219,
+          "group_id": 39,
+          "name": "RealEC: Closing-Switched to CD File/Delete Delivery Action",
+          "display_name": "RealEC: CD File-Delete \"Deliver Final Statement\" Action",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 220,
+          "group_id": 39,
+          "name": "RealEC: Closing-Deliver Final Settlement Statement (OPT)",
+          "display_name": "RealEC: Deliver Final Settlement Statement",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 221,
+          "group_id": 39,
+          "name": "RealEC: Closing-Receive Closing Package from Lender",
+          "display_name": "RealEC: Receive Closing Package from Lender",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 222,
+          "group_id": 39,
+          "name": "RealEC: Closing-Signing is Complete",
+          "display_name": "RealEC: Signing is Complete",
+          "description": null,
+          "hidden": true,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 39,
+              "group_id": 222,
+              "name": "RealEC: Closing-Signing is Complete",
+              "task": 2
+            }
+          ],
+          "start_affects": [
+            {
+              "type": "complete",
+              "group_id": 39,
+              "action_id": 222,
+              "task": 2
+            }
+          ],
+          "complete_affects": [
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 225
+            },
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 224
+            }
+          ]
+        },
+        {
+          "action_id": 223,
+          "group_id": 39,
+          "name": "RealEC: Closing-Signing Did Not Take Place",
+          "display_name": "RealEC: Signing Did Not Take Place",
+          "description": null,
+          "hidden": true,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 39,
+              "group_id": 223,
+              "name": "RealEC: Closing-Signing Did Not Take Place",
+              "task": 2
+            }
+          ],
+          "start_affects": [
+            {
+              "type": "complete",
+              "group_id": 39,
+              "action_id": 223,
+              "task": 2
+            }
+          ],
+          "complete_affects": []
+        },
+        {
+          "action_id": 224,
+          "group_id": 39,
+          "name": "RealEC: Closing-Post-Close Audit of Executed Documents",
+          "display_name": "RealEC: Post-Close Audit of Executed Documents",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 39,
+              "action_id": 225,
+              "task": 1
+            },
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 226
+            }
+          ]
+        },
+        {
+          "action_id": 225,
+          "group_id": 39,
+          "name": "RealEC: Closing-Deliver Critical Documents",
+          "display_name": "RealEC: Deliver Critical Documents",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 39,
+              "group_id": 225,
+              "name": "RealEC: Closing-Critical Docs Attached",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 226,
+          "group_id": 39,
+          "name": "RealEC: Closing-Document Review Failed",
+          "display_name": "RealEC: Document Review Failed",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 39,
+              "group_id": 226,
+              "name": "RealEC: Closing-Document Review Failed",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 227,
+          "group_id": 39,
+          "name": "RealEC: Closing-Disbursement Approved by Lender (OPT)",
+          "display_name": "RealEC: Disbursement Approved by Lender",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 230
+            },
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 229
+            }
+          ]
+        },
+        {
+          "action_id": 228,
+          "group_id": 39,
+          "name": "RealEC: Closing-Disbursement NOT Approved by Lender (OPT)",
+          "display_name": "RealEC: Disbursement NOT Approved by Lender",
+          "description": null,
+          "hidden": true,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 39,
+              "group_id": 228,
+              "name": "RealEC: Closing-Disbursement NOT Approved by Lender Resonse",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 229,
+          "group_id": 39,
+          "name": "RealEC: Closing-Provider Ready to Disburse",
+          "display_name": "RealEC: Provider Ready to Disburse",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 39,
+              "group_id": 229,
+              "name": "RealEC: Closing-Disbursement Approved by Lender Response",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 230,
+          "group_id": 39,
+          "name": "RealEC: Closing-Provider Not Ready to Disburse Funds",
+          "display_name": "RealEC: Provider Not Ready to Disburse Funds",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 39,
+              "group_id": 230,
+              "name": "RealEC: Closing-Provider Not Ready to Disburse Funds",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 231,
+          "group_id": 39,
+          "name": "RealEC: Closing-Disbursement Info. to Lender",
+          "display_name": "RealEC: Disbursement Info. to Lender",
+          "description": null,
+          "hidden": true,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [
+            {
+              "type": "complete",
+              "group_id": 39,
+              "action_id": 231,
+              "task": 2
+            }
+          ],
+          "complete_affects": []
+        },
+        {
+          "action_id": 232,
+          "group_id": 39,
+          "name": "RealEC: Closing-Documents Recorded",
+          "display_name": "RealEC: Documents Recorded",
+          "description": null,
+          "hidden": true,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [
+            {
+              "type": "complete",
+              "group_id": 39,
+              "action_id": 232,
+              "task": 2
+            }
+          ],
+          "complete_affects": [
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 234
+            },
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 233
+            },
+            {
+              "type": "create",
+              "group_id": 39,
+              "action_id": 235
+            }
+          ]
+        },
+        {
+          "action_id": 233,
+          "group_id": 39,
+          "name": "RealEC: Closing-Mortgage Document Recorded (OPT)",
+          "display_name": "RealEC: Mortgage Document Recorded",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 39,
+              "group_id": 233,
+              "name": "RealEC: Closing-Mortgage Document Recorded",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 234,
+          "group_id": 39,
+          "name": "RealEC: Closing-Deed of Trust Document Recorded (OPT)",
+          "display_name": "RealEC: Deed of Trust Document Recorded",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 39,
+              "group_id": 234,
+              "name": "RealEC: Closing-Deed of Trust Document Recorded",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 235,
+          "group_id": 39,
+          "name": "RealEC: Closing-Other Security Instr Doc. Recorded (OPT)",
+          "display_name": "RealEC: Other Security Instrument Document Recorde",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 39,
+              "group_id": 235,
+              "name": "RealEC: Closing-Other Security Instrument Document Recorded",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 246,
+          "group_id": 39,
+          "name": "RealEC: Closing-Request for Reopen Not Accepted",
+          "display_name": "RealEC: Request for Reopen Not Accepted",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 247,
+          "group_id": 39,
+          "name": "RealEC: Closing-Closing Statement Received",
+          "display_name": "RealEC: Closing Statement Received",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        }
+      ],
+      "triggers": [
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 39,
+            "action_id": 201
+          },
+          "external_action": {
+            "id": 65,
+            "name": "RealEC 222: Closing Comment Action  Rqrd Rcvd"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 39,
+            "action_id": 214
+          },
+          "external_action": {
+            "id": 93,
+            "name": "RealEC 431: Closing Instructions"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 39,
+            "action_id": 216
+          },
+          "external_action": {
+            "id": 94,
+            "name": "RealEC 432: Closing Statement Mods Requested"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 39,
+            "action_id": 218
+          },
+          "external_action": {
+            "id": 90,
+            "name": "RealEC 434: Closing Statement Approved"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 39,
+            "action_id": 217
+          },
+          "external_action": {
+            "id": 191,
+            "name": "RealEC 4064: Provider Analytics Results"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 39,
+            "action_id": 221
+          },
+          "external_action": {
+            "id": 102,
+            "name": "RealEC 760: Closing Doc Package Delivered"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 39,
+            "action_id": 186
+          },
+          "external_action": {
+            "id": 96,
+            "name": "RealEC 220: Closing Comment Rcvd"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 39,
+            "action_id": 200
+          },
+          "external_action": {
+            "id": 78,
+            "name": "RealEC 240: Closing Service Cancelled"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 39,
+            "action_id": 189
+          },
+          "external_action": {
+            "id": 81,
+            "name": "RealEC 325: Closing Loan Contact Update"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 39,
+            "action_id": 219
+          },
+          "external_action": {
+            "id": 193,
+            "name": "RealEC 438: Enable CI Collaboration"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 39,
+            "action_id": 203
+          },
+          "external_action": {
+            "id": 195,
+            "name": "RealEC: Closing Collaboration Settlement Type Conflict"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 39,
+            "action_id": 188
+          },
+          "external_action": {
+            "id": 84,
+            "name": "RealEC 460: Closing Doc Attached By Customer"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 39,
+            "action_id": 246
+          },
+          "external_action": {
+            "id": 194,
+            "name": "RealEC 439: Request For Reopen Not Accepted"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 39,
+            "action_id": 247
+          },
+          "external_action": {
+            "id": 216,
+            "name": "RealEC 435: Closing Statement Distributed"
+          }
+        }
+      ]
+    },
+    {
+      "id": 40,
+      "name": "RealEC: Signing Appointment Order (1 Set)",
+      "optional": true,
+      "actions": [
+        {
+          "action_id": 236,
+          "group_id": 40,
+          "name": "RealEC: Signing-Signing Appointment Order Received",
+          "display_name": "RealEC: Signing Appointment Order Received",
+          "description": null,
+          "hidden": true,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 23,
+              "action_id": 141,
+              "task": 2
+            }
+          ]
+        },
+        {
+          "action_id": 237,
+          "group_id": 40,
+          "name": "RealEC: Signing-Signing Service Cancelled",
+          "display_name": "RealEC: Signing Service Cancelled",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 186,
+          "group_id": 40,
+          "name": "RealEC: Review Comments",
+          "display_name": "RealEC: Review Comments",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 238,
+          "group_id": 40,
+          "name": "RealEC: Signing 1 Set-Review Comments, Send Response",
+          "display_name": "RealEC: Review Comments, Send Response",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 40,
+              "group_id": 238,
+              "name": "RealEC: Signing 1 Set-220 Comment",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 239,
+          "group_id": 40,
+          "name": "RealEC: Signing-Schedule Signing",
+          "display_name": "RealEC: Schedule Signing",
+          "description": null,
+          "hidden": true,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 189,
+          "group_id": 40,
+          "name": "RealEC: Review New Loan Contact Info.",
+          "display_name": "RealEC: Review New Loan Contact Info.",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 240,
+          "group_id": 40,
+          "name": "RealEC: Signing-Reschedule Signing (by Lender)",
+          "display_name": "RealEC: Reschedule Signing (by Lender)",
+          "description": null,
+          "hidden": true,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "create",
+              "group_id": 40,
+              "action_id": 242
+            }
+          ]
+        },
+        {
+          "action_id": 241,
+          "group_id": 40,
+          "name": "RealEC: Signing-Reschedule Signing (by Provider)",
+          "display_name": "RealEC: Reschedule Signing (by Provider)",
+          "description": null,
+          "hidden": true,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "create",
+              "group_id": 40,
+              "action_id": 242
+            }
+          ]
+        },
+        {
+          "action_id": 242,
+          "group_id": 40,
+          "name": "RealEC: Signing-Send Lender Signing Agent's Information",
+          "display_name": "RealEC: Send Lender Signing Agent's Information",
+          "description": null,
+          "hidden": true,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        }
+      ],
+      "triggers": [
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 40,
+            "action_id": 240
+          },
+          "external_action": {
+            "id": 105,
+            "name": "RealEC 310: Signing Rescheduled"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 40,
+            "action_id": 186
+          },
+          "external_action": {
+            "id": 63,
+            "name": "RealEC 220: Signing Comment Rcvd"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 40,
+            "action_id": 237
+          },
+          "external_action": {
+            "id": 79,
+            "name": "RealEC 240: Signing Service Cancelled"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 40,
+            "action_id": 189
+          },
+          "external_action": {
+            "id": 82,
+            "name": "RealEC 325: Signing Loan Contact Update"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 40,
+            "action_id": 238
+          },
+          "external_action": {
+            "id": 66,
+            "name": "RealEC 222: Signing Comment Action  Rqrd Rcvd"
+          }
+        }
+      ]
+    },
+    {
+      "id": 41,
+      "name": "RealEC: Signing Appointment Order (2 Sets)",
+      "optional": true,
+      "actions": [
+        {
+          "action_id": 236,
+          "group_id": 41,
+          "name": "RealEC: Signing-Signing Appointment Order Received",
+          "display_name": "RealEC: Signing Appointment Order Received",
+          "description": null,
+          "hidden": true,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "complete",
+              "group_id": 23,
+              "action_id": 141,
+              "task": 2
+            }
+          ]
+        },
+        {
+          "action_id": 237,
+          "group_id": 41,
+          "name": "RealEC: Signing-Signing Service Cancelled",
+          "display_name": "RealEC: Signing Service Cancelled",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 186,
+          "group_id": 41,
+          "name": "RealEC: Review Comments",
+          "display_name": "RealEC: Review Comments",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 243,
+          "group_id": 41,
+          "name": "RealEC: Signing 2 Sets-Review Comments, Send Response",
+          "display_name": "RealEC: Review Comments, Send Response",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [
+            {
+              "action_id": 41,
+              "group_id": 243,
+              "name": "RealEC: Signing 2 Sets-220 Comment",
+              "task": 2
+            }
+          ],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 239,
+          "group_id": 41,
+          "name": "RealEC: Signing-Schedule Signing",
+          "display_name": "RealEC: Schedule Signing",
+          "description": null,
+          "hidden": true,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 189,
+          "group_id": 41,
+          "name": "RealEC: Review New Loan Contact Info.",
+          "display_name": "RealEC: Review New Loan Contact Info.",
+          "description": null,
+          "hidden": false,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        },
+        {
+          "action_id": 240,
+          "group_id": 41,
+          "name": "RealEC: Signing-Reschedule Signing (by Lender)",
+          "display_name": "RealEC: Reschedule Signing (by Lender)",
+          "description": null,
+          "hidden": true,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "create",
+              "group_id": 41,
+              "action_id": 242
+            }
+          ]
+        },
+        {
+          "action_id": 241,
+          "group_id": 41,
+          "name": "RealEC: Signing-Reschedule Signing (by Provider)",
+          "display_name": "RealEC: Reschedule Signing (by Provider)",
+          "description": null,
+          "hidden": true,
+          "dynamic": false,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": [
+            {
+              "type": "create",
+              "group_id": 41,
+              "action_id": 242
+            }
+          ]
+        },
+        {
+          "action_id": 242,
+          "group_id": 41,
+          "name": "RealEC: Signing-Send Lender Signing Agent's Information",
+          "display_name": "RealEC: Send Lender Signing Agent's Information",
+          "description": null,
+          "hidden": true,
+          "dynamic": true,
+          "start_emails": [],
+          "complete_emails": [],
+          "start_affects": [],
+          "complete_affects": []
+        }
+      ],
+      "triggers": [
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 41,
+            "action_id": 240
+          },
+          "external_action": {
+            "id": 105,
+            "name": "RealEC 310: Signing Rescheduled"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 41,
+            "action_id": 186
+          },
+          "external_action": {
+            "id": 63,
+            "name": "RealEC 220: Signing Comment Rcvd"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 41,
+            "action_id": 237
+          },
+          "external_action": {
+            "id": 79,
+            "name": "RealEC 240: Signing Service Cancelled"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 41,
+            "action_id": 189
+          },
+          "external_action": {
+            "id": 82,
+            "name": "RealEC 325: Signing Loan Contact Update"
+          }
+        },
+        {
+          "affect": {
+            "type": "create",
+            "group_id": 41,
+            "action_id": 243
+          },
+          "external_action": {
+            "id": 66,
+            "name": "RealEC 222: Signing Comment Action  Rqrd Rcvd"
+          }
+        }
+      ]
+    }
+  ]
+}

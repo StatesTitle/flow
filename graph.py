@@ -10,7 +10,7 @@ from collections import defaultdict
 
 from typing import List, Set, Tuple, Dict
 
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field, InitVar
 
 from deps import Vertex, escape_name
 from resware_model import Task, build_models, PartnerType
@@ -40,11 +40,12 @@ class Context:
 
 @dataclass(frozen=True)
 class CtxHolder:
-    _ctx: Context = field(compare=False)
+    _ctx: InitVar[Context] = field(compare=False)
 
 
 @dataclass(frozen=True)
 class Affect(CtxHolder, ActionLookupMixin):
+    type: str
     group_id: int
     action_id: int
 
@@ -220,17 +221,17 @@ def _build_external_action(models, model_trigger):
 def _build_affects(model_affect, ctx):
     if model_affect.affected_group_id is not None:
         if model_affect.offset is not None:
-            yield OffsetActionAffect(ctx,
+            yield OffsetActionAffect(ctx, 'offset',
                 model_affect.affected_group_id, model_affect.affected_action_id,
                 model_affect.affected_task, model_affect.offset
             )
         if model_affect.auto_complete:
-            yield CompleteActionAffect(ctx,
+            yield CompleteActionAffect(ctx, 'complete',
                 model_affect.affected_group_id, model_affect.affected_action_id,
                 model_affect.affected_task
             )
     if model_affect.created_group_id is not None:
-        yield CreateActionAffect(ctx, model_affect.created_group_id, model_affect.created_action_id)
+        yield CreateActionAffect(ctx, 'create', model_affect.created_group_id, model_affect.created_action_id)
 
 
 def _build_triggers(models, model_trigger, ctx):
@@ -399,6 +400,8 @@ if __name__ == '__main__':
     models = build_models()
     #print(build_partners(models))
     alist = build_action_list(models, ACTION_LIST_DEF_ID)
+#    import json
+#    print(json.dumps(asdict(alist), indent='  '))
     for group in alist.groups:
         print('Group:', group.name)
         for trigger in group.triggers:
