@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import Tree from './Tree';
+import {Tree, attachActionsToAffects} from './Tree';
 import registerServiceWorker from './registerServiceWorker';
 import request from'request-promise-native';
 import actionList from './structured_actions.json';
@@ -17,6 +17,6 @@ if (useApp) {
             app.setState({actionList: resp})
         });
 } else {
-    ReactDOM.render(<Tree actionList={actionList}/>, document.getElementById('root'))
+    ReactDOM.render(<Tree actionList={attachActionsToAffects(actionList)}/>, document.getElementById('root'))
 }
 registerServiceWorker();

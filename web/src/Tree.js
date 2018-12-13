@@ -10,6 +10,7 @@ class Row extends Component {
     }
 
 }
+
 class Email extends Component {
     render() {
         return <Row indent={3}>{this.props.email.name}</Row>;
@@ -18,7 +19,7 @@ class Email extends Component {
 
 class Affect extends Component {
     render() {
-        return <Row indent={3}>{this.props.affect.type}</Row>;
+        return <Row indent={3}>{this.props.affect.type} {this.props.affect.action.name}</Row>;
     }
 }
 
@@ -55,4 +56,27 @@ class Tree extends Component {
     }
 }
 
-export default Tree;
+function attachActionsToAffects(actionList) {
+        const actionLookup = {};
+        actionList.groups.forEach(group => {
+            const actionById = {};
+            actionLookup[group.id] = actionById;
+            group.actions.forEach(a => {actionById[a.action_id] = a});
+        });
+        function attach(possiblyIdContainingItems) {
+            possiblyIdContainingItems.forEach(item => {
+                if (!item.group_id || !item.action_id) {
+                    return;
+                }
+                item.action = actionLookup[item.group_id][item.action_id];
+            })
+        }
+        actionList.groups.forEach(group => {
+            group.actions.forEach(action =>{
+                attach(action.start_affects);
+                attach(action.complete_affects);
+            })
+        });
+        return actionList;
+}
+export {Tree, attachActionsToAffects};
