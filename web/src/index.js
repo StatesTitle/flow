@@ -2,14 +2,21 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import Tree from './Tree';
 import registerServiceWorker from './registerServiceWorker';
 import request from'request-promise-native';
+import actionList from './structured_actions.json';
 
-let app = ReactDOM.render(<App />, document.getElementById('root'));
+const useApp = false;
+if (useApp) {
+    let app = ReactDOM.render(<App/>, document.getElementById('root'));
 
-request.get({url: 'https://flow.corp.statestitle.com/api/action_list', json:true})
-// request.get({url: 'http://localhost:8000/api/action_list', json:true})
-    .then(resp => {
-        app.setState({actionList: resp})
-    });
+    request.get({url: 'https://flow.corp.statestitle.com/api/action_list', json: true})
+    // request.get({url: 'http://localhost:8000/api/action_list', json:true})
+        .then(resp => {
+            app.setState({actionList: resp})
+        });
+} else {
+    ReactDOM.render(<Tree actionList={actionList}/>, document.getElementById('root'))
+}
 registerServiceWorker();
