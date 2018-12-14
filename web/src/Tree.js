@@ -4,7 +4,7 @@ class Row extends Component {
     render() {
         const indent = this.props.indent ? this.props.indent : 0;
         return (<div className="row">
-            {indent && <div className={"col-" + indent}/>}
+            {this.props.indent && <div className={"col-" + indent}/>}
             <div className={"col-" + (12 - indent)}>{this.props.children}</div>
         </div>);
     }
@@ -52,7 +52,9 @@ class Group extends Component {
 }
 class Tree extends Component {
     render() {
-        return this.props.actionList.groups.map(g => <Group group={g}/>)
+        return (<div className="container">
+            {this.props.actionList.groups.map(g => <Group group={g}/>)}
+        </div>);
     }
 }
 
