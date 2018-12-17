@@ -2,9 +2,9 @@
 
 Allows for the conversion of that graph into a dot language digraph
 
-For the dataclasses below, we've made them frozen when they need a __hash__ method to be put into a set or dict. All of
-the instances should be immutable after build_action_list returns, but we're not marking as frozen unless necessary to
-keep from dealing with setting compare=False on fields and how dataclass overrides setattr if frozen is true"""
+For the dataclasses below, we've made them unsafe_hash when they need a __hash__ method to be put into a set or dict. All of
+the instances should be immutable after build_action_list returns, but we're not marking as frozen because we set _ctx in __post_init__"""
+
 import re
 from collections import defaultdict
 
@@ -38,24 +38,27 @@ class Context:
     groups: Dict[int, 'Group'] = field(default_factory=dict)
 
 
-@dataclass(frozen=True)
+@dataclass(unsafe_hash=True)
 class CtxHolder:
-    _ctx: InitVar[Context] = field(compare=False)
+    _ctx: InitVar[Context]
+
+    def __post_init__(self, ctx):
+        self._ctx = ctx
 
 
-@dataclass(frozen=True)
+@dataclass(unsafe_hash=True)
 class Affect(CtxHolder, ActionLookupMixin):
     type: str
     group_id: int
     action_id: int
 
 
-@dataclass(frozen=True)
+@dataclass(unsafe_hash=True)
 class AffectTaskAffect(Affect):
     task: Task
 
 
-@dataclass(frozen=True)
+@dataclass(unsafe_hash=True)
 class CompleteActionAffect(AffectTaskAffect):
     @property
     def desc(self):
@@ -63,7 +66,7 @@ class CompleteActionAffect(AffectTaskAffect):
 
 
 
-@dataclass(frozen=True)
+@dataclass(unsafe_hash=True)
 class OffsetActionAffect(AffectTaskAffect):
     offset: float
 
@@ -72,14 +75,14 @@ class OffsetActionAffect(AffectTaskAffect):
         return f'Offset {self.task.name} on {self.action.path} by {self.offset} hours'
 
 
-@dataclass(frozen=True)
+@dataclass(unsafe_hash=True)
 class CreateActionAffect(Affect):
     @property
     def desc(self):
         return f'Create {self.action.path}'
 
 
-@dataclass(frozen=True)
+@dataclass(unsafe_hash=True)
 class ExternalAction:
     """Something happening outside of ResWare that ResWare can detect and use to trigger an affect
 
@@ -101,25 +104,30 @@ class ExternalAction:
         return {'fillcolor': '#a6cee3', 'style': 'filled'}
 
 
-@dataclass(frozen=True)
+@dataclass
+class DocumentType:
+    id: int
+    name: str
+
+
+@dataclass(unsafe_hash=True)
 class DocumentAdded(ExternalAction):
-    document_type_id: int
-    document_name: str
+    document: DocumentType
 
     @property
     def label(self):
-        return self.document_name + ' Added'
+        return self.document.name + ' Added'
 
     @property
     def node_name(self):
-        return _node_name(self.document_name, self.id, self.document_type_id)
+        return _node_name(self.document.name, self.id, self.document.id)
 
     @property
     def dot_attrs(self):
         return {'fillcolor': '#b2df8a', 'style': 'filled'}
 
 
-@dataclass(frozen=True)
+@dataclass(unsafe_hash=True)
 class ActionEventReceived(ExternalAction):
     action_event_id: int
     action_event_name: str
@@ -144,13 +152,14 @@ class Trigger:
     external_action: ExternalAction
 
 
-@dataclass(frozen=True)
+@dataclass(unsafe_hash=True)
 class Email(CtxHolder, ActionLookupMixin):
     """An email template that's sent on the start or completion of an action"""
     action_id: int
     group_id: int
     name: str
     task: Task
+
 
     @property
     def node_name(self):
@@ -161,7 +170,7 @@ class Email(CtxHolder, ActionLookupMixin):
         return {'fillcolor': '#33a02c', 'style': 'filled', 'fontcolor': 'white'}
 
 
-@dataclass(frozen=True)
+@dataclass(unsafe_hash=True)
 class Action(CtxHolder, GroupLookupMixin):
     """An action in a group with the emails it sends and the affects its start or completion cause
 
@@ -209,8 +218,9 @@ class ActionList:
 def _build_external_action(models, model_trigger):
     name = models.external_actions[model_trigger.external_action_id].name
     if model_trigger.document_type_id is not None:
-        doc = models.document_types[model_trigger.document_type_id]
-        return DocumentAdded(model_trigger.external_action_id, name, doc.id, doc.name)
+        model_doc = models.document_types[model_trigger.document_type_id]
+        doc = DocumentType(model_doc.id, model_doc.name)
+        return DocumentAdded(model_trigger.external_action_id, name, doc)
     elif model_trigger.action_event_id is not None:
         ae = models.action_events[model_trigger.action_event_id]
         return ActionEventReceived(model_trigger.external_action_id, name, ae.id, ae.name)
