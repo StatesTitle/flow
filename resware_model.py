@@ -77,7 +77,51 @@ class DocumentType:
 class Email:
     id: int = col('ActionEmailTemplateID')
     name: str = col('ActionEmailTemplateName')
+    subject: str = col('EmailSubject', nullable=True)
+    body: str = col('EmailBody', nullable=True)
+    # 0 - neither attach by template or document type
+    # 1 - attach by template only
+    # 2 - attach by document type
+    # 3 - attach by both template and document type
+    email_attachment_type: int = col('EmailAttachmentType')
+    generate_hud: bool = col('GenerateHUD')
+    generate_buyer_statement: bool = col('GenerateBuyerStatement')
+    combine_as_pdf: bool = col('CombineAsPDF')
+    pdf_name: str = col("PDFName", nullable=True)
+    pdf_document_type_id: int = col("PDFDocumentTypeID", nullable=True)
+    # 1 = user, 2 = internet orders, 3 = team, 4 = team group, 5 = user's reply to, 6 = issue tracker, 7 = assigned team
+    reply_to_type: int = col("ReplyToType")
+    transmit_via_xml: bool = col('TransmitViaXML')
+    combine_generated_documents_attach_to_email: bool = col('CombineGeneratedDocumentsAttachToEmail')
+    # There are also a huge number of columns controlling what's generated. Add em as needed
 
+
+@tableclass('ActionEmailTemplateDocumentTypeRef', lookup='email_id', one_to_many=True)
+class EmailDocument:
+    email_id: int = col('ActionEmailTemplateID')
+    document_type_id: int = col('DocumentTypeID')
+
+
+@tableclass('ActionEmailTemplatePartnerTypeRef', lookup='email_id', one_to_many=True)
+class EmailPartner:
+    """The partner that should receive the email"""
+    email_id: int = col('ActionEmailTemplateID')
+    partner_type_id: int = col('PartnerTypeID')
+
+
+@tableclass('ActionEmailTemplateTemplateRef', lookup='email_id', one_to_many=True)
+class EmailTemplate:
+    email_id: int = col('ActionEmailTemplateID')
+    template_id: int = col('TemplateID')
+
+
+@tableclass('Template')
+class Template:
+    id: int = col('TemplateID')
+    name: str = col('Name')
+    filename: str = col('Filename')
+    document_type_id: int = col('DocumentTypeID')
+    # lots more columns about how the document is generated
 
 def _email_start_complete_to_task(start_complete):
     return Task.COMPLETE if start_complete else Task.START
@@ -178,6 +222,10 @@ class Models:
         self.triggers = load(conn, Trigger)
         self.external_actions = load(conn, ExternalAction)
         self.emails = load(conn, Email)
+        self.email_documents = load(conn, EmailDocument)
+        self.email_partners = load(conn, EmailPartner)
+        self.email_templates = load(conn, EmailTemplate)
+        self.templates = load(conn, Template)
         self.action_emails = load(conn, ActionEmail)
         self.action_events = load(conn, ActionEvent)
         self.document_types = load(conn, DocumentType)

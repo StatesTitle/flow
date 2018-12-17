@@ -152,6 +152,13 @@ class Trigger:
     external_action: ExternalAction
 
 
+@dataclass
+class Template:
+    name: str
+    filename: str
+    document_type: DocumentType
+
+
 @dataclass(unsafe_hash=True)
 class Email(CtxHolder, ActionLookupMixin):
     """An email template that's sent on the start or completion of an action"""
@@ -159,6 +166,9 @@ class Email(CtxHolder, ActionLookupMixin):
     group_id: int
     name: str
     task: Task
+    documents: List[DocumentType] = field(default_factory=list, compare=False)
+    templates: List[DocumentType] = field(default_factory=list, compare=False)
+    recipients: List[PartnerType] = field(default_factory=list, compare=False)
 
 
     @property
@@ -250,6 +260,26 @@ def _build_triggers(models, model_trigger, ctx):
         yield Trigger(affect, external_action)
 
 
+def _build_document_type(models, document_type_id):
+    model_doc = models.document_types[document_type_id]
+    return DocumentType(model_doc.id, model_doc.name)
+
+
+def _build_email(models, model_action_email, action, ctx):
+    email = Email(ctx, action.group_id, action.action_id,
+            models.emails[model_action_email.email_id].name, model_action_email.task)
+    for model_email_doc in models.email_documents[model_action_email.email_id]:
+        model_doc = models.document_types[model_email_doc.document_type_id]
+        email.documents.append(_build_document_type(models, model_email_doc.document_type_id))
+    for model_email_template in models.email_templates[model_action_email.email_id]:
+        model_template = models.templates[model_email_template.template_id]
+        doc = _build_document_type(models, model_template.document_type_id)
+        email.templates.append(Template(model_template.name, model_template.filename, doc))
+    for model_email_partner in models.email_partners[model_action_email.email_id]:
+        email.recipients.append(models.partner_types[model_email_partner.partner_type_id])
+    return email
+
+
 def _build_action(models, model_group_action, ctx):
     model_action = models.actions[model_group_action.action_id]
     action = Action(
@@ -265,20 +295,11 @@ def _build_action(models, model_group_action, ctx):
             action.complete_affects.extend(_build_affects(affect, ctx))
 
     for model_action_email in models.action_emails[action.action_id]:
+        email = _build_email(models, model_action_email, action, ctx)
         if model_action_email.task == Task.START:
-            action.start_emails.append(
-                Email(ctx,
-                    action.group_id, action.action_id, models.emails[model_action_email.email_id].name,
-                    model_action_email.task
-                )
-            )
+            action.start_emails.append(email)
         if model_action_email.task == Task.COMPLETE:
-            action.complete_emails.append(
-                Email(ctx,
-                    action.group_id, action.action_id, models.emails[model_action_email.email_id].name,
-                    model_action_email.task
-                )
-            )
+            action.complete_emails.append(email)
     return action
 
 
@@ -410,8 +431,10 @@ if __name__ == '__main__':
     models = build_models()
     #print(build_partners(models))
     alist = build_action_list(models, ACTION_LIST_DEF_ID)
-#    import json
-#    print(json.dumps(asdict(alist), indent='  '))
+    import json
+    print(json.dumps(asdict(alist), indent='  '))
+    import sys
+    sys.exit(0)
     for group in alist.groups:
         print('Group:', group.name)
         for trigger in group.triggers:
