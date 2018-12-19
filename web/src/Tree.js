@@ -1,17 +1,11 @@
 import React, { Component } from 'react';
 
-class Col extends Component {
-    render() {
-        return <div className={"col-" + this.props.width}>{this.props.children}</div>
-    }
-}
-
 class Row extends Component {
     render() {
         const indent = this.props.indent ? this.props.indent : 0;
         return (<div className="row">
-            {this.props.indent && <Col width={indent}/>}
-            <Col width={12 - indent}>{this.props.children}</Col>
+            {indent > 0 && <div className={"col-" + indent}/>}
+            <div className={"col-"+ (12 - indent)}>{this.props.children}</div>
         </div>);
     }
 }
@@ -37,11 +31,6 @@ class OnDone extends Component {
     }
 }
 
-class ActionDetail extends Component {
-    render() {
-        return <p>{this.props.action.name}</p>;
-    }
-}
 
 class Action extends Component {
     hasContent(affects, emails) {
@@ -76,6 +65,46 @@ class Group extends Component {
     }
 }
 
+class Field extends Component {
+        render() {
+            if (!this.props.value) {
+                return null;
+            } else if (this.props.length > 40) {
+                return [<p className="font-weight-bold">{this.props.name}</p>, <p>{this.props.value}</p>];
+            } else {
+                return (<p><span className="font-weight-bold">{this.props.name}: </span>{this.props.value}</p>);
+            }
+        }
+}
+
+class EmailDetail extends Component {
+        render() {
+            const email = this.props.email;
+            return (<div className="card">
+                <div className="card-header">Email {email.name}</div>
+                <div className="card-body">
+                    <Field name="Subject" value={email.subject}/>
+                    <Field name="Body" value={email.body}/>
+                    <Field name="Attached Documents" value={email.documents.map(d => d.name).join(', ')}/>
+                    <Field name="Generated Templates" value={email.templates.map(t => t.name + " of type " + t.document_type.name).join(', ')}/>
+                    <Field name="Recipients" value={email.recipients.map(r => r.name).join(', ')}/>
+                </div>
+            </div>);
+        }
+}
+
+class ActionDetail extends Component {
+    render() {
+        return (<div className="card">
+            <div className="card-header">{this.props.action.name} Detail</div>
+            <div className="card-body">
+                {this.props.action.start_emails.map(e => <EmailDetail email={e}/>)}
+                {this.props.action.complete_emails.map(e => <EmailDetail email={e}/>)}
+            </div>
+        </div>);
+    }
+}
+
 class Tree extends Component {
     render() {
         function hasEverything(email) {
@@ -91,15 +120,14 @@ class Tree extends Component {
                 }
             }
         }
-        console.log(detailAction);
         return (<div className="container">
             <div className="row">
-                <Col width={8}>
+                <div className="col-6" style={{height: '100vh', overflow: "auto"}}>
                     {this.props.actionList.groups.map(g => <Group group={g}/>)}
-                </Col>
-                <Col width={4}>
+                </div>
+                <div className="col">
                     <ActionDetail action={detailAction}/>
-                </Col>
+                </div>
             </div>
         </div>);
     }
