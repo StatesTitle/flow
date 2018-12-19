@@ -165,6 +165,8 @@ class Email(CtxHolder, ActionLookupMixin):
     action_id: int
     group_id: int
     name: str
+    subject: str
+    body: str
     task: Task
     documents: List[DocumentType] = field(default_factory=list, compare=False)
     templates: List[DocumentType] = field(default_factory=list, compare=False)
@@ -266,8 +268,9 @@ def _build_document_type(models, document_type_id):
 
 
 def _build_email(models, model_action_email, action, ctx):
+    model_email = models.emails[model_action_email.email_id]
     email = Email(ctx, action.group_id, action.action_id,
-            models.emails[model_action_email.email_id].name, model_action_email.task)
+            model_email.name, model_email.subject, model_email.body, model_action_email.task)
     for model_email_doc in models.email_documents[model_action_email.email_id]:
         model_doc = models.document_types[model_email_doc.document_type_id]
         email.documents.append(_build_document_type(models, model_email_doc.document_type_id))

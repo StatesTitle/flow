@@ -1,14 +1,19 @@
 import React, { Component } from 'react';
 
+class Col extends Component {
+    render() {
+        return <div className={"col-" + this.props.width}>{this.props.children}</div>
+    }
+}
+
 class Row extends Component {
     render() {
         const indent = this.props.indent ? this.props.indent : 0;
         return (<div className="row">
-            {this.props.indent && <div className={"col-" + indent}/>}
-            <div className={"col-" + (12 - indent)}>{this.props.children}</div>
+            {this.props.indent && <Col width={indent}/>}
+            <Col width={12 - indent}>{this.props.children}</Col>
         </div>);
     }
-
 }
 
 class Email extends Component {
@@ -35,6 +40,13 @@ class OnDone extends Component {
     }
 }
 
+class ActionDetail extends Component {
+    render() {
+        return <p>{this.props.action.name}</p>;
+    }
+}
+
+
 class Action extends Component {
     render() {
         const action = this.props.action;
@@ -50,10 +62,32 @@ class Group extends Component {
         return [groupRow].concat(actionRows);
     }
 }
+
 class Tree extends Component {
     render() {
+        function hasEverything(email) {
+            return email.documents.length && email.templates.length && email.recipients.length;
+        }
+        let detailAction = null;
+        for (let i = 0; i < this.props.actionList.groups.length && detailAction === null; i++) {
+            let group = this.props.actionList.groups[i];
+            for (let j = 0; j < group.actions.length && detailAction === null; j++) {
+                let action = group.actions[j];
+                if (action.start_emails.some(hasEverything) || action.complete_emails.some(hasEverything)) {
+                    detailAction = action;
+                }
+            }
+        }
+        console.log(detailAction);
         return (<div className="container">
-            {this.props.actionList.groups.map(g => <Group group={g}/>)}
+            <div className="row">
+                <Col width={8}>
+                    {this.props.actionList.groups.map(g => <Group group={g}/>)}
+                </Col>
+                <Col width={4}>
+                    <ActionDetail action={detailAction}/>
+                </Col>
+            </div>
         </div>);
     }
 }
@@ -77,8 +111,9 @@ function attachActionsToAffects(actionList) {
             group.actions.forEach(action =>{
                 attach(action.start_affects);
                 attach(action.complete_affects);
-            })
+            });
         });
         return actionList;
 }
+
 export {Tree, attachActionsToAffects};

@@ -522,8 +522,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 976,
-            "document_name": "UCD"
+            "document": {
+              "id": 976,
+              "name": "UCD"
+            }
           }
         }
       ]
@@ -546,13 +548,49 @@
               "action_id": 16,
               "group_id": 96,
               "name": "FORM: Vesting Certificate",
-              "task": 1
+              "subject": null,
+              "body": null,
+              "task": 1,
+              "documents": [],
+              "templates": [
+                {
+                  "name": "Vesting Certificate",
+                  "filename": "Vesting_Certificate.dot",
+                  "document_type": {
+                    "id": 1020,
+                    "name": "Vesting Certificate"
+                  }
+                }
+              ],
+              "recipients": []
             },
             {
               "action_id": 16,
               "group_id": 96,
               "name": "FORM: Order Entry Docs",
-              "task": 1
+              "subject": null,
+              "body": "Wiring Instructions\r\nCustom Fields",
+              "task": 1,
+              "documents": [],
+              "templates": [
+                {
+                  "name": "Wiring Instructions",
+                  "filename": "Wiring_Instructions.dot",
+                  "document_type": {
+                    "id": 1019,
+                    "name": "Wiring Instructions"
+                  }
+                },
+                {
+                  "name": "Custom Fields Document",
+                  "filename": "CustomFields.dot",
+                  "document_type": {
+                    "id": 1047,
+                    "name": "Custom Fields Document"
+                  }
+                }
+              ],
+              "recipients": []
             }
           ],
           "complete_emails": [],
@@ -612,7 +650,22 @@
               "action_id": 16,
               "group_id": 97,
               "name": "*To Client: Preliminary Closing Disclosure",
-              "task": 2
+              "subject": null,
+              "body": null,
+              "task": 2,
+              "documents": [
+                {
+                  "id": 3,
+                  "name": "Preliminary Settlement Statement"
+                }
+              ],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -649,7 +702,12 @@
               "action_id": 16,
               "group_id": 98,
               "name": "*To Client: Order Confirmation - Sad Path",
-              "task": 2
+              "subject": "THANK YOU FOR THE ORDER!",
+              "body": "States Title has received your order for Loan Number _GetLoanNumber_1_.\r\n\r\nYour States Title Order Number is _GetFileNumber_1_.\r\n\r\nA Preliminary Closing Disclosure has been instantly prepared and is attached to this email.\r\n\r\nWe are working on your order and will provide you with a Title Commitment within 48-72 hours. ",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": []
             }
           ],
           "start_affects": [],
@@ -728,7 +786,17 @@
               "action_id": 16,
               "group_id": 160,
               "name": "*To Client: Borrower's Auth Request",
-              "task": 2
+              "subject": "Borrower\u2019s Authorization Request",
+              "body": "In order to help us clear title and resolve outstanding mortgage requirements, please provide a signed Borrower\u2019s authorization at your earliest convenience.",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -818,8 +886,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 1007,
-            "document_name": "Borrower's Authorization"
+            "document": {
+              "id": 1007,
+              "name": "Borrower's Authorization"
+            }
           }
         },
         {
@@ -859,8 +929,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 1008,
-            "document_name": "1003"
+            "document": {
+              "id": 1008,
+              "name": "1003"
+            }
           }
         },
         {
@@ -898,7 +970,22 @@
               "action_id": 17,
               "group_id": 102,
               "name": "*To Payoff Lender 1 - Order Payoff",
-              "task": 2
+              "subject": "Order Payoff",
+              "body": "Requesting payoff for the attached referenced loan.",
+              "task": 2,
+              "documents": [
+                {
+                  "id": 1007,
+                  "name": "Borrower's Authorization"
+                }
+              ],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 23,
+                  "name": "Payoff Lender 1"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -943,8 +1030,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 969,
-            "document_name": "Payoff - 1st"
+            "document": {
+              "id": 969,
+              "name": "Payoff - 1st"
+            }
           }
         }
       ]
@@ -999,7 +1088,30 @@
               "action_id": 20,
               "group_id": 114,
               "name": "*To Lender: CTC Notification",
-              "task": 2
+              "subject": "Clear to Close",
+              "body": "We are writing to inform you that barring a change in circumstance, _GetFileNumber_1_ has been cleared of all liens and encumbrances and is now clear to close. If a change in circumstance does occur, e.g. changes to the loan amount, discovery of new lien requiring subordination, or addition of another borrower to the loan, please notify us as soon as possible so that we can review changes to title, if any.",
+              "task": 2,
+              "documents": [
+                {
+                  "id": 3,
+                  "name": "Preliminary Settlement Statement"
+                },
+                {
+                  "id": 99,
+                  "name": "Commitment"
+                },
+                {
+                  "id": 1020,
+                  "name": "Vesting Certificate"
+                }
+              ],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -1031,7 +1143,25 @@
               "action_id": 20,
               "group_id": 148,
               "name": "FORM: Commitment Merge",
-              "task": 1
+              "subject": null,
+              "body": null,
+              "task": 1,
+              "documents": [
+                {
+                  "id": 1029,
+                  "name": "Commitment Jacket"
+                },
+                {
+                  "id": 1042,
+                  "name": "Legal Description"
+                },
+                {
+                  "id": 1043,
+                  "name": "Commitment Schedules"
+                }
+              ],
+              "templates": [],
+              "recipients": []
             }
           ],
           "complete_emails": [
@@ -1039,19 +1169,85 @@
               "action_id": 20,
               "group_id": 148,
               "name": "*To Client: Commitment Package",
-              "task": 2
+              "subject": "_CD_Underwriter for Title Email_21_",
+              "body": "_CD_Check For Taxes_12_",
+              "task": 2,
+              "documents": [
+                {
+                  "id": 9,
+                  "name": "Tax Statement"
+                },
+                {
+                  "id": 99,
+                  "name": "Commitment"
+                },
+                {
+                  "id": 984,
+                  "name": "CPL"
+                },
+                {
+                  "id": 1019,
+                  "name": "Wiring Instructions"
+                }
+              ],
+              "templates": [
+                {
+                  "name": "Wiring Instructions",
+                  "filename": "Wiring_Instructions.dot",
+                  "document_type": {
+                    "id": 1019,
+                    "name": "Wiring Instructions"
+                  }
+                }
+              ],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                }
+              ]
             },
             {
               "action_id": 20,
               "group_id": 148,
               "name": "*To Client: Commitment Doc (Real EC)",
-              "task": 2
+              "subject": "_CD_Underwriter for Title Email_21_",
+              "body": "_CD_Check For Taxes_12_",
+              "task": 2,
+              "documents": [
+                {
+                  "id": 99,
+                  "name": "Commitment"
+                }
+              ],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                }
+              ]
             },
             {
               "action_id": 20,
               "group_id": 148,
               "name": "*To Client: Commitment Accessory Docs  (Real EC)",
-              "task": 2
+              "subject": null,
+              "body": null,
+              "task": 2,
+              "documents": [
+                {
+                  "id": 984,
+                  "name": "CPL"
+                }
+              ],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                }
+              ]
             }
           ],
           "start_affects": [
@@ -1090,7 +1286,17 @@
               "action_id": 20,
               "group_id": 147,
               "name": "*To Lender: Vesting Issue",
-              "task": 1
+              "subject": "Vesting Issue Found",
+              "body": "The name(s) we have on file for this transaction are:\r\n\r\n_GetBuyerSellerNamesWithVesting_Buyer_1_\r\n\r\nThe name(s) returned with our search package are:\r\n\r\n_GetSearchDataVesting_1_\r\n\r\nPlease advise if we will need to order a deed.\r\n\r\nWe [do/do not] anticipate this extending the clear to close timeline [by length of time if it extends]. We estimate that this will cost the borrower _CF_Estimated.Deed.Recording.Fee_8_. ",
+              "task": 1,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "complete_emails": [],
@@ -1119,7 +1325,17 @@
               "action_id": 20,
               "group_id": 154,
               "name": "**To Client: CTC Delay",
-              "task": 2
+              "subject": "Clear to Close Delay",
+              "body": "We are waiting on [Item] from [entity or person] before we can clear [issue]. We requested this from [Entity/Person] and [Entity/Person] on [Date] and [Date]. Once [the Item] is received, we expect to be clear to close in [time to resolution].",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -1174,8 +1390,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 1043,
-            "document_name": "Commitment Schedules"
+            "document": {
+              "id": 1043,
+              "name": "Commitment Schedules"
+            }
           }
         },
         {
@@ -1188,8 +1406,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 99,
-            "document_name": "Commitment"
+            "document": {
+              "id": 99,
+              "name": "Commitment"
+            }
           }
         },
         {
@@ -1202,8 +1422,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 984,
-            "document_name": "CPL"
+            "document": {
+              "id": 984,
+              "name": "CPL"
+            }
           }
         }
       ]
@@ -1295,7 +1517,17 @@
               "action_id": 23,
               "group_id": 118,
               "name": "*To Notary: Scheduling Request",
-              "task": 2
+              "subject": "New Scheduling Request",
+              "body": "Please review the request below. If you cannot accomidate this request, please let us know ASAP.\r\n\r\nSigning Date/Time & Location:\r\n_GetSigningDateTime_1_\r\n_GetSigningAddress_1_\r\n_GetSigningAddressCityStateZip_1_\r\n\r\n_GetSigningAddressMapURL_1_\r\n\r\n",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 10000,
+                  "name": "Notary"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -1348,7 +1580,17 @@
               "action_id": 23,
               "group_id": 120,
               "name": "*To Client: Scheduling Confirmation",
-              "task": 2
+              "subject": "Closing Schedule Confirmation",
+              "body": "We are writing to inform you that the closing for _GetFileNumber_1_ has been successfully scheduled for _GetEstimatedSettlementDateLong_1_. If you haven\u2019t done so already, please provide us with the closing instructions at your earliest convenience.",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -1590,7 +1832,17 @@
               "action_id": 24,
               "group_id": 125,
               "name": "*To Notary: Closing Package",
-              "task": 2
+              "subject": "Documents for Signing",
+              "body": "Please login to download the documents for the above referenced signing.",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 10000,
+                  "name": "Notary"
+                }
+              ]
             }
           ],
           "start_affects": [
@@ -1696,7 +1948,22 @@
               "action_id": 24,
               "group_id": 144,
               "name": "*To Lender; CD for Approval",
-              "task": 2
+              "subject": "CD for Approval",
+              "body": "Please review the attached CD and responed with any changes or approval.",
+              "task": 2,
+              "documents": [
+                {
+                  "id": 12,
+                  "name": "Buyer's Closing Statement"
+                }
+              ],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 10000,
+                  "name": "Notary"
+                }
+              ]
             }
           ],
           "start_affects": [
@@ -1760,7 +2027,22 @@
               "action_id": 24,
               "group_id": 146,
               "name": "*To Lender: Revised CD Approval",
-              "task": 2
+              "subject": "Revised CD for Review",
+              "body": "Please review the attached revised CD.",
+              "task": 2,
+              "documents": [
+                {
+                  "id": 12,
+                  "name": "Buyer's Closing Statement"
+                }
+              ],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [
@@ -1849,7 +2131,17 @@
               "action_id": 24,
               "group_id": 163,
               "name": "*To Client: Closing Incomplete Notification",
-              "task": 2
+              "subject": "Notification of incomplete signing",
+              "body": "We are writing to inform you that the previously scheduled closing for _GetBuyerSellerNames_Buyer_1_] for _GetFileNumber_1_ at _GetEstimatedSettlementDate_1_ did not close as scheduled due to _CF_No.Sign.Reasons_4_.\r\n\r\nWe will _CF_No.Sign.Resolution_7_  and notify you upon resolution.",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -1953,8 +2245,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 1014,
-            "document_name": "Lender Package - Unsigned"
+            "document": {
+              "id": 1014,
+              "name": "Lender Package - Unsigned"
+            }
           }
         },
         {
@@ -1967,8 +2261,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 997,
-            "document_name": "FedEx Label"
+            "document": {
+              "id": 997,
+              "name": "FedEx Label"
+            }
           }
         },
         {
@@ -1981,8 +2277,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 972,
-            "document_name": "Closing Instructions"
+            "document": {
+              "id": 972,
+              "name": "Closing Instructions"
+            }
           }
         },
         {
@@ -1995,8 +2293,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 976,
-            "document_name": "UCD"
+            "document": {
+              "id": 976,
+              "name": "UCD"
+            }
           }
         }
       ]
@@ -2072,7 +2372,22 @@
               "action_id": 25,
               "group_id": 128,
               "name": "*To Lender: Funding Docs",
-              "task": 2
+              "subject": "Funding Docs",
+              "body": "Please review the attached funding documents.",
+              "task": 2,
+              "documents": [
+                {
+                  "id": 1016,
+                  "name": "Funding Docs"
+                }
+              ],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -2270,7 +2585,26 @@
               "action_id": 25,
               "group_id": 182,
               "name": "FORM: Pennymac Note Coversheet Merge",
-              "task": 2
+              "subject": null,
+              "body": null,
+              "task": 2,
+              "documents": [
+                {
+                  "id": 1046,
+                  "name": "Lender Package - Executed Note"
+                }
+              ],
+              "templates": [
+                {
+                  "name": "CS- Signed Closing Package",
+                  "filename": "CS-_Signed_Closing_Package.dot",
+                  "document_type": {
+                    "id": 1045,
+                    "name": "Cover Sheet"
+                  }
+                }
+              ],
+              "recipients": []
             }
           ],
           "start_affects": [],
@@ -2308,8 +2642,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 1015,
-            "document_name": "Lender Package - Signed"
+            "document": {
+              "id": 1015,
+              "name": "Lender Package - Signed"
+            }
           }
         },
         {
@@ -2322,8 +2658,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 1016,
-            "document_name": "Funding Docs"
+            "document": {
+              "id": 1016,
+              "name": "Funding Docs"
+            }
           }
         },
         {
@@ -2336,8 +2674,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 1017,
-            "document_name": "Borrower Funds"
+            "document": {
+              "id": 1017,
+              "name": "Borrower Funds"
+            }
           }
         },
         {
@@ -2375,8 +2715,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 1046,
-            "document_name": "Lender Package - Executed Note"
+            "document": {
+              "id": 1046,
+              "name": "Lender Package - Executed Note"
+            }
           }
         }
       ]
@@ -2465,7 +2807,30 @@
               "action_id": 26,
               "group_id": 137,
               "name": "**To Client: Recording Confirms",
-              "task": 2
+              "subject": "Post Closing - Recording Confirmed",
+              "body": "We are writing to inform you that the documents for this file has been successfully recorded. Please see the attached digital copies.\r\n\r\n_GetRecordingDocuments_1_",
+              "task": 2,
+              "documents": [
+                {
+                  "id": 988,
+                  "name": "Recording Document"
+                },
+                {
+                  "id": 1018,
+                  "name": "Recorded Docs - Mortgage"
+                },
+                {
+                  "id": 1025,
+                  "name": "Recorded Docs - Subordination"
+                }
+              ],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                }
+              ]
             }
           ],
           "start_affects": [
@@ -2522,8 +2887,10 @@
           "external_action": {
             "id": 215,
             "name": "CSC: Package Recorded",
-            "document_type_id": 1018,
-            "document_name": "Recorded Docs - Mortgage"
+            "document": {
+              "id": 1018,
+              "name": "Recorded Docs - Mortgage"
+            }
           }
         },
         {
@@ -2558,7 +2925,30 @@
               "action_id": 27,
               "group_id": 133,
               "name": "*To Client: Policy - Loan",
-              "task": 2
+              "subject": "Final Title Policy",
+              "body": "Attached please find the final title policy for [Order #]. Let us know if you have any additional questions or concerns.",
+              "task": 2,
+              "documents": [
+                {
+                  "id": 103,
+                  "name": "Policy Package"
+                },
+                {
+                  "id": 979,
+                  "name": "Loan Policy Jacket"
+                },
+                {
+                  "id": 1004,
+                  "name": "Loan Policy Schedules"
+                }
+              ],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -2578,7 +2968,30 @@
               "action_id": 27,
               "group_id": 140,
               "name": "*To Client: Policy - Loan",
-              "task": 2
+              "subject": "Final Title Policy",
+              "body": "Attached please find the final title policy for [Order #]. Let us know if you have any additional questions or concerns.",
+              "task": 2,
+              "documents": [
+                {
+                  "id": 103,
+                  "name": "Policy Package"
+                },
+                {
+                  "id": 979,
+                  "name": "Loan Policy Jacket"
+                },
+                {
+                  "id": 1004,
+                  "name": "Loan Policy Schedules"
+                }
+              ],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -2605,7 +3018,26 @@
               "action_id": 27,
               "group_id": 139,
               "name": "*To Lender: Final Docs",
-              "task": 2
+              "subject": "Final Docs",
+              "body": "See attached recorded mortgage and title policy for the above referenced loan.",
+              "task": 2,
+              "documents": [
+                {
+                  "id": 103,
+                  "name": "Policy Package"
+                },
+                {
+                  "id": 1018,
+                  "name": "Recorded Docs - Mortgage"
+                }
+              ],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -2650,8 +3082,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 103,
-            "document_name": "Policy Package"
+            "document": {
+              "id": 103,
+              "name": "Policy Package"
+            }
           }
         },
         {
@@ -2664,8 +3098,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 1026,
-            "document_name": "Policy - Short Form"
+            "document": {
+              "id": 1026,
+              "name": "Policy - Short Form"
+            }
           }
         },
         {
@@ -2678,8 +3114,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 1027,
-            "document_name": "Policy - Lenders"
+            "document": {
+              "id": 1027,
+              "name": "Policy - Lenders"
+            }
           }
         }
       ]
@@ -2797,7 +3235,21 @@
               "action_id": 30,
               "group_id": 158,
               "name": "**To Client: Request Mortgage Statement",
-              "task": 2
+              "subject": "Requesting and Updating Portfolio Payoff Statement",
+              "body": "In order to help us accurately quote title fees on the preliminary ALTA Settlement Statement, we are requesting the following mortgage statements:\r\n\r\n_GetSettlementLineAmount_401_1_\r\n\r\nPlease provide at your earliest convenience. \r\n\r\n** NEED SQL TO CREATE PULL FIELD FOR PAYOFF INFO",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 23,
+                  "name": "Payoff Lender 1"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -2835,8 +3287,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 1022,
-            "document_name": "Mortgage Statement"
+            "document": {
+              "id": 1022,
+              "name": "Mortgage Statement"
+            }
           }
         }
       ]
@@ -2860,7 +3314,12 @@
               "action_id": 31,
               "group_id": 161,
               "name": "*To Client: Disbursement Delay",
-              "task": 2
+              "subject": "Disbursement Delay",
+              "body": "We are writing to inform you that there has been a disbursement delay due to _CF_Disbursement.Delay.Reason_3_.\r\n\r\n\r\n\r\nPlease contact us by phone or email to resolve. ",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": []
             }
           ],
           "start_affects": [],
@@ -3035,8 +3494,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 5,
-            "document_name": "Deed"
+            "document": {
+              "id": 5,
+              "name": "Deed"
+            }
           }
         }
       ]
@@ -3059,7 +3520,46 @@
               "action_id": 36,
               "group_id": 104,
               "name": "FORM: Wiring, Jacket, Legal",
-              "task": 1
+              "subject": null,
+              "body": null,
+              "task": 1,
+              "documents": [
+                {
+                  "id": 1029,
+                  "name": "Commitment Jacket"
+                },
+                {
+                  "id": 1042,
+                  "name": "Legal Description"
+                }
+              ],
+              "templates": [
+                {
+                  "name": "Legal Description - Exhibit A",
+                  "filename": "Legal Description - Exhibit A.dot",
+                  "document_type": {
+                    "id": 1042,
+                    "name": "Legal Description"
+                  }
+                },
+                {
+                  "name": "WFG 3173800 - Jacket",
+                  "filename": "WFG 3173800 - Jacket.dot",
+                  "document_type": {
+                    "id": 1029,
+                    "name": "Commitment Jacket"
+                  }
+                },
+                {
+                  "name": "Wiring Instructions",
+                  "filename": "Wiring_Instructions.dot",
+                  "document_type": {
+                    "id": 1019,
+                    "name": "Wiring Instructions"
+                  }
+                }
+              ],
+              "recipients": []
             }
           ],
           "complete_emails": [
@@ -3067,7 +3567,17 @@
               "action_id": 36,
               "group_id": 104,
               "name": "*To Searcher: Order Search",
-              "task": 2
+              "subject": "Search Package Request",
+              "body": "Please accept this email as a request for a new _GetProductTypePullField1_1_ search package on the following property:\r\n\r\nProperty Address: _GetPropertyAddressFull_1_\r\nParcel ID: _GetPropertyParcelID1_1_\r\nCurrent Owners: _GetBuyerSellerNames_Buyer_1_\r\n\r\n_GetProductTypeSearcherInstructions_1_",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 12,
+                  "name": "Searcher"
+                }
+              ]
             }
           ],
           "start_affects": [
@@ -3203,8 +3713,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 27,
-            "document_name": "Search Package"
+            "document": {
+              "id": 27,
+              "name": "Search Package"
+            }
           }
         },
         {
@@ -3217,8 +3729,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 982,
-            "document_name": "Bankruptcy Search"
+            "document": {
+              "id": 982,
+              "name": "Bankruptcy Search"
+            }
           }
         },
         {
@@ -3231,8 +3745,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 984,
-            "document_name": "CPL"
+            "document": {
+              "id": 984,
+              "name": "CPL"
+            }
           }
         }
       ]
@@ -3289,7 +3805,17 @@
               "action_id": 37,
               "group_id": 180,
               "name": "*To Tax Prep: Order Taxes",
-              "task": 2
+              "subject": "New Tax Request",
+              "body": "Please provide taxes for the following property:\r\n\r\n_GetPropertyAddressFull_1_",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 10010,
+                  "name": "Tax Prep"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -3317,7 +3843,22 @@
               "action_id": 37,
               "group_id": 181,
               "name": "*To Client: Taxes",
-              "task": 2
+              "subject": "Taxes",
+              "body": null,
+              "task": 2,
+              "documents": [
+                {
+                  "id": 9,
+                  "name": "Tax Statement"
+                }
+              ],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                }
+              ]
             }
           ],
           "start_affects": [
@@ -3355,8 +3896,10 @@
           "external_action": {
             "id": 121,
             "name": "Document Added",
-            "document_type_id": 9,
-            "document_name": "Tax Statement"
+            "document": {
+              "id": 9,
+              "name": "Tax Statement"
+            }
           }
         }
       ]
@@ -3507,7 +4050,21 @@
               "action_id": 38,
               "group_id": 187,
               "name": "RealEC: Title-220 Comment",
-              "task": 2
+              "subject": null,
+              "body": "___",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -3601,7 +4158,26 @@
               "action_id": 38,
               "group_id": 191,
               "name": "RealEC: Title-Deliver Tax Document",
-              "task": 2
+              "subject": null,
+              "body": "Please see attached tax document.",
+              "task": 2,
+              "documents": [
+                {
+                  "id": 9,
+                  "name": "Tax Statement"
+                }
+              ],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -3621,7 +4197,26 @@
               "action_id": 38,
               "group_id": 192,
               "name": "RealEC: Title-Deliver Fee Sheet",
-              "task": 2
+              "subject": null,
+              "body": "Please see attached title fee sheet.",
+              "task": 2,
+              "documents": [
+                {
+                  "id": 987,
+                  "name": "Estimated Title Fees"
+                }
+              ],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -3641,7 +4236,21 @@
               "action_id": 38,
               "group_id": 193,
               "name": "RealEC: Title-Lender Items for Curative Clearance",
-              "task": 2
+              "subject": null,
+              "body": "The following items need to be cleared:\r\n____\r\n",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -3692,7 +4301,21 @@
               "action_id": 38,
               "group_id": 195,
               "name": "RealEC: Title-Lender Curative Docs Not Sufficient",
-              "task": 2
+              "subject": null,
+              "body": "Reason this doesn't clear title:\r\n____",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -3731,7 +4354,21 @@
               "action_id": 38,
               "group_id": 197,
               "name": "RealEC: Title-Send Curative Documents to Lender",
-              "task": 2
+              "subject": "Curative Clearance Documents",
+              "body": "Attached are curative clearance documents for your review/reference.",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -3923,7 +4560,21 @@
               "action_id": 39,
               "group_id": 202,
               "name": "RealEC: Closing-220 Comment",
-              "task": 2
+              "subject": null,
+              "body": "___",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -4013,7 +4664,21 @@
               "action_id": 39,
               "group_id": 205,
               "name": "RealEC: Closing-Payoff Request Info. Lender Responsible",
-              "task": 2
+              "subject": null,
+              "body": "Please order a payoff for the following:\r\n\r\nPayoff Acct. No.:\t____\r\nPayoff Lender:\t_GetPartnerName_Payoff.Lender_1_\r\nPaoff Lender Address:\t_GetPartnerAddress_Payoff.Lender_1_, _GetPartnerCityStateZip_Payoff.Lender_1_\r\nPayoff Lender Contact:\t_GetPartnerContact_Payoff.Lender_1_, _GetPartnerContactEmail_Payoff.Lender_1_, _GetPartnerContactPhone_Payoff.Lender_1_\r\nReason for Payoff: ____\r\n\r\nResponsible Party:\tLender",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -4033,7 +4698,21 @@
               "action_id": 39,
               "group_id": 206,
               "name": "RealEC: Closing-Payoff Request Info. Provider Responsible",
-              "task": 2
+              "subject": null,
+              "body": "I will order a payoff for the following:\r\n\r\nPayoff Acct. No.:\t____\r\nPayoff Lender:\t_GetPartnerName_Payoff.Lender_1_\r\nPaoff Lender Address:\t_GetPartnerAddress_Payoff.Lender_1_, _GetPartnerCityStateZip_Payoff.Lender_1_\r\nPayoff Lender Contact:\t_GetPartnerContact_Payoff.Lender_1_, _GetPartnerContactEmail_Payoff.Lender_1_, _GetPartnerContactPhone_Payoff.Lender_1_\r\nReason for Payoff:\t____\r\n\r\nResponsible Party:\tProvider",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -4090,7 +4769,21 @@
               "action_id": 39,
               "group_id": 208,
               "name": "RealEC: Closing-Subordination Request Info. Lender Responsible",
-              "task": 2
+              "subject": null,
+              "body": "Please order a subordination agreement for the following:\r\n\r\nSubordination Lender:\t____\r\nSubordination Mortgage Information:\t____\r\n\r\nResponsible Party:\tLender",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -4110,7 +4803,21 @@
               "action_id": 39,
               "group_id": 209,
               "name": "RealEC: Closing-Subordination Request Info. Provider Responsible",
-              "task": 2
+              "subject": null,
+              "body": "I will order a subordination agreement for the following:\r\n\r\nSubordination Lender:\t____\r\nSubordination Mortgage Information:\t____\r\n\r\nResponsible Party:\tProvider",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -4162,7 +4869,26 @@
               "action_id": 39,
               "group_id": 211,
               "name": "RealEC: Closing-Deliver Payoff",
-              "task": 2
+              "subject": null,
+              "body": "Please see attached payoff statement.",
+              "task": 2,
+              "documents": [
+                {
+                  "id": 969,
+                  "name": "Payoff - 1st"
+                }
+              ],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -4208,7 +4934,26 @@
               "action_id": 39,
               "group_id": 213,
               "name": "RealEC: Closing-Deliver Subordination Agreement",
-              "task": 2
+              "subject": null,
+              "body": "Please see attached subordination agreement.",
+              "task": 2,
+              "documents": [
+                {
+                  "id": 973,
+                  "name": "Subordination Agreement"
+                }
+              ],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -4358,7 +5103,21 @@
               "action_id": 39,
               "group_id": 222,
               "name": "RealEC: Closing-Signing is Complete",
-              "task": 2
+              "subject": null,
+              "body": "Closing has been completed.",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [
@@ -4396,7 +5155,21 @@
               "action_id": 39,
               "group_id": 223,
               "name": "RealEC: Closing-Signing Did Not Take Place",
-              "task": 2
+              "subject": null,
+              "body": "Closing did not take place because ____.",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [
@@ -4448,7 +5221,26 @@
               "action_id": 39,
               "group_id": 225,
               "name": "RealEC: Closing-Critical Docs Attached",
-              "task": 2
+              "subject": null,
+              "body": "Please see attached critical documents.",
+              "task": 2,
+              "documents": [
+                {
+                  "id": 970,
+                  "name": "Critical Documents"
+                }
+              ],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -4468,7 +5260,21 @@
               "action_id": 39,
               "group_id": 226,
               "name": "RealEC: Closing-Document Review Failed",
-              "task": 2
+              "subject": null,
+              "body": "Document review has failed for the following reason(s):\r\n____",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -4512,7 +5318,21 @@
               "action_id": 39,
               "group_id": 228,
               "name": "RealEC: Closing-Disbursement NOT Approved by Lender Resonse",
-              "task": 2
+              "subject": null,
+              "body": "___",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -4532,7 +5352,21 @@
               "action_id": 39,
               "group_id": 229,
               "name": "RealEC: Closing-Disbursement Approved by Lender Response",
-              "task": 2
+              "subject": null,
+              "body": "___",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -4552,7 +5386,21 @@
               "action_id": 39,
               "group_id": 230,
               "name": "RealEC: Closing-Provider Not Ready to Disburse Funds",
-              "task": 2
+              "subject": null,
+              "body": "We are unable to disburse funds for the following reason(s):\r\n____",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -4628,7 +5476,21 @@
               "action_id": 39,
               "group_id": 233,
               "name": "RealEC: Closing-Mortgage Document Recorded",
-              "task": 2
+              "subject": null,
+              "body": "The mortgage document has been recorded.\r\n\r\nRecorded: _GetRecordingMortgageDateTime_1_\r\nInstrument No.: _GetRecordingMortgageInstrument_1_\r\nBook/Page: _GetRecordingMortgageBook_1_ / _GetRecordingMortgagePage_1_\r\n",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -4648,7 +5510,21 @@
               "action_id": 39,
               "group_id": 234,
               "name": "RealEC: Closing-Deed of Trust Document Recorded",
-              "task": 2
+              "subject": null,
+              "body": "The Deed of Trust has been recorded.\r\n\r\nRecorded: _GetRecordingDeedOfTrustDateTime_1_\r\nInstrument No.: _GetRecordingDeedOfTrustInstrument_1_\r\nBook/Page: _GetRecordingDeedOfTrustBook_1_ / _GetRecordingDeedOfTrustPage_1_",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -4668,7 +5544,21 @@
               "action_id": 39,
               "group_id": 235,
               "name": "RealEC: Closing-Other Security Instrument Document Recorded",
-              "task": 2
+              "subject": null,
+              "body": "The ___ has been recorded.\r\n\r\nRecorded: ___\r\nInstrument No.: ___\r\nBook/Page: ___",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -4923,7 +5813,21 @@
               "action_id": 40,
               "group_id": 238,
               "name": "RealEC: Signing 1 Set-220 Comment",
-              "task": 2
+              "subject": null,
+              "body": "___",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
@@ -5130,7 +6034,21 @@
               "action_id": 41,
               "group_id": 243,
               "name": "RealEC: Signing 2 Sets-220 Comment",
-              "task": 2
+              "subject": null,
+              "body": "___",
+              "task": 2,
+              "documents": [],
+              "templates": [],
+              "recipients": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
             }
           ],
           "start_affects": [],
