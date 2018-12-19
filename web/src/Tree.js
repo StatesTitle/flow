@@ -18,22 +18,19 @@ class Row extends Component {
 
 class Email extends Component {
     render() {
-        return <Row indent={3}>{this.props.email.name}</Row>;
+        return <Row indent={1}>{this.props.email.name}</Row>;
     }
 }
 
 class Affect extends Component {
     render() {
-        return <Row indent={3}>{this.props.affect.type} {this.props.affect.action.name}</Row>;
+        return <Row indent={1}>{this.props.affect.type} {this.props.affect.action.name}</Row>;
     }
 }
 
 class OnDone extends Component {
     render() {
-        if (this.props.affects.length === 0 && this.props.emails.length === 0) {
-            return null;
-        }
-        return [<Row indent={2}>On {this.props.task}:</Row>].concat(
+        return [<Row>On {this.props.task}:</Row>].concat(
             this.props.affects.map(a => <Affect affect={a}/>),
             this.props.emails.map(e => <Email email={e}/>)
         );
@@ -46,20 +43,36 @@ class ActionDetail extends Component {
     }
 }
 
-
 class Action extends Component {
+    hasContent(affects, emails) {
+        return affects.length > 0 || emails.length > 0;
+    }
+
     render() {
         const action = this.props.action;
-        return [<Row indent={1}>{action.name}</Row>,
-            <OnDone task="Start" affects={action.start_affects} emails={action.start_emails}/>,
-            <OnDone task="Complete" affects={action.complete_affects} emails={action.complete_emails}/>];
+        let body = null;
+        const hasStart = this.hasContent(action.start_affects, action.start_emails);
+        const hasComplete = this.hasContent(action.complete_affects, action.complete_emails);
+        if (hasStart || hasComplete) {
+            body = (<div className="card-body pt-2 pb-2">
+                {hasStart && <OnDone task="Start" affects={action.start_affects} emails={action.start_emails}/>}
+                {hasComplete && <OnDone task="Complete" affects={action.complete_affects} emails={action.complete_emails}/>}
+            </div>);
+        }
+        return (<div className="card border-dark mb-1">
+            <div className="card-header">{action.name}</div>
+            {body}
+        </div>);
     }
 }
 class Group extends Component {
     render() {
-        const groupRow = (<Row>{this.props.group.name}</Row>);
-        const actionRows = this.props.group.actions.map(a => <Action action={a}/>);
-        return [groupRow].concat(actionRows);
+        return (<div className="card mb-2">
+            <div className="card-header">{this.props.group.name}</div>
+            <div className="card-body">
+                {this.props.group.actions.map(a => <Action action={a}/>)}
+            </div>
+            </div>);
     }
 }
 
