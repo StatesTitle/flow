@@ -48,7 +48,7 @@ class Action extends Component {
                 {hasComplete && <OnDone task="Complete" affects={action.complete_affects} emails={action.complete_emails}/>}
             </div>);
         }
-        return (<div className="card border-dark mb-1">
+        return (<div className="card border-dark mb-1" onClick={() => this.props.onActionSelect(action)}>
             <div className="card-header">{action.name}</div>
             {body}
         </div>);
@@ -59,7 +59,7 @@ class Group extends Component {
         return (<div className="card mb-2">
             <div className="card-header">{this.props.group.name}</div>
             <div className="card-body">
-                {this.props.group.actions.map(a => <Action action={a}/>)}
+                {this.props.group.actions.map(a => <Action action={a} onActionSelect={this.props.onActionSelect}/>)}
             </div>
             </div>);
     }
@@ -106,28 +106,24 @@ class ActionDetail extends Component {
 }
 
 class Tree extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {detailAction: null};
+    }
+
+    onActionSelect = (action) => {
+        this.setState({detailAction: action});
+    };
+
     render() {
-        function hasEverything(email) {
-            return email.documents.length && email.templates.length && email.recipients.length;
-        }
-        let detailAction = null;
-        for (let i = 0; i < this.props.actionList.groups.length && detailAction === null; i++) {
-            let group = this.props.actionList.groups[i];
-            for (let j = 0; j < group.actions.length && detailAction === null; j++) {
-                let action = group.actions[j];
-                if (action.start_emails.some(hasEverything) || action.complete_emails.some(hasEverything)) {
-                    detailAction = action;
-                }
-            }
-        }
         return (<div className="container">
             <div className="row">
                 <div className="col-6" style={{height: '100vh', overflow: "auto"}}>
-                    {this.props.actionList.groups.map(g => <Group group={g}/>)}
+                    {this.props.actionList.groups.map(g => <Group group={g} onActionSelect={this.onActionSelect}/>)}
                 </div>
-                <div className="col">
-                    <ActionDetail action={detailAction}/>
-                </div>
+                {this.state.detailAction && (<div className="col">
+                    <ActionDetail action={this.state.detailAction}/>
+                </div>)}
             </div>
         </div>);
     }
