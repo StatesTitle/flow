@@ -24,9 +24,9 @@ class Affect extends Component {
 
 class OnDone extends Component {
     render() {
-        return [<Row>On {this.props.task}:</Row>].concat(
-            this.props.affects.map(a => <Affect affect={a}/>),
-            this.props.emails.map(e => <Email email={e}/>)
+        return [<Row key="header">On {this.props.task}:</Row>].concat(
+            this.props.affects.map(a => <Affect key={a.type + " " + a.task + " " + a.group_id + " " + a.action_id} affect={a}/>),
+            this.props.emails.map(e => <Email key={e.task + " " + e.name} email={e}/>)
         );
     }
 }
@@ -44,8 +44,8 @@ class Action extends Component {
         const hasComplete = this.hasContent(action.complete_affects, action.complete_emails);
         if (hasStart || hasComplete) {
             body = (<div className="card-body pt-2 pb-2">
-                {hasStart && <OnDone task="Start" affects={action.start_affects} emails={action.start_emails}/>}
-                {hasComplete && <OnDone task="Complete" affects={action.complete_affects} emails={action.complete_emails}/>}
+                {hasStart && <OnDone key="start" task="Start" affects={action.start_affects} emails={action.start_emails}/>}
+                {hasComplete && <OnDone key="complete" task="Complete" affects={action.complete_affects} emails={action.complete_emails}/>}
             </div>);
         }
         return (<div className="card border-dark mb-1" onClick={() => this.props.onActionSelect(action)}>
@@ -59,7 +59,7 @@ class Group extends Component {
         return (<div className="card mb-2">
             <div className="card-header">{this.props.group.name}</div>
             <div className="card-body">
-                {this.props.group.actions.map(a => <Action action={a} onActionSelect={this.props.onActionSelect}/>)}
+                {this.props.group.actions.map(a => <Action key={a.action_id} action={a} onActionSelect={this.props.onActionSelect}/>)}
             </div>
             </div>);
     }
@@ -119,7 +119,7 @@ class Tree extends Component {
         return (<div className="container">
             <div className="row">
                 <div className="col-6" style={{height: '100vh', overflow: "auto"}}>
-                    {this.props.actionList.groups.map(g => <Group group={g} onActionSelect={this.onActionSelect}/>)}
+                    {this.props.actionList.groups.map(g => <Group key={g.id} group={g} onActionSelect={this.onActionSelect}/>)}
                 </div>
                 {this.state.detailAction && (<div className="col">
                     <ActionDetail action={this.state.detailAction}/>
