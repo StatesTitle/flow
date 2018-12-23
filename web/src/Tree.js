@@ -1,130 +1,68 @@
 import React, { Component } from 'react';
 
-class Row extends Component {
+class Field extends Component {
     render() {
-        const indent = this.props.indent ? this.props.indent : 0;
-        return (<div className="row">
-            {indent > 0 && <div className={"col-" + indent}/>}
-            <div className={"col-"+ (12 - indent)}>{this.props.children}</div>
-        </div>);
+        if (!this.props.value) {
+            return null;
+        } else if (this.props.length > 40) {
+            return [<p className="font-weight-bold">{this.props.name}</p>, <p>{this.props.value}</p>];
+        } else {
+            return (<p><span className="font-weight-bold">{this.props.name}: </span>{this.props.value}</p>);
+        }
     }
 }
 
 class Email extends Component {
     render() {
-        return <Row indent={1}>{this.props.email.name}</Row>;
+        const email = this.props.email;
+        return (<li className="list-group-item">
+            <Field name="Email" value={email.name}/>
+            <Field name="Subject" value={email.subject}/>
+            <Field name="Body" value={email.body}/>
+            <Field name="Attached Documents" value={email.documents.map(d => d.name).join(', ')}/>
+            <Field name="Generated Templates" value={email.templates.map(t => t.name + " of type " + t.document_type.name).join(', ')}/>
+            <Field name="Recipients" value={email.recipients.map(r => r.name).join(', ')}/>
+            </li>);
     }
 }
 
 class Affect extends Component {
     render() {
-        return <Row indent={1}>{this.props.affect.type} {this.props.affect.action.name}</Row>;
+        return <li className="list-group-item">{this.props.affect.type} {this.props.affect.action.name}</li>;
     }
 }
-
-class OnDone extends Component {
-    render() {
-        return [<Row key="header">On {this.props.task}:</Row>].concat(
-            this.props.affects.map(a => <Affect key={a.type + " " + a.task + " " + a.group_id + " " + a.action_id} affect={a}/>),
-            this.props.emails.map(e => <Email key={e.task + " " + e.name} email={e}/>)
-        );
-    }
-}
-
 
 class Action extends Component {
-    hasContent(affects, emails) {
-        return affects.length > 0 || emails.length > 0;
-    }
-
     render() {
         const action = this.props.action;
-        let body = null;
-        const hasStart = this.hasContent(action.start_affects, action.start_emails);
-        const hasComplete = this.hasContent(action.complete_affects, action.complete_emails);
-        if (hasStart || hasComplete) {
-            body = (<div className="card-body pt-2 pb-2">
-                {hasStart && <OnDone key="start" task="Start" affects={action.start_affects} emails={action.start_emails}/>}
-                {hasComplete && <OnDone key="complete" task="Complete" affects={action.complete_affects} emails={action.complete_emails}/>}
-            </div>);
-        }
-        return (<div className="card border-dark mb-1" onClick={() => this.props.onActionSelect(action)}>
+        return (<div className="card border-dark mb-1">
             <div className="card-header">{action.name}</div>
-            {body}
+            <ul className="list-group list-group-flush">
+                {action.start_affects.map(a => <Affect key={a.type + " " + a.task + " " + a.group_id + " " + a.action_id} affect={a}/>)}
+                {action.start_emails.map(e => <Email key={e.task + " " + e.name} email={e}/>)}
+                {action.complete_affects.map(a => <Affect key={a.type + " " + a.task + " " + a.group_id + " " + a.action_id} affect={a}/>)}
+                {action.complete_emails.map(e => <Email key={e.task + " " + e.name} email={e}/>)}
+            </ul>
         </div>);
     }
 }
+
 class Group extends Component {
     render() {
         return (<div className="card mb-2">
             <div className="card-header">{this.props.group.name}</div>
             <div className="card-body">
-                {this.props.group.actions.map(a => <Action key={a.action_id} action={a} onActionSelect={this.props.onActionSelect}/>)}
+                {this.props.group.actions.map(a => <Action key={a.action_id} action={a} />)}
             </div>
             </div>);
     }
 }
 
-class Field extends Component {
-        render() {
-            if (!this.props.value) {
-                return null;
-            } else if (this.props.length > 40) {
-                return [<p className="font-weight-bold">{this.props.name}</p>, <p>{this.props.value}</p>];
-            } else {
-                return (<p><span className="font-weight-bold">{this.props.name}: </span>{this.props.value}</p>);
-            }
-        }
-}
-
-class EmailDetail extends Component {
-        render() {
-            const email = this.props.email;
-            return (<div className="card">
-                <div className="card-header">Email {email.name}</div>
-                <div className="card-body">
-                    <Field name="Subject" value={email.subject}/>
-                    <Field name="Body" value={email.body}/>
-                    <Field name="Attached Documents" value={email.documents.map(d => d.name).join(', ')}/>
-                    <Field name="Generated Templates" value={email.templates.map(t => t.name + " of type " + t.document_type.name).join(', ')}/>
-                    <Field name="Recipients" value={email.recipients.map(r => r.name).join(', ')}/>
-                </div>
-            </div>);
-        }
-}
-
-class ActionDetail extends Component {
-    render() {
-        return (<div className="card">
-            <div className="card-header">{this.props.action.name} Detail</div>
-            <div className="card-body">
-                {this.props.action.start_emails.map(e => <EmailDetail email={e}/>)}
-                {this.props.action.complete_emails.map(e => <EmailDetail email={e}/>)}
-            </div>
-        </div>);
-    }
-}
 
 class Tree extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {detailAction: null};
-    }
-
-    onActionSelect = (action) => {
-        this.setState({detailAction: action});
-    };
-
     render() {
         return (<div className="container">
-            <div className="row">
-                <div className="col-6" style={{height: '100vh', overflow: "auto"}}>
-                    {this.props.actionList.groups.map(g => <Group key={g.id} group={g} onActionSelect={this.onActionSelect}/>)}
-                </div>
-                {this.state.detailAction && (<div className="col">
-                    <ActionDetail action={this.state.detailAction}/>
-                </div>)}
-            </div>
+            {this.props.actionList.groups.map(g => <Group key={g.id} group={g} />)}
         </div>);
     }
 }
