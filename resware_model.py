@@ -179,10 +179,11 @@ class GroupAction:
 
 
 @tableclass('ActionListGroupDefPartnerRel', one_to_many=True, lookup='group_id')
-class GroupPartner:
+class GroupPartnerRestriction:
     group_id: int = col('ActionListGroupDefID')
     partner_id: int = col('PartnerCompanyID')
     include: bool = col('ActionPartnerAddTypeID', parser=_group_partner_include)
+
 
 @tableclass('ActionListGroupDef')
 class Group:
@@ -270,7 +271,7 @@ class Models:
         self.group_actions = load(conn, GroupAction)
         self.group_action_partner_restrictions = load(conn, GroupActionPartnerRestriction)
         self.groups = load(conn, Group)
-        self.group_partners = load(conn, GroupPartner)
+        self.group_partner_restrictions = load(conn, GroupPartnerRestriction)
         self.group_action_affects = load(conn, GroupActionAffect)
         self.action_lists = load(conn, ActionList)
         self.action_list_groups = load(conn, ActionListGroups)

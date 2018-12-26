@@ -56,9 +56,12 @@ class Action extends Component {
 
 class Group extends Component {
     render() {
+        const group = this.props.group;
         return (<div className="card mb-2">
             <div className="card-header">{this.props.group.name}</div>
             <div className="card-body">
+                <Field name="Required Partners" value={group.required.map(r => r.name).join(', ')}/>
+                <Field name="Excluded Partners" value={group.excluded.map(r => r.name).join(', ')}/>
                 {this.props.group.actions.map(a => <Action key={a.action_id} action={a} />)}
             </div>
             </div>);

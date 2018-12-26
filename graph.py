@@ -293,12 +293,7 @@ def _build_email(models, model_action_email, action, ctx):
         email.templates.append(Template(model_template.name, model_template.filename, doc))
     for model_email_partner_type_recipient in models.email_partner_type_recipients[model_action_email.email_id]:
         email.recipients.append(models.partner_types[model_email_partner_type_recipient.partner_type_id])
-    for model_partner_restriction in models.email_partner_restrictions[model_action_email.email_id]:
-        partner =_build_partner(models, models.partners[model_partner_restriction.partner_id])
-        if model_partner_restriction.include:
-            email.required.append(partner)
-        else:
-            email.excluded.append(partner)
+    _add_partner_restrictions(models, email, models.email_partner_restrictions[model_action_email.email_id])
     return email
 
 
@@ -323,15 +318,17 @@ def _build_action(models, model_group_action, ctx):
         if model_action_email.task == Task.COMPLETE:
             action.complete_emails.append(email)
 
-    for model_partner_restriction in models.group_action_partner_restrictions[key]:
-        partner =_build_partner(models, models.partners[model_partner_restriction.partner_id])
-        if model_partner_restriction.include:
-            action.required.append(partner)
-        else:
-            action.excluded.append(partner)
+    _add_partner_restrictions(models, action, models.group_action_partner_restrictions[key])
 
     return action
 
+def _add_partner_restrictions(models, restricted, restrictions):
+    for restriction in restrictions:
+        partner =_build_partner(models, models.partners[restriction.partner_id])
+        if restriction.include:
+            restricted.required.append(partner)
+        else:
+            restricted.excluded.append(partner)
 
 def _build_group(models, model_alist_group, ctx):
     model_group = models.groups[model_alist_group.group_id]
@@ -341,6 +338,7 @@ def _build_group(models, model_alist_group, ctx):
         group.actions.append(_build_action(models, model_group_action, ctx))
     for model_trigger in models.triggers[group.id]:
         group.triggers.extend(_build_triggers(models, model_trigger, ctx))
+    _add_partner_restrictions(models, group, models.group_partner_restrictions[group.id])
     return group
 
 
