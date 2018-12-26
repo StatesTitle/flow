@@ -322,6 +322,14 @@ def _build_action(models, model_group_action, ctx):
             action.start_emails.append(email)
         if model_action_email.task == Task.COMPLETE:
             action.complete_emails.append(email)
+
+    for model_partner_restriction in models.group_action_partner_restrictions[key]:
+        partner =_build_partner(models, models.partners[model_partner_restriction.partner_id])
+        if model_partner_restriction.include:
+            action.required.append(partner)
+        else:
+            action.excluded.append(partner)
+
     return action
 
 

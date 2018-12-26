@@ -318,7 +318,18 @@
           "complete_emails": [],
           "start_affects": [],
           "complete_affects": [],
-          "required": [],
+          "required": [
+            {
+              "id": 519,
+              "name": "Product Type Partner Missing",
+              "types": [
+                {
+                  "id": 10002,
+                  "name": "Product Type"
+                }
+              ]
+            }
+          ],
           "excluded": []
         }
       ],
@@ -1593,7 +1604,22 @@
               "task": 1
             }
           ],
-          "required": [],
+          "required": [
+            {
+              "id": 1527,
+              "name": "States Title Insurance Company",
+              "types": [
+                {
+                  "id": 7,
+                  "name": "Underwriter"
+                },
+                {
+                  "id": 10005,
+                  "name": "Direct Underwriter"
+                }
+              ]
+            }
+          ],
           "excluded": []
         }
       ],
@@ -1740,7 +1766,36 @@
             }
           ],
           "required": [],
-          "excluded": []
+          "excluded": [
+            {
+              "id": 1570,
+              "name": "PennyMac",
+              "types": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
+            },
+            {
+              "id": 1728,
+              "name": "FifthThird",
+              "types": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
+            }
+          ]
         },
         {
           "action_id": 118,
@@ -2515,7 +2570,32 @@
               "task": 1
             }
           ],
-          "required": [],
+          "required": [
+            {
+              "id": 1570,
+              "name": "PennyMac",
+              "types": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
+            },
+            {
+              "id": 1522,
+              "name": "Jess Test Client",
+              "types": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                }
+              ]
+            }
+          ],
           "excluded": []
         },
         {
@@ -2537,7 +2617,32 @@
               "task": 1
             }
           ],
-          "required": [],
+          "required": [
+            {
+              "id": 1522,
+              "name": "Jess Test Client",
+              "types": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                }
+              ]
+            },
+            {
+              "id": 1570,
+              "name": "PennyMac",
+              "types": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
+            }
+          ],
           "excluded": []
         },
         {
@@ -2559,7 +2664,32 @@
             }
           ],
           "complete_affects": [],
-          "required": [],
+          "required": [
+            {
+              "id": 1522,
+              "name": "Jess Test Client",
+              "types": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                }
+              ]
+            },
+            {
+              "id": 1570,
+              "name": "PennyMac",
+              "types": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
+            }
+          ],
           "excluded": []
         },
         {
@@ -2574,7 +2704,32 @@
           "complete_emails": [],
           "start_affects": [],
           "complete_affects": [],
-          "required": [],
+          "required": [
+            {
+              "id": 1522,
+              "name": "Jess Test Client",
+              "types": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                }
+              ]
+            },
+            {
+              "id": 1570,
+              "name": "PennyMac",
+              "types": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
+            }
+          ],
           "excluded": []
         }
       ],
@@ -2977,7 +3132,22 @@
           ],
           "start_affects": [],
           "complete_affects": [],
-          "required": [],
+          "required": [
+            {
+              "id": 1570,
+              "name": "PennyMac",
+              "types": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
+            }
+          ],
           "excluded": []
         },
         {
@@ -2999,7 +3169,32 @@
               "task": 1
             }
           ],
-          "required": [],
+          "required": [
+            {
+              "id": 1522,
+              "name": "Jess Test Client",
+              "types": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                }
+              ]
+            },
+            {
+              "id": 1570,
+              "name": "PennyMac",
+              "types": [
+                {
+                  "id": 1,
+                  "name": "Client"
+                },
+                {
+                  "id": 3,
+                  "name": "Lender"
+                }
+              ]
+            }
+          ],
           "excluded": []
         }
       ],
@@ -3358,7 +3553,28 @@
           ],
           "start_affects": [],
           "complete_affects": [],
-          "required": [],
+          "required": [
+            {
+              "id": 1526,
+              "name": "NATIC",
+              "types": [
+                {
+                  "id": 7,
+                  "name": "Underwriter"
+                }
+              ]
+            },
+            {
+              "id": 1524,
+              "name": "WFG",
+              "types": [
+                {
+                  "id": 7,
+                  "name": "Underwriter"
+                }
+              ]
+            }
+          ],
           "excluded": []
         },
         {
@@ -3427,7 +3643,22 @@
               "task": 1
             }
           ],
-          "required": [],
+          "required": [
+            {
+              "id": 1527,
+              "name": "States Title Insurance Company",
+              "types": [
+                {
+                  "id": 7,
+                  "name": "Underwriter"
+                },
+                {
+                  "id": 10005,
+                  "name": "Direct Underwriter"
+                }
+              ]
+            }
+          ],
           "excluded": []
         },
         {
@@ -4125,7 +4356,28 @@
               "task": 1
             }
           ],
-          "required": [],
+          "required": [
+            {
+              "id": 1526,
+              "name": "NATIC",
+              "types": [
+                {
+                  "id": 7,
+                  "name": "Underwriter"
+                }
+              ]
+            },
+            {
+              "id": 1524,
+              "name": "WFG",
+              "types": [
+                {
+                  "id": 7,
+                  "name": "Underwriter"
+                }
+              ]
+            }
+          ],
           "excluded": []
         },
         {
@@ -4153,7 +4405,28 @@
               "task": 1
             }
           ],
-          "required": [],
+          "required": [
+            {
+              "id": 1526,
+              "name": "NATIC",
+              "types": [
+                {
+                  "id": 7,
+                  "name": "Underwriter"
+                }
+              ]
+            },
+            {
+              "id": 1524,
+              "name": "WFG",
+              "types": [
+                {
+                  "id": 7,
+                  "name": "Underwriter"
+                }
+              ]
+            }
+          ],
           "excluded": []
         },
         {
@@ -4174,7 +4447,28 @@
               "action_id": 108
             }
           ],
-          "required": [],
+          "required": [
+            {
+              "id": 1526,
+              "name": "NATIC",
+              "types": [
+                {
+                  "id": 7,
+                  "name": "Underwriter"
+                }
+              ]
+            },
+            {
+              "id": 1524,
+              "name": "WFG",
+              "types": [
+                {
+                  "id": 7,
+                  "name": "Underwriter"
+                }
+              ]
+            }
+          ],
           "excluded": []
         },
         {
@@ -4204,7 +4498,28 @@
           "complete_emails": [],
           "start_affects": [],
           "complete_affects": [],
-          "required": [],
+          "required": [
+            {
+              "id": 1526,
+              "name": "NATIC",
+              "types": [
+                {
+                  "id": 7,
+                  "name": "Underwriter"
+                }
+              ]
+            },
+            {
+              "id": 1524,
+              "name": "WFG",
+              "types": [
+                {
+                  "id": 7,
+                  "name": "Underwriter"
+                }
+              ]
+            }
+          ],
           "excluded": []
         },
         {
@@ -4219,7 +4534,28 @@
           "complete_emails": [],
           "start_affects": [],
           "complete_affects": [],
-          "required": [],
+          "required": [
+            {
+              "id": 1526,
+              "name": "NATIC",
+              "types": [
+                {
+                  "id": 7,
+                  "name": "Underwriter"
+                }
+              ]
+            },
+            {
+              "id": 1524,
+              "name": "WFG",
+              "types": [
+                {
+                  "id": 7,
+                  "name": "Underwriter"
+                }
+              ]
+            }
+          ],
           "excluded": []
         },
         {
@@ -4241,7 +4577,28 @@
               "task": 1
             }
           ],
-          "required": [],
+          "required": [
+            {
+              "id": 1526,
+              "name": "NATIC",
+              "types": [
+                {
+                  "id": 7,
+                  "name": "Underwriter"
+                }
+              ]
+            },
+            {
+              "id": 1524,
+              "name": "WFG",
+              "types": [
+                {
+                  "id": 7,
+                  "name": "Underwriter"
+                }
+              ]
+            }
+          ],
           "excluded": []
         }
       ],
@@ -4379,7 +4736,22 @@
               "offset": 8.0
             }
           ],
-          "required": [],
+          "required": [
+            {
+              "id": 1679,
+              "name": "SLK",
+              "types": [
+                {
+                  "id": 12,
+                  "name": "Searcher"
+                },
+                {
+                  "id": 10010,
+                  "name": "Tax Prep"
+                }
+              ]
+            }
+          ],
           "excluded": []
         },
         {

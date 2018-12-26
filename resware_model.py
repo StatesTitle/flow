@@ -165,7 +165,7 @@ def _group_partner_include(type_id):
 
 
 @tableclass('ActionListGroupActionDefPartnerRel', one_to_many=True, lookup=('group_id', 'action_id'))
-class GroupActionPartner:
+class GroupActionPartnerRestriction:
     group_id: int = col('ActionListGroupDefID')
     action_id: int = col('ActionDefID')
     partner_id: int = col('PartnerCompanyID')
@@ -249,9 +249,10 @@ class Models:
         self.emails = load(conn, Email)
         self.email_documents = load(conn, EmailDocument)
         self.email_partner_type_recipients = load(conn, EmailPartnerTypeRecipient)
-        self.email_partner_restrictions = load(conn, EmailPartnerRestriction)
+
         # There's at least one restriction column for every email template The partner is NULL if
         # it's a placeholder and there aren't any real ones
+        self.email_partner_restrictions = load(conn, EmailPartnerRestriction)
         for email_id, partners in list(self.email_partner_restrictions.items()):
             for partner in partners[:]:
                 if partner.partner_id is None:
@@ -259,6 +260,7 @@ class Models:
             # If the list is now empty, delete it from the dict
             if len(partners) == 0:
                 del self.email_partner_restrictions[email_id]
+
         self.email_templates = load(conn, EmailTemplate)
         self.templates = load(conn, Template)
         self.action_emails = load(conn, ActionEmail)
@@ -266,7 +268,7 @@ class Models:
         self.document_types = load(conn, DocumentType)
         self.actions = load(conn, Action)
         self.group_actions = load(conn, GroupAction)
-        self.group_action_partners = load(conn, GroupActionPartner)
+        self.group_action_partner_restrictions = load(conn, GroupActionPartnerRestriction)
         self.groups = load(conn, Group)
         self.group_partners = load(conn, GroupPartner)
         self.group_action_affects = load(conn, GroupActionAffect)

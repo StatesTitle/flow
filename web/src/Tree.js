@@ -39,6 +39,11 @@ class Action extends Component {
         const action = this.props.action;
         return (<div className="card border-dark mb-1">
             <div className="card-header">{action.name}</div>
+            {((action.required.length > 0 || action.excluded.length > 0) && (
+            <div className="card-body">
+                <Field name="Required Partners" value={action.required.map(r => r.name).join(', ')}/>
+                <Field name="Excluded Partners" value={action.excluded.map(r => r.name).join(', ')}/>
+            </div>))}
             <ul className="list-group list-group-flush">
                 {action.start_affects.map(a => <Affect key={a.type + " " + a.task + " " + a.group_id + " " + a.action_id} affect={a}/>)}
                 {action.start_emails.map(e => <Email key={e.task + " " + e.name} email={e}/>)}
