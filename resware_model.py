@@ -103,10 +103,17 @@ class EmailDocument:
 
 
 @tableclass('ActionEmailTemplatePartnerTypeRef', lookup='email_id', one_to_many=True)
-class EmailPartner:
-    """The partner that should receive the email"""
+class EmailPartnerTypeRecipient:
+    """The partner type that should receive the email"""
     email_id: int = col('ActionEmailTemplateID')
     partner_type_id: int = col('PartnerTypeID')
+
+
+@tableclass('PartnerCompanyActionEmailTemplateRel', one_to_many=True, lookup='email_id')
+class EmailPartnerRestriction:
+    partner_id: int = col('PartnerCompanyID', nullable=True)
+    email_id: int = col('ActionEmailTemplateID')
+    include: bool = col('IncludeExclude')
 
 
 @tableclass('ActionEmailTemplateTemplateRef', lookup='email_id', one_to_many=True)
@@ -152,12 +159,30 @@ class Action:
     hidden: bool = col('Hidden')
 
 
+def _group_partner_include(type_id):
+    assert type_id == 1 or type_id == 2, f'Expected type_id to be either 1 for include or 2 for exclude, not {type_id}'
+    return type_id == 1
+
+
+@tableclass('ActionListGroupActionDefPartnerRel', one_to_many=True, lookup=('group_id', 'action_id'))
+class GroupActionPartner:
+    group_id: int = col('ActionListGroupDefID')
+    action_id: int = col('ActionDefID')
+    partner_id: int = col('PartnerCompanyID')
+    include: bool = col('ActionPartnerAddTypeID', parser=_group_partner_include)
+
 @tableclass('ActionListGroupActionDef', lookup='group_id', one_to_many=True)
 class GroupAction:
     group_id: int = col('ActionListGroupDefID')
     action_id: int = col('ActionDefID')
     dynamic: bool = col('Dynamic')
 
+
+@tableclass('ActionListGroupDefPartnerRel', one_to_many=True, lookup='group_id')
+class GroupPartner:
+    group_id: int = col('ActionListGroupDefID')
+    partner_id: int = col('PartnerCompanyID')
+    include: bool = col('ActionPartnerAddTypeID', parser=_group_partner_include)
 
 @tableclass('ActionListGroupDef')
 class Group:
@@ -223,7 +248,17 @@ class Models:
         self.external_actions = load(conn, ExternalAction)
         self.emails = load(conn, Email)
         self.email_documents = load(conn, EmailDocument)
-        self.email_partners = load(conn, EmailPartner)
+        self.email_partner_type_recipients = load(conn, EmailPartnerTypeRecipient)
+        self.email_partner_restrictions = load(conn, EmailPartnerRestriction)
+        # There's at least one restriction column for every email template The partner is NULL if
+        # it's a placeholder and there aren't any real ones
+        for email_id, partners in list(self.email_partner_restrictions.items()):
+            for partner in partners[:]:
+                if partner.partner_id is None:
+                    partners.remove(partner)
+            # If the list is now empty, delete it from the dict
+            if len(partners) == 0:
+                del self.email_partner_restrictions[email_id]
         self.email_templates = load(conn, EmailTemplate)
         self.templates = load(conn, Template)
         self.action_emails = load(conn, ActionEmail)
@@ -231,7 +266,9 @@ class Models:
         self.document_types = load(conn, DocumentType)
         self.actions = load(conn, Action)
         self.group_actions = load(conn, GroupAction)
+        self.group_action_partners = load(conn, GroupActionPartner)
         self.groups = load(conn, Group)
+        self.group_partners = load(conn, GroupPartner)
         self.group_action_affects = load(conn, GroupActionAffect)
         self.action_lists = load(conn, ActionList)
         self.action_list_groups = load(conn, ActionListGroups)

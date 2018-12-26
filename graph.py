@@ -22,6 +22,13 @@ def _node_name(*components):
     return escape_name('N' + ' '.join([str(c) for c in components]))
 
 
+@dataclass
+class Partner:
+    id: int
+    name: str
+    types: List[PartnerType] = field(default_factory=list, compare=False)
+
+
 class GroupLookupMixin:
     @property
     def group(self):
@@ -171,6 +178,8 @@ class Email(CtxHolder, ActionLookupMixin):
     documents: List[DocumentType] = field(default_factory=list, compare=False)
     templates: List[DocumentType] = field(default_factory=list, compare=False)
     recipients: List[PartnerType] = field(default_factory=list, compare=False)
+    required: List[Partner] = field(default_factory=list, compare=False)
+    excluded: List[Partner] = field(default_factory=list, compare=False)
 
 
     @property
@@ -201,6 +210,8 @@ class Action(CtxHolder, GroupLookupMixin):
     complete_emails: List[Email] = field(default_factory=list, compare=False)
     start_affects: List[Affect] = field(default_factory=list, compare=False)
     complete_affects: List[Affect] = field(default_factory=list, compare=False)
+    required: List[Partner] = field(default_factory=list, compare=False)
+    excluded: List[Partner] = field(default_factory=list, compare=False)
 
     @property
     def node_name(self):
@@ -219,6 +230,8 @@ class Group:
     optional: bool
     actions: List[Action] = field(default_factory=list, compare=False)
     triggers: List[Trigger] = field(default_factory=list, compare=False)
+    required: List[Partner] = field(default_factory=list, compare=False)
+    excluded: List[Partner] = field(default_factory=list, compare=False)
 
 
 @dataclass
@@ -278,8 +291,14 @@ def _build_email(models, model_action_email, action, ctx):
         model_template = models.templates[model_email_template.template_id]
         doc = _build_document_type(models, model_template.document_type_id)
         email.templates.append(Template(model_template.name, model_template.filename, doc))
-    for model_email_partner in models.email_partners[model_action_email.email_id]:
-        email.recipients.append(models.partner_types[model_email_partner.partner_type_id])
+    for model_email_partner_type_recipient in models.email_partner_type_recipients[model_action_email.email_id]:
+        email.recipients.append(models.partner_types[model_email_partner_type_recipient.partner_type_id])
+    for model_partner_restriction in models.email_partner_restrictions[model_action_email.email_id]:
+        partner =_build_partner(models, models.partners[model_partner_restriction.partner_id])
+        if model_partner_restriction.include:
+            email.required.append(partner)
+        else:
+            email.excluded.append(partner)
     return email
 
 
@@ -329,31 +348,16 @@ def build_action_list(models, action_list_id):
     return result
 
 
-def _defaultdict_list_factory():
-    return defaultdict(list)
-
-
-@dataclass
-class Partner:
-    id: int
-    name: str
-    types: List[PartnerType] = field(default_factory=list, compare=False)
-    auto_adds: Dict[PartnerType, List[Tuple['Partner', PartnerType]]] = field(default_factory=_defaultdict_list_factory, compare=False)
-
+def _build_partner(models, model_partner):
+    partner = Partner(model_partner.id, model_partner.name)
+    for model_partner_type in models.partners_types[partner.id]:
+        partner.types.append(models.partner_types[model_partner_type.type_id])
+    return partner
 
 def build_partners(models):
     partners = {}
     for model_partner in models.partners.values():
-        partner = Partner(model_partner.id, model_partner.name)
-        for model_partner_type in models.partners_types[partner.id]:
-            partner.types.append(models.partner_types[model_partner_type.type_id])
-        partners[partner.id] = partner
-
-    for partner in partners.values():
-        for model_auto_add in models.partners_auto_adds[partner.id]:
-            our_model_type = models.partner_types[model_auto_add.type_id]
-            to_add = (partners[model_auto_add.auto_add_id], models.partner_types[model_auto_add.auto_add_type_id])
-            partner.auto_adds[our_model_type].append(to_add)
+        partners[model_partner.id] = _build_partner(models, model_partner)
     return partners, models.partner_types
 
 name_prefix = re.compile('^\w+: ')

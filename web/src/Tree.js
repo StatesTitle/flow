@@ -22,6 +22,8 @@ class Email extends Component {
             <Field name="Attached Documents" value={email.documents.map(d => d.name).join(', ')}/>
             <Field name="Generated Templates" value={email.templates.map(t => t.name + " of type " + t.document_type.name).join(', ')}/>
             <Field name="Recipients" value={email.recipients.map(r => r.name).join(', ')}/>
+            <Field name="Required Partners" value={email.required.map(r => r.name).join(', ')}/>
+            <Field name="Excluded Partners" value={email.excluded.map(r => r.name).join(', ')}/>
             </li>);
     }
 }
