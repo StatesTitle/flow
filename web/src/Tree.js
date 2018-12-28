@@ -25,36 +25,60 @@ function Email(props) {
 }
 
 function Affect(props) {
-    return <li className="list-group-item">{props.affect.type} {props.affect.action.name}</li>;
+        return (<span>
+            <span className="font-weight-bold">On</span> {props.reason}
+            <span className="font-weight-bold"> {props.affect.type}</span> {props.affect.action.name}
+        </span>);
 }
 
 function Action(props) {
     const action = props.action;
-    return (<div className="card border-dark mb-1">
-        <div className="card-header">{action.name}</div>
+    function affectLi(reason) {
+        return (a => (<li className="list-group-item">
+            <Affect key={a.type + " " + a.task + " " + a.group_id + " " + a.action_id} reason={reason} affect={a}/>
+            </li>));
+    }
+    return (<div className="card border-dark m-2 ml-3 mr-3">
+        <h5 className="card-header">{action.name}</h5>
         {((action.required.length > 0 || action.excluded.length > 0) && (
         <div className="card-body">
             <Field name="Required Partners" value={action.required.map(r => r.name).join(', ')}/>
             <Field name="Excluded Partners" value={action.excluded.map(r => r.name).join(', ')}/>
         </div>))}
         <ul className="list-group list-group-flush">
-            {action.start_affects.map(a => <Affect key={a.type + " " + a.task + " " + a.group_id + " " + a.action_id} affect={a}/>)}
+            {action.start_affects.map(affectLi("start"))}
             {action.start_emails.map(e => <Email key={e.task + " " + e.name} email={e}/>)}
-            {action.complete_affects.map(a => <Affect key={a.type + " " + a.task + " " + a.group_id + " " + a.action_id} affect={a}/>)}
+            {action.complete_affects.map(affectLi("complete"))}
             {action.complete_emails.map(e => <Email key={e.task + " " + e.name} email={e}/>)}
         </ul>
     </div>);
 }
 
+function Trigger(props) {
+    const trigger = props.trigger;
+    return (<li className="list-group-item">
+        <Affect reason={trigger.external_action.name + (trigger.external_action.document ? (" - " + trigger.external_action.document.name) : "")} affect={trigger.affect}/>
+    </li>);
+}
+
 function Group(props) {
     const group = props.group;
-    return (<div className="card mb-2">
-        <div className="card-header">{props.group.name}</div>
-        <div className="card-body">
+    return (<div className="card mb-3">
+        <h2 className="card-header">{props.group.name}</h2>
+        {((group.required.length > 0 || group.excluded.length > 0) && (<div className="card-body">
             <Field name="Required Partners" value={group.required.map(r => r.name).join(', ')}/>
             <Field name="Excluded Partners" value={group.excluded.map(r => r.name).join(', ')}/>
+        </div>))}
+        <ul className="list-group list-group-flush">
+            <li className="list-group-item list-group-item-info mb-1">Actions</li>
             {props.group.actions.map(a => <Action key={a.action_id} action={a} />)}
-        </div>
+        </ul>
+        {props.group.triggers.length > 0 && (
+            <ul className="list-group list-group-flush">
+                <li className="list-group-item list-group-item-info">Triggers</li>
+                {props.group.triggers.map(t => <Trigger trigger={t} />)}
+            </ul>
+        )}
         </div>);
 }
 
@@ -66,25 +90,27 @@ function Tree(props) {
 }
 
 function attachActionsToAffects(actionList) {
+        // Move Default External Triggers from first to last. It's built-in and uninteresting
+        actionList.groups.push(actionList.groups.shift());
+
         const actionLookup = {};
         actionList.groups.forEach(group => {
             const actionById = {};
             actionLookup[group.id] = actionById;
             group.actions.forEach(a => {actionById[a.action_id] = a});
         });
-        function attach(possiblyIdContainingItems) {
-            possiblyIdContainingItems.forEach(item => {
-                if (!item.group_id || !item.action_id) {
-                    return;
-                }
-                item.action = actionLookup[item.group_id][item.action_id];
-            })
+        function attach(item) {
+            if (!item.group_id || !item.action_id) {
+                return;
+            }
+            item.action = actionLookup[item.group_id][item.action_id];
         }
         actionList.groups.forEach(group => {
             group.actions.forEach(action =>{
-                attach(action.start_affects);
-                attach(action.complete_affects);
+                action.start_affects.forEach(attach);
+                action.complete_affects.forEach(attach);
             });
+            group.triggers.forEach(trigger =>{ attach(trigger.affect); });
         });
         return actionList;
 }
