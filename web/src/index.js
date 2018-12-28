@@ -17,6 +17,11 @@ if (useApp) {
             app.setState({actionList: resp})
         });
 } else {
-    ReactDOM.render(<Tree actionList={attachActionsToAffects(actionList)}/>, document.getElementById('root'))
+    request.get({url: 'https://flow.corp.statestitle.com/api/graph', json: true})
+    //request.get({url: 'http://localhost:8000/api/graph', json:true})
+        .then(resp => {
+            ReactDOM.render(<Tree actionList={attachActionsToAffects(resp)}/>, document.getElementById('root'))
+        });
+    //ReactDOM.render(<Tree actionList={attachActionsToAffects(actionList)}/>, document.getElementById('root'))
 }
 registerServiceWorker();
