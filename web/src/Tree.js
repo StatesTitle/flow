@@ -35,7 +35,7 @@ function Action(props) {
     const action = props.action;
     function affectLi(reason) {
         return (a => (<li className="list-group-item">
-            <Affect key={a.type + " " + a.task + " " + a.group_id + " " + a.action_id} reason={reason} affect={a}/>
+            <Affect key={`${a.type} ${a.task} ${a.group_id} ${a.action_id}`} reason={reason} affect={a}/>
             </li>));
     }
     return (<div className="card border-dark m-2 ml-3 mr-3">
