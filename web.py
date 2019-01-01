@@ -4,6 +4,7 @@ import flask
 from flask import request, abort
 from flask import jsonify
 
+from dataclasses import asdict
 from graph import generate_digraph_from_action_list, build_action_list, AffectTaskAffect, \
     CreateActionAffect
 from resware_model import build_models, Task
@@ -21,6 +22,17 @@ def stream():
     run = subprocess.run(['dot', '-Tsvg'], stdout=subprocess.PIPE, input=bytes(digraph, 'utf-8'))
     return flask.Response(run.stdout, mimetype='image/svg+xml')
 
+
+@app.route('/api/graph')
+def api_graph():
+    if request.headers.get('Authorization', '') != WEB_TOKEN:
+        abort(401)
+
+    alist = build_action_list(build_models(), ACTION_LIST_DEF_ID)
+    response = jsonify(asdict(alist))
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
 
 @app.route('/api/action_list')
 def api_action_list():
