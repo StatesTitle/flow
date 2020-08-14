@@ -1,0 +1,8 @@
+dataclasses
+Flask
+gunicorn
+paramiko
+pymssql
+python-dotenv
+sshtunnel
+yapf
