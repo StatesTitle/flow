@@ -2,12 +2,9 @@ import subprocess
 
 import flask
 from flask import request, abort
-from flask import jsonify
 
-from dataclasses import asdict
-from graph import generate_digraph_from_action_list, build_action_list, AffectTaskAffect, \
-    CreateActionAffect
-from resware_model import build_models, Task
+from graph import generate_digraph_from_action_list, build_action_list
+from resware_model import build_models
 from settings import ACTION_LIST_DEF_ID, WEB_TOKEN
 
 app = flask.Flask(__name__)
@@ -21,65 +18,6 @@ def stream():
     digraph = '\n'.join(generate_digraph_from_action_list(alist))
     run = subprocess.run(['dot', '-Tsvg'], stdout=subprocess.PIPE, input=bytes(digraph, 'utf-8'))
     return flask.Response(run.stdout, mimetype='image/svg+xml')
-
-
-@app.route('/api/graph')
-def api_graph():
-    if request.headers.get('Authorization', '') != WEB_TOKEN:
-        abort(401)
-
-    alist = build_action_list(build_models(), ACTION_LIST_DEF_ID)
-    response = jsonify(asdict(alist))
-    response.headers.add('Access-Control-Allow-Origin', '*')
-
-    return response
-
-@app.route('/api/action_list')
-def api_action_list():
-    if request.headers.get('Authorization', '') != WEB_TOKEN:
-        abort(401)
-
-    groups = build_action_list(build_models(), ACTION_LIST_DEF_ID).groups
-    actions = [action for action_group in groups for action in action_group.actions]
-
-    response = jsonify(get_json(actions))
-    response.headers.add('Access-Control-Allow-Origin', '*')
-
-    return response
-
-
-def get_json(action_list):
-    return [{
-        'id': action.action_id,
-        'groupId': action.group_id,
-        'name': action.name,
-        'description': action.description,
-        'hidden': action.hidden,
-        'dynamic': action.dynamic,
-        'start_emails': [{
-            'name': email.name
-        } for email in action.start_emails],
-        'complete_emails': [{
-            'name': email.name
-        } for email in action.complete_emails],
-        'start_affects': [get_affect(affect) for affect in action.start_affects],
-        'complete_affects': [get_affect(affect) for affect in action.complete_affects],
-    } for action in action_list]
-
-
-def get_affect(affect):
-    if isinstance(affect, AffectTaskAffect):
-        return {
-            'type': 'complete' if affect.task == Task.COMPLETE else 'start',
-            'action': f'{affect.action_id}-{affect.group_id}',
-        }
-    elif isinstance(affect, CreateActionAffect):
-        return {
-            'type': 'create',
-            'action': f'{affect.action_id}-{affect.group_id}',
-        }
-    else:
-        return {}
 
 
 if __name__ == "__main__":
