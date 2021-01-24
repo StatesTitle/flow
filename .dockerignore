@@ -1,0 +1,5 @@
+# Ignore everything
+**
+
+!/*.py
+!/requirements.txt
