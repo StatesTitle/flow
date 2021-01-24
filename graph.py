@@ -6,7 +6,7 @@ For the dataclasses below, we've made them unsafe_hash when they need a __hash__
 the instances should be immutable after build_action_list returns, but we're not marking as frozen because we set _ctx in __post_init__"""
 
 import re
-from collections import defaultdict
+import sys
 
 from typing import List, Set, Tuple, Dict
 
@@ -34,10 +34,24 @@ class GroupLookupMixin:
     def group(self):
         return self._ctx.groups[self.group_id]
 
+
+# ResWare will leave dangling affects in a group for actions that have been deleted.
+# We're capturing them here to make it easier to print them and then clean them up
+missed = set()
+
+
 class ActionLookupMixin:
     @property
     def action(self):
-        return self._ctx.actions[(self.group_id, self.action_id)]
+        key = (self.group_id, self.action_id)
+        try:
+            return self._ctx.actions[key]
+        except KeyError:
+            if key not in missed:
+                missed.add(key)
+                #print(f'{self} tried to find {key} but failed')
+            return None
+
 
 @dataclass
 class Context:
@@ -70,7 +84,6 @@ class CompleteActionAffect(AffectTaskAffect):
     @property
     def desc(self):
         return f'{self.task.name} {self.action.path}'
-
 
 
 @dataclass(unsafe_hash=True)
@@ -181,7 +194,6 @@ class Email(CtxHolder, ActionLookupMixin):
     required: List[Partner] = field(default_factory=list, compare=False)
     excluded: List[Partner] = field(default_factory=list, compare=False)
 
-
     @property
     def node_name(self):
         return _node_name(self.name, self.group_id, self.action_id)
@@ -256,17 +268,19 @@ def _build_external_action(models, model_trigger):
 def _build_affects(model_affect, ctx):
     if model_affect.affected_group_id is not None:
         if model_affect.offset is not None:
-            yield OffsetActionAffect(ctx, 'offset',
-                model_affect.affected_group_id, model_affect.affected_action_id,
+            yield OffsetActionAffect(
+                ctx, 'offset', model_affect.affected_group_id, model_affect.affected_action_id,
                 model_affect.affected_task, model_affect.offset
             )
         if model_affect.auto_complete:
-            yield CompleteActionAffect(ctx, 'complete',
-                model_affect.affected_group_id, model_affect.affected_action_id,
+            yield CompleteActionAffect(
+                ctx, 'complete', model_affect.affected_group_id, model_affect.affected_action_id,
                 model_affect.affected_task
             )
     if model_affect.created_group_id is not None:
-        yield CreateActionAffect(ctx, 'create', model_affect.created_group_id, model_affect.created_action_id)
+        yield CreateActionAffect(
+            ctx, 'create', model_affect.created_group_id, model_affect.created_action_id
+        )
 
 
 def _build_triggers(models, model_trigger, ctx):
@@ -282,8 +296,10 @@ def _build_document_type(models, document_type_id):
 
 def _build_email(models, model_action_email, action, ctx):
     model_email = models.emails[model_action_email.email_id]
-    email = Email(ctx, action.group_id, action.action_id,
-            model_email.name, model_email.subject, model_email.body, model_action_email.task)
+    email = Email(
+        ctx, action.group_id, action.action_id, model_email.name, model_email.subject,
+        model_email.body, model_action_email.task
+    )
     for model_email_doc in models.email_documents[model_action_email.email_id]:
         model_doc = models.document_types[model_email_doc.document_type_id]
         email.documents.append(_build_document_type(models, model_email_doc.document_type_id))
@@ -291,17 +307,23 @@ def _build_email(models, model_action_email, action, ctx):
         model_template = models.templates[model_email_template.template_id]
         doc = _build_document_type(models, model_template.document_type_id)
         email.templates.append(Template(model_template.name, model_template.filename, doc))
-    for model_email_partner_type_recipient in models.email_partner_type_recipients[model_action_email.email_id]:
-        email.recipients.append(models.partner_types[model_email_partner_type_recipient.partner_type_id])
-    _add_partner_restrictions(models, email, models.email_partner_restrictions[model_action_email.email_id])
+    for model_email_partner_type_recipient in models.email_partner_type_recipients[
+        model_action_email.email_id]:
+        email.recipients.append(
+            models.partner_types[model_email_partner_type_recipient.partner_type_id]
+        )
+    _add_partner_restrictions(
+        models, email, models.email_partner_restrictions[model_action_email.email_id]
+    )
     return email
 
 
 def _build_action(models, model_group_action, ctx):
     model_action = models.actions[model_group_action.action_id]
     action = Action(
-        ctx, model_action.id, model_group_action.group_id, model_action.name, model_action.display_name,
-        model_action.description, model_action.hidden, model_group_action.dynamic
+        ctx, model_action.id, model_group_action.group_id, model_action.name,
+        model_action.display_name, model_action.description, model_action.hidden,
+        model_group_action.dynamic
     )
     key = (action.group_id, action.action_id)
     ctx.actions[key] = action
@@ -322,13 +344,15 @@ def _build_action(models, model_group_action, ctx):
 
     return action
 
+
 def _add_partner_restrictions(models, restricted, restrictions):
     for restriction in restrictions:
-        partner =_build_partner(models, models.partners[restriction.partner_id])
+        partner = _build_partner(models, models.partners[restriction.partner_id])
         if restriction.include:
             restricted.required.append(partner)
         else:
             restricted.excluded.append(partner)
+
 
 def _build_group(models, model_alist_group, ctx):
     model_group = models.groups[model_alist_group.group_id]
@@ -360,17 +384,19 @@ def _build_partner(models, model_partner):
         partner.types.append(models.partner_types[model_partner_type.type_id])
     return partner
 
+
 def build_partners(models):
     partners = {}
     for model_partner in models.partners.values():
         partners[model_partner.id] = _build_partner(models, model_partner)
     return partners, models.partner_types
 
+
 name_prefix = re.compile('^\w+: ')
 
 
 def _walk(action: Action, reachable: Set[Action]):
-    if action in reachable:
+    if action is None or action in reachable:
         return
     reachable.add(action)
     for affect in action.start_affects:
@@ -379,9 +405,14 @@ def _walk(action: Action, reachable: Set[Action]):
         _walk(affect.action, reachable)
 
 
-def generate_digraph_from_action_list(action_list: ActionList, roots: Set[Action] = None):
+def generate_digraph_from_action_list(
+    action_list: ActionList, groups=None, roots: Set[Action] = None
+):
     if roots is None:
         roots = find_roots(action_list)
+
+    if groups is None:
+        groups = action_list.groups
 
     # Find the actions reachable from the given roots
     reachable = set()
@@ -400,7 +431,7 @@ def generate_digraph_from_action_list(action_list: ActionList, roots: Set[Action
         yield line
 
     yield 'digraph G {'
-    for group in action_list.groups:
+    for group in groups:
         for trigger in group.triggers:
             if trigger.affect.action not in reachable:
                 continue
@@ -421,6 +452,8 @@ def generate_digraph_from_action_list(action_list: ActionList, roots: Set[Action
                 Vertex(name_prefix.sub('', action.name), shape='box', name=action.node_name)
             )
             for affect in action.start_affects + action.complete_affects:
+                if affect.action is None:
+                    continue
                 yield from emit(f'{action.node_name} -> {affect.action.node_name}')
             for email in action.start_emails + action.complete_emails:
                 yield from emit(str(Vertex(email.name, name=email.node_name, **email.dot_attrs)))
@@ -440,14 +473,7 @@ def find_roots(action_list, external_actions=None):
     return roots
 
 
-if __name__ == '__main__':
-    models = build_models()
-    #print(build_partners(models))
-    alist = build_action_list(models, ACTION_LIST_DEF_ID)
-    import json
-    print(json.dumps(asdict(alist), indent='  '))
-    import sys
-    sys.exit(0)
+def pprint_groups(alist):
     for group in alist.groups:
         print('Group:', group.name)
         for trigger in group.triggers:
@@ -463,4 +489,20 @@ if __name__ == '__main__':
                 for affect in affects:
                     print('   ', affect.desc)
 
-    #print('\n'.join(generate_digraph_from_action_list(alist)))
+
+if __name__ == '__main__':
+    models = build_models()
+    alist = build_action_list(models, ACTION_LIST_DEF_ID)
+    action = sys.argv[1] if len(sys.argv) > 1 else 'digraph'
+    if action == 'digraph':
+        print('\n'.join(generate_digraph_from_action_list(alist)))
+    elif action == 'partners':
+        print(build_partners(models))
+    elif action == 'json':
+        import json
+        print(json.dumps(asdict(alist), indent='  '))
+    elif action == 'pprint':
+        pprint_groups(alist)
+    else:
+        print(f'Unknown action {action}. Valid options are digraph, partners, json, and pprint')
+        sys.exit(1)
