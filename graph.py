@@ -8,6 +8,7 @@ the instances should be immutable after build_action_list returns, but we're not
 import re
 import sys
 
+from functools import wraps
 from typing import List, Set, Tuple, Dict
 
 from dataclasses import asdict, dataclass, field, InitVar
@@ -32,7 +33,13 @@ class Partner:
 class GroupLookupMixin:
     @property
     def group(self):
-        return self._ctx.groups[self.group_id]
+        try:
+            return self._ctx.groups[self.group_id]
+        except KeyError:
+            if self.group_id not in missed:
+                missed.add(self.group_id)
+                #print(f'{self} tried to find {key} but failed')
+            return None
 
 
 # ResWare will leave dangling affects in a group for actions that have been deleted.
@@ -113,15 +120,11 @@ class CreateGroupAffect(CtxHolder, GroupLookupMixin):
 
     @property
     def action(self):
-        try:
-            # Somewhat arbitrarily say the action affected by creating a group is the first action
-            # in the group. This gets the linkage in place in the graph
-            return self.group.actions[0]
-        except KeyError:
-            if self.group_id not in missed:
-                missed.add(self.group_id)
-                #print(f'{self} tried to find {key} but failed')
+        if self.group is None:
             return None
+        # Somewhat arbitrarily say the action affected by creating a group is the first action
+        # in the group. This gets the linkage in place in the graph
+        return self.group.actions[0]
 
 
 @dataclass(unsafe_hash=True)
@@ -144,6 +147,10 @@ class ExternalAction:
     @property
     def dot_attrs(self):
         return {'fillcolor': '#a6cee3', 'style': 'filled'}
+
+    @property
+    def vertex(self):
+        return Vertex(self.label, name=self.node_name, **self.dot_attrs)
 
 
 @dataclass
@@ -224,6 +231,10 @@ class Email(CtxHolder, ActionLookupMixin):
     def dot_attrs(self):
         return {'fillcolor': '#33a02c', 'style': 'filled', 'fontcolor': 'white'}
 
+    @property
+    def vertex(self):
+        return Vertex(self.name, name=self.node_name, **self.dot_attrs)
+
 
 @dataclass(unsafe_hash=True)
 class Action(CtxHolder, GroupLookupMixin):
@@ -255,8 +266,16 @@ class Action(CtxHolder, GroupLookupMixin):
     def path(self):
         return f'{self.group.name}/{self.name}'
 
+    @property
+    def affects(self):
+        return self.start_affects + self.complete_affects
 
-@dataclass
+    @property
+    def vertex(self):
+        return Vertex(name_prefix.sub('', self.name), shape='box', name=self.node_name)
+
+
+@dataclass(unsafe_hash=True)
 class Group:
     """A group of actions and triggers that can be added to a file"""
     id: int
@@ -266,6 +285,14 @@ class Group:
     triggers: List[Trigger] = field(default_factory=list, compare=False)
     required: List[Partner] = field(default_factory=list, compare=False)
     excluded: List[Partner] = field(default_factory=list, compare=False)
+
+    @property
+    def node_name(self):
+        return _node_name(self.name, self.id)
+
+    @property
+    def vertex(self):
+        return Vertex(self.name, shape='octagon', name=self.node_name)
 
 
 @dataclass
@@ -399,7 +426,7 @@ def build_action_list(models, action_list_id):
     for model_alist_group in models.action_list_groups[action_list_id]:
         result.groups.append(_build_group(models, model_alist_group, ctx))
 
-    return result
+    return ctx, result
 
 
 def _build_partner(models, model_partner):
@@ -429,50 +456,91 @@ def _walk(action: Action, reachable: Set[Action]):
         _walk(affect.action, reachable)
 
 
-def generate_digraph_from_action_list(
-    action_list: ActionList, groups=None, roots: Set[Action] = None
-):
-    if groups is None:
-        groups = action_list.groups
+def digraph(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        lines = ['digraph G {']
+        yielded = set()
+        for obj in f(*args, **kwargs):
+            # We're not distinguishing offset vs start vs complete affects in the arrows yet. That leads to dupe arrows, so
+            # filter them out here
+            line = str(obj)
+            if line in yielded:
+                continue
+            yielded.add(line)
+            lines.append(line)
+        lines.append('}')
+        return '\n'.join(lines)
 
-    yielded = set()
+    return decorated_function
 
-    def emit(obj):
-        # We're not distinguishing offset vs start vs complete affects in the arrows yet. That leads to dupe arrows, so
-        # filter them out here
-        line = str(obj)
-        if line in yielded:
-            return
-        yielded.add(line)
-        yield line
 
-    yield 'digraph G {'
-    for group in groups:
+@digraph
+def generate_digraph_from_group(alist: ActionList, group: Group):
+    incoming_group = set()
+    incoming_action = set()
+    for g in alist.groups:
+        if g == group:
+            continue
+        for act in g.actions:
+            for aff in act.affects:
+                if aff.group == group:
+                    if aff.type == 'create_group':
+                        incoming_group.add(g)
+                    elif aff.action is not None:
+                        incoming_action.add((g, aff.action))
+    if len(incoming_group) > 0:
+        for g in incoming_group:
+            yield g.vertex
+        yield group.vertex
+        for g in incoming_group:
+            yield f'{g.node_name} -> {group.node_name}'
+    for g, act in incoming_action:
+        yield g.vertex
+    for g, act in incoming_action:
+        yield act.vertex
+    for g, act in incoming_action:
+        yield f'{g.node_name} -> {act.node_name}'
+    for trigger in group.triggers:
+        if trigger.affect.action is None or trigger.affect.action.group != group:
+            continue
+        yield trigger.external_action.vertex
+        yield f'{trigger.external_action.node_name} -> {trigger.affect.action.node_name}'
+    for action in group.actions:
+        yield action.vertex
+        for affect in action.start_affects + action.complete_affects:
+            if affect.action is None or affect.action.group != group:
+                continue
+            yield f'{action.node_name} -> {affect.action.node_name}'
+        for email in action.start_emails + action.complete_emails:
+            yield email.vertex
+            yield f'{action.node_name} -> {email.node_name}'
+
+    for act in group.actions:
+        for aff in act.affects:
+            if aff.group is not None and aff.group != group:
+                yield aff.group.vertex
+                yield f'{act.node_name} -> {aff.group.node_name}'
+
+
+@digraph
+def generate_digraph_from_action_list(action_list: ActionList):
+    for group in action_list.groups:
         for trigger in group.triggers:
             if trigger.affect.action is None:
                 continue
-            yield from emit(
-                Vertex(
-                    trigger.external_action.label,
-                    name=trigger.external_action.node_name,
-                    **trigger.external_action.dot_attrs
-                )
-            )
-            yield from emit(
-                f'{trigger.external_action.node_name} -> {trigger.affect.action.node_name}'
-            )
+            yield trigger.external_action.vertex
+            yield f'{trigger.external_action.node_name} -> {trigger.affect.action.node_name}'
+
         for action in group.actions:
-            yield from emit(
-                Vertex(name_prefix.sub('', action.name), shape='box', name=action.node_name)
-            )
+            yield action.vertex
             for affect in action.start_affects + action.complete_affects:
                 if affect.action is None:
                     continue
-                yield from emit(f'{action.node_name} -> {affect.action.node_name}')
+                yield f'{action.node_name} -> {affect.action.node_name}'
             for email in action.start_emails + action.complete_emails:
-                yield from emit(str(Vertex(email.name, name=email.node_name, **email.dot_attrs)))
-                yield from emit(f'{action.node_name} -> {email.node_name}')
-    yield '}'
+                yield email.vertex
+                yield f'{action.node_name} -> {email.node_name}'
 
 
 def find_roots(action_list, external_actions=None):
@@ -506,10 +574,14 @@ def pprint_groups(alist):
 
 if __name__ == '__main__':
     models = build_models()
-    alist = build_action_list(models, ACTION_LIST_DEF_ID)
+    ctx, alist = build_action_list(models, ACTION_LIST_DEF_ID)
     action = sys.argv[1] if len(sys.argv) > 1 else 'digraph'
     if action == 'digraph':
-        print('\n'.join(generate_digraph_from_action_list(alist)))
+        print(generate_digraph_from_action_list(alist))
+    elif action == 'group':
+        group_id = int(sys.argv[2])
+        group = ctx.groups[group_id]
+        print(generate_digraph_from_group(alist, group))
     elif action == 'partners':
         print(build_partners(models))
     elif action == 'json':
