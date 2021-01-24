@@ -40,7 +40,7 @@ class GroupLookupMixin:
 missed = set()
 
 
-class ActionLookupMixin:
+class ActionLookupMixin(GroupLookupMixin):
     @property
     def action(self):
         key = (self.group_id, self.action_id)
@@ -100,6 +100,28 @@ class CreateActionAffect(Affect):
     @property
     def desc(self):
         return f'Create {self.action.path}'
+
+
+@dataclass(unsafe_hash=True)
+class CreateGroupAffect(CtxHolder, GroupLookupMixin):
+    type: str
+    group_id: int
+
+    @property
+    def desc(self):
+        return f'Create {self.group}'
+
+    @property
+    def action(self):
+        try:
+            # Somewhat arbitrarily say the action affected by creating a group is the first action
+            # in the group. This gets the linkage in place in the graph
+            return self.group.actions[0]
+        except KeyError:
+            if self.group_id not in missed:
+                missed.add(self.group_id)
+                #print(f'{self} tried to find {key} but failed')
+            return None
 
 
 @dataclass(unsafe_hash=True)
@@ -277,10 +299,13 @@ def _build_affects(model_affect, ctx):
                 ctx, 'complete', model_affect.affected_group_id, model_affect.affected_action_id,
                 model_affect.affected_task
             )
-    if model_affect.created_group_id is not None:
+    if model_affect.created_action_group_id is not None:
         yield CreateActionAffect(
-            ctx, 'create', model_affect.created_group_id, model_affect.created_action_id
+            ctx, 'create_action', model_affect.created_action_group_id,
+            model_affect.created_action_action_id
         )
+    if model_affect.created_group_id is not None:
+        yield CreateGroupAffect(ctx, 'create_group', model_affect.created_group_id)
 
 
 def _build_triggers(models, model_trigger, ctx):
@@ -301,7 +326,6 @@ def _build_email(models, model_action_email, action, ctx):
         model_email.body, model_action_email.task
     )
     for model_email_doc in models.email_documents[model_action_email.email_id]:
-        model_doc = models.document_types[model_email_doc.document_type_id]
         email.documents.append(_build_document_type(models, model_email_doc.document_type_id))
     for model_email_template in models.email_templates[model_action_email.email_id]:
         model_template = models.templates[model_email_template.template_id]
@@ -408,16 +432,8 @@ def _walk(action: Action, reachable: Set[Action]):
 def generate_digraph_from_action_list(
     action_list: ActionList, groups=None, roots: Set[Action] = None
 ):
-    if roots is None:
-        roots = find_roots(action_list)
-
     if groups is None:
         groups = action_list.groups
-
-    # Find the actions reachable from the given roots
-    reachable = set()
-    for root in roots:
-        _walk(root, reachable)
 
     yielded = set()
 
@@ -433,7 +449,7 @@ def generate_digraph_from_action_list(
     yield 'digraph G {'
     for group in groups:
         for trigger in group.triggers:
-            if trigger.affect.action not in reachable:
+            if trigger.affect.action is None:
                 continue
             yield from emit(
                 Vertex(
@@ -446,8 +462,6 @@ def generate_digraph_from_action_list(
                 f'{trigger.external_action.node_name} -> {trigger.affect.action.node_name}'
             )
         for action in group.actions:
-            if action not in reachable:
-                continue
             yield from emit(
                 Vertex(name_prefix.sub('', action.name), shape='box', name=action.node_name)
             )
@@ -503,6 +517,10 @@ if __name__ == '__main__':
         print(json.dumps(asdict(alist), indent='  '))
     elif action == 'pprint':
         pprint_groups(alist)
+    elif action == 'build':
+        pass
     else:
-        print(f'Unknown action {action}. Valid options are digraph, partners, json, and pprint')
+        print(
+            f'Unknown action {action}. Valid options are digraph, build, partners, json, and pprint'
+        )
         sys.exit(1)

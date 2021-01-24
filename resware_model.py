@@ -14,6 +14,7 @@ class Task(enum.IntEnum):
     START = 1
     COMPLETE = 2
 
+
 # All actions in a group in ResWare have "start" and "complete" tasks. Those tasks can be marked "done". All affects
 # happen on either start or complete being marked done.  That's tracked in the ActionTypeID column in the
 # ActionGroupAffectDef and ActionListGroupExternalTriggerAffectsDef tables. If ActionTypeID is 1, that means the
@@ -21,7 +22,7 @@ class Task(enum.IntEnum):
 # complete being marked done.
 #
 # What an affect does is determined by which additional columns are set on the row in ActionGroupAffectDef:
-# 1. If AffectActionListGroupDefID and AffectActionDefID are set,  another GroupAction is being changed.
+# 1. If AffectActionListGroupDefID and AffectActionDefID are set, another GroupAction is being changed.
 #    AffectActionTypeID determines if it's the start or complete task that's being changed, just like with
 #    ActionTypeID. It can do one of two things:
 #     a. If AffectOffset is set, it's changing the due date offset
@@ -50,9 +51,9 @@ class Affect:
     affected_task: Task = col('AffectActionTypeID', nullable=True)
     offset: float = col('AffectOffset', nullable=True)
     auto_complete: bool = col('AffectAutoComplete', nullable=True)
-    created_group_id: int = col('CreateActionActionListGroupDefID', nullable=True)
-    created_action_id: int = col('CreateActionActionDefID', nullable=True)
-    # TODO CreateGroupActionListGroupDefID
+    created_action_group_id: int = col('CreateActionActionListGroupDefID', nullable=True)
+    created_action_action_id: int = col('CreateActionActionDefID', nullable=True)
+    created_group_id: int = col('CreateGroupActionListGroupDefID', nullable=True)
 
 
 @tableclass('ExternalActionDef')
@@ -92,7 +93,9 @@ class Email:
     # 1 = user, 2 = internet orders, 3 = team, 4 = team group, 5 = user's reply to, 6 = issue tracker, 7 = assigned team
     reply_to_type: int = col("ReplyToType")
     transmit_via_xml: bool = col('TransmitViaXML')
-    combine_generated_documents_attach_to_email: bool = col('CombineGeneratedDocumentsAttachToEmail')
+    combine_generated_documents_attach_to_email: bool = col(
+        'CombineGeneratedDocumentsAttachToEmail'
+    )
     # There are also a huge number of columns controlling what's generated. Add em as needed
 
 
@@ -130,6 +133,7 @@ class Template:
     document_type_id: int = col('DocumentTypeID')
     # lots more columns about how the document is generated
 
+
 def _email_start_complete_to_task(start_complete):
     return Task.COMPLETE if start_complete else Task.START
 
@@ -164,12 +168,15 @@ def _group_partner_include(type_id):
     return type_id == 1
 
 
-@tableclass('ActionListGroupActionDefPartnerRel', one_to_many=True, lookup=('group_id', 'action_id'))
+@tableclass(
+    'ActionListGroupActionDefPartnerRel', one_to_many=True, lookup=('group_id', 'action_id')
+)
 class GroupActionPartnerRestriction:
     group_id: int = col('ActionListGroupDefID')
     action_id: int = col('ActionDefID')
     partner_id: int = col('PartnerCompanyID')
     include: bool = col('ActionPartnerAddTypeID', parser=_group_partner_include)
+
 
 @tableclass('ActionListGroupActionDef', lookup='group_id', one_to_many=True)
 class GroupAction:
