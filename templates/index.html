@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Everything{% endblock %}
+{% block content %}
+<h3><a href="/everything.svg">Everything!</a></h3>
+<h3>Groups</h3>
+<ul>
+    {% for group in groups %}
+    <li><a href="/groups/{{ group.id }}.svg">{{ group.name }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}
