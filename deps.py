@@ -3,7 +3,7 @@ from collections import namedtuple
 
 def escape_name(name):
     name = name.replace('&', 'and')
-    for c in ' ./#?,!@$%^*()+=[]{}:;"-\\\'':
+    for c in ' ./#?,!@$%^*()+=[]{}:;"-\\\'~':
         name = name.replace(c, '_')
     return name
 
