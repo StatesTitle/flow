@@ -3,4 +3,4 @@ Flask
 gunicorn
 pymssql
 python-dotenv
-yapf
+black

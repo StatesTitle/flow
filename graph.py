@@ -20,7 +20,7 @@ from settings import ACTION_LIST_DEF_ID
 
 def _node_name(*components):
     # Prepend an 'N' for 'node' in case the first component starts with a number, which is a warning in dot
-    return escape_name('N' + ' '.join([str(c) for c in components]))
+    return escape_name("N" + " ".join([str(c) for c in components]))
 
 
 @dataclass
@@ -38,7 +38,7 @@ class GroupLookupMixin:
         except KeyError:
             if self.group_id not in missed:
                 missed.add(self.group_id)
-                #print(f'{self} tried to find {key} but failed')
+                # print(f'{self} tried to find {key} but failed')
             return None
 
 
@@ -56,14 +56,14 @@ class ActionLookupMixin(GroupLookupMixin):
         except KeyError:
             if key not in missed:
                 missed.add(key)
-                #print(f'{self} tried to find {key} but failed')
+                # print(f'{self} tried to find {key} but failed')
             return None
 
 
 @dataclass
 class Context:
-    actions: Dict[Tuple[int, int], 'Action'] = field(default_factory=dict)
-    groups: Dict[int, 'Group'] = field(default_factory=dict)
+    actions: Dict[Tuple[int, int], "Action"] = field(default_factory=dict)
+    groups: Dict[int, "Group"] = field(default_factory=dict)
 
 
 @dataclass(unsafe_hash=True)
@@ -90,7 +90,7 @@ class AffectTaskAffect(Affect):
 class CompleteActionAffect(AffectTaskAffect):
     @property
     def desc(self):
-        return f'{self.task.name} {self.action.path}'
+        return f"{self.task.name} {self.action.path}"
 
 
 @dataclass(unsafe_hash=True)
@@ -99,14 +99,14 @@ class OffsetActionAffect(AffectTaskAffect):
 
     @property
     def desc(self):
-        return f'Offset {self.task.name} on {self.action.path} by {self.offset} hours'
+        return f"Offset {self.task.name} on {self.action.path} by {self.offset} hours"
 
 
 @dataclass(unsafe_hash=True)
 class CreateActionAffect(Affect):
     @property
     def desc(self):
-        return f'Create {self.action.path}'
+        return f"Create {self.action.path}"
 
 
 @dataclass(unsafe_hash=True)
@@ -116,7 +116,7 @@ class CreateGroupAffect(CtxHolder, GroupLookupMixin):
 
     @property
     def desc(self):
-        return f'Create {self.group}'
+        return f"Create {self.group}"
 
     @property
     def action(self):
@@ -133,6 +133,7 @@ class ExternalAction:
 
     There are a fair number of specific actions that are instances of this class, and then for document addition and
     action events receipt, we create an instance of the subclasses below"""
+
     id: int
     name: str
 
@@ -146,7 +147,7 @@ class ExternalAction:
 
     @property
     def dot_attrs(self):
-        return {'fillcolor': '#a6cee3', 'style': 'filled'}
+        return {"fillcolor": "#a6cee3", "style": "filled"}
 
     @property
     def vertex(self):
@@ -165,7 +166,7 @@ class DocumentAdded(ExternalAction):
 
     @property
     def label(self):
-        return self.document.name + ' Added'
+        return self.document.name + " Added"
 
     @property
     def node_name(self):
@@ -173,7 +174,7 @@ class DocumentAdded(ExternalAction):
 
     @property
     def dot_attrs(self):
-        return {'fillcolor': '#b2df8a', 'style': 'filled'}
+        return {"fillcolor": "#b2df8a", "style": "filled"}
 
 
 @dataclass(unsafe_hash=True)
@@ -191,12 +192,13 @@ class ActionEventReceived(ExternalAction):
 
     @property
     def dot_attrs(self):
-        return {'fillcolor': '#1f78b4', 'style': 'filled', 'fontcolor': 'white'}
+        return {"fillcolor": "#1f78b4", "style": "filled", "fontcolor": "white"}
 
 
 @dataclass
 class Trigger:
     """A combination of an external action that ResWare detects and the affect it performs when it detects it"""
+
     affect: Affect
     external_action: ExternalAction
 
@@ -211,6 +213,7 @@ class Template:
 @dataclass(unsafe_hash=True)
 class Email(CtxHolder, ActionLookupMixin):
     """An email template that's sent on the start or completion of an action"""
+
     action_id: int
     group_id: int
     name: str
@@ -229,7 +232,7 @@ class Email(CtxHolder, ActionLookupMixin):
 
     @property
     def dot_attrs(self):
-        return {'fillcolor': '#33a02c', 'style': 'filled', 'fontcolor': 'white'}
+        return {"fillcolor": "#33a02c", "style": "filled", "fontcolor": "white"}
 
     @property
     def vertex(self):
@@ -244,6 +247,7 @@ class Action(CtxHolder, GroupLookupMixin):
     the instance on a group here. That means it's possible for the same global action to be in the graph multiple times.
     If that's the case, it'll always be a separate instance in the group. Since the affects are on the instance anyway,
     the global action concept isn't very useful."""
+
     action_id: int
     group_id: int
     name: str = field(compare=False)
@@ -264,7 +268,7 @@ class Action(CtxHolder, GroupLookupMixin):
 
     @property
     def path(self):
-        return f'{self.group.name}/{self.name}'
+        return f"{self.group.name}/{self.name}"
 
     @property
     def affects(self):
@@ -272,12 +276,13 @@ class Action(CtxHolder, GroupLookupMixin):
 
     @property
     def vertex(self):
-        return Vertex(name_prefix.sub('', self.name), shape='box', name=self.node_name)
+        return Vertex(name_prefix.sub("", self.name), shape="box", name=self.node_name)
 
 
 @dataclass(unsafe_hash=True)
 class Group:
     """A group of actions and triggers that can be added to a file"""
+
     id: int
     name: str
     optional: bool
@@ -292,7 +297,7 @@ class Group:
 
     @property
     def vertex(self):
-        return Vertex(self.name, shape='octagon', name=self.node_name)
+        return Vertex(self.name, shape="octagon", name=self.node_name)
 
 
 @dataclass
@@ -309,7 +314,9 @@ def _build_external_action(models, model_trigger):
         return DocumentAdded(model_trigger.external_action_id, name, doc)
     elif model_trigger.action_event_id is not None:
         ae = models.action_events[model_trigger.action_event_id]
-        return ActionEventReceived(model_trigger.external_action_id, name, ae.id, ae.name)
+        return ActionEventReceived(
+            model_trigger.external_action_id, name, ae.id, ae.name
+        )
     else:
         return ExternalAction(model_trigger.external_action_id, name)
 
@@ -318,21 +325,30 @@ def _build_affects(model_affect, ctx):
     if model_affect.affected_group_id is not None:
         if model_affect.offset is not None:
             yield OffsetActionAffect(
-                ctx, 'offset', model_affect.affected_group_id, model_affect.affected_action_id,
-                model_affect.affected_task, model_affect.offset
+                ctx,
+                "offset",
+                model_affect.affected_group_id,
+                model_affect.affected_action_id,
+                model_affect.affected_task,
+                model_affect.offset,
             )
         if model_affect.auto_complete:
             yield CompleteActionAffect(
-                ctx, 'complete', model_affect.affected_group_id, model_affect.affected_action_id,
-                model_affect.affected_task
+                ctx,
+                "complete",
+                model_affect.affected_group_id,
+                model_affect.affected_action_id,
+                model_affect.affected_task,
             )
     if model_affect.created_action_group_id is not None:
         yield CreateActionAffect(
-            ctx, 'create_action', model_affect.created_action_group_id,
-            model_affect.created_action_action_id
+            ctx,
+            "create_action",
+            model_affect.created_action_group_id,
+            model_affect.created_action_action_id,
         )
     if model_affect.created_group_id is not None:
-        yield CreateGroupAffect(ctx, 'create_group', model_affect.created_group_id)
+        yield CreateGroupAffect(ctx, "create_group", model_affect.created_group_id)
 
 
 def _build_triggers(models, model_trigger, ctx):
@@ -349,17 +365,27 @@ def _build_document_type(models, document_type_id):
 def _build_email(models, model_action_email, action, ctx):
     model_email = models.emails[model_action_email.email_id]
     email = Email(
-        ctx, action.group_id, action.action_id, model_email.name, model_email.subject,
-        model_email.body, model_action_email.task
+        ctx,
+        action.group_id,
+        action.action_id,
+        model_email.name,
+        model_email.subject,
+        model_email.body,
+        model_action_email.task,
     )
     for model_email_doc in models.email_documents[model_action_email.email_id]:
-        email.documents.append(_build_document_type(models, model_email_doc.document_type_id))
+        email.documents.append(
+            _build_document_type(models, model_email_doc.document_type_id)
+        )
     for model_email_template in models.email_templates[model_action_email.email_id]:
         model_template = models.templates[model_email_template.template_id]
         doc = _build_document_type(models, model_template.document_type_id)
-        email.templates.append(Template(model_template.name, model_template.filename, doc))
+        email.templates.append(
+            Template(model_template.name, model_template.filename, doc)
+        )
     for model_email_partner_type_recipient in models.email_partner_type_recipients[
-        model_action_email.email_id]:
+        model_action_email.email_id
+    ]:
         email.recipients.append(
             models.partner_types[model_email_partner_type_recipient.partner_type_id]
         )
@@ -372,9 +398,14 @@ def _build_email(models, model_action_email, action, ctx):
 def _build_action(models, model_group_action, ctx):
     model_action = models.actions[model_group_action.action_id]
     action = Action(
-        ctx, model_action.id, model_group_action.group_id, model_action.name,
-        model_action.display_name, model_action.description, model_action.hidden,
-        model_group_action.dynamic
+        ctx,
+        model_action.id,
+        model_group_action.group_id,
+        model_action.name,
+        model_action.display_name,
+        model_action.description,
+        model_action.hidden,
+        model_group_action.dynamic,
     )
     key = (action.group_id, action.action_id)
     ctx.actions[key] = action
@@ -391,7 +422,9 @@ def _build_action(models, model_group_action, ctx):
         if model_action_email.task == Task.COMPLETE:
             action.complete_emails.append(email)
 
-    _add_partner_restrictions(models, action, models.group_action_partner_restrictions[key])
+    _add_partner_restrictions(
+        models, action, models.group_action_partner_restrictions[key]
+    )
 
     return action
 
@@ -413,7 +446,9 @@ def _build_group(models, model_alist_group, ctx):
         group.actions.append(_build_action(models, model_group_action, ctx))
     for model_trigger in models.triggers[group.id]:
         group.triggers.extend(_build_triggers(models, model_trigger, ctx))
-    _add_partner_restrictions(models, group, models.group_partner_restrictions[group.id])
+    _add_partner_restrictions(
+        models, group, models.group_partner_restrictions[group.id]
+    )
     return group
 
 
@@ -443,7 +478,7 @@ def build_partners(models):
     return partners, models.partner_types
 
 
-name_prefix = re.compile('^\w+: ')
+name_prefix = re.compile("^\w+: ")
 
 
 def _walk(action: Action, reachable: Set[Action]):
@@ -459,7 +494,7 @@ def _walk(action: Action, reachable: Set[Action]):
 def digraph(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        lines = ['digraph G {']
+        lines = ["digraph G {"]
         yielded = set()
         for obj in f(*args, **kwargs):
             # We're not distinguishing offset vs start vs complete affects in the arrows yet. That leads to dupe arrows, so
@@ -469,8 +504,8 @@ def digraph(f):
                 continue
             yielded.add(line)
             lines.append(line)
-        lines.append('}')
-        return '\n'.join(lines)
+        lines.append("}")
+        return "\n".join(lines)
 
     return decorated_function
 
@@ -485,7 +520,7 @@ def generate_digraph_from_group(alist: ActionList, group: Group):
         for act in g.actions:
             for aff in act.affects:
                 if aff.group == group:
-                    if aff.type == 'create_group':
+                    if aff.type == "create_group":
                         incoming_group.add(g)
                     elif aff.action is not None:
                         incoming_action.add((g, aff.action))
@@ -494,33 +529,33 @@ def generate_digraph_from_group(alist: ActionList, group: Group):
             yield g.vertex
         yield group.vertex
         for g in incoming_group:
-            yield f'{g.node_name} -> {group.node_name}'
+            yield f"{g.node_name} -> {group.node_name}"
     for g, act in incoming_action:
         yield g.vertex
     for g, act in incoming_action:
         yield act.vertex
     for g, act in incoming_action:
-        yield f'{g.node_name} -> {act.node_name}'
+        yield f"{g.node_name} -> {act.node_name}"
     for trigger in group.triggers:
         if trigger.affect.action is None or trigger.affect.action.group != group:
             continue
         yield trigger.external_action.vertex
-        yield f'{trigger.external_action.node_name} -> {trigger.affect.action.node_name}'
+        yield f"{trigger.external_action.node_name} -> {trigger.affect.action.node_name}"
     for action in group.actions:
         yield action.vertex
         for affect in action.start_affects + action.complete_affects:
             if affect.action is None or affect.action.group != group:
                 continue
-            yield f'{action.node_name} -> {affect.action.node_name}'
+            yield f"{action.node_name} -> {affect.action.node_name}"
         for email in action.start_emails + action.complete_emails:
             yield email.vertex
-            yield f'{action.node_name} -> {email.node_name}'
+            yield f"{action.node_name} -> {email.node_name}"
 
     for act in group.actions:
         for aff in act.affects:
             if aff.group is not None and aff.group != group:
                 yield aff.group.vertex
-                yield f'{act.node_name} -> {aff.group.node_name}'
+                yield f"{act.node_name} -> {aff.group.node_name}"
 
 
 @digraph
@@ -530,23 +565,27 @@ def generate_digraph_from_action_list(action_list: ActionList):
             if trigger.affect.action is None:
                 continue
             yield trigger.external_action.vertex
-            yield f'{trigger.external_action.node_name} -> {trigger.affect.action.node_name}'
+            yield f"{trigger.external_action.node_name} -> {trigger.affect.action.node_name}"
 
         for action in group.actions:
             yield action.vertex
             for affect in action.start_affects + action.complete_affects:
                 if affect.action is None:
                     continue
-                yield f'{action.node_name} -> {affect.action.node_name}'
+                yield f"{action.node_name} -> {affect.action.node_name}"
             for email in action.start_emails + action.complete_emails:
                 yield email.vertex
-                yield f'{action.node_name} -> {email.node_name}'
+                yield f"{action.node_name} -> {email.node_name}"
 
 
 def find_roots(action_list, external_actions=None):
     """Finds actions affected by the given external actions"""
     if external_actions is None:
-        external_actions = {121: 'Document Added', 14: 'File Created', 154: 'Received Action Event'}
+        external_actions = {
+            121: "Document Added",
+            14: "File Created",
+            154: "Received Action Event",
+        }
     roots = set()
     for group in action_list.groups:
         for trigger in group.triggers:
@@ -557,42 +596,45 @@ def find_roots(action_list, external_actions=None):
 
 def pprint_groups(alist):
     for group in alist.groups:
-        print('Group:', group.name)
+        print("Group:", group.name)
         for trigger in group.triggers:
-            print('  Trigger:', trigger.external_action.label, '->', trigger.affect.desc)
+            print(
+                "  Trigger:", trigger.external_action.label, "->", trigger.affect.desc
+            )
         for action in group.actions:
-            print('  Action:', action.path)
+            print("  Action:", action.path)
             emails = action.start_emails + action.complete_emails
             if emails:
-                print('    Emails:', ', '.join([email.name for email in emails]))
+                print("    Emails:", ", ".join([email.name for email in emails]))
             affects = action.start_affects + action.complete_affects
             if affects:
-                print('    Affects:')
+                print("    Affects:")
                 for affect in affects:
-                    print('   ', affect.desc)
+                    print("   ", affect.desc)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     models = build_models()
     ctx, alist = build_action_list(models, ACTION_LIST_DEF_ID)
-    action = sys.argv[1] if len(sys.argv) > 1 else 'digraph'
-    if action == 'digraph':
+    action = sys.argv[1] if len(sys.argv) > 1 else "digraph"
+    if action == "digraph":
         print(generate_digraph_from_action_list(alist))
-    elif action == 'group':
+    elif action == "group":
         group_id = int(sys.argv[2])
         group = ctx.groups[group_id]
         print(generate_digraph_from_group(alist, group))
-    elif action == 'partners':
+    elif action == "partners":
         print(build_partners(models))
-    elif action == 'json':
+    elif action == "json":
         import json
-        print(json.dumps(asdict(alist), indent='  '))
-    elif action == 'pprint':
+
+        print(json.dumps(asdict(alist), indent="  "))
+    elif action == "pprint":
         pprint_groups(alist)
-    elif action == 'build':
+    elif action == "build":
         pass
     else:
         print(
-            f'Unknown action {action}. Valid options are digraph, build, partners, json, and pprint'
+            f"Unknown action {action}. Valid options are digraph, build, partners, json, and pprint"
         )
         sys.exit(1)

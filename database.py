@@ -4,8 +4,11 @@ import pymssql
 from dataclasses import dataclass, field, fields
 
 from settings import (
-    RESWARE_DATABASE_NAME, RESWARE_DATABASE_PASSWORD, RESWARE_DATABASE_PORT,
-    RESWARE_DATABASE_SERVER, RESWARE_DATABASE_USER
+    RESWARE_DATABASE_NAME,
+    RESWARE_DATABASE_PASSWORD,
+    RESWARE_DATABASE_PORT,
+    RESWARE_DATABASE_SERVER,
+    RESWARE_DATABASE_USER,
 )
 
 
@@ -17,7 +20,7 @@ class ResWareDatabaseConnection:
             password=RESWARE_DATABASE_PASSWORD,
             port=RESWARE_DATABASE_PORT,
             database=RESWARE_DATABASE_NAME,
-            as_dict=True
+            as_dict=True,
         )
         return self.connection
 
@@ -27,12 +30,13 @@ class ResWareDatabaseConnection:
 
 def tableclass(table, lookup=None, one_to_many=False, **kwargs):
     """Marks a dataclass as loadable from a specified SQL table"""
+
     def wrap(cls, lookup=lookup):
         dataclass(cls, **kwargs)
         cls.table = table
         if lookup is None:
-            if any((f.name == 'id' for f in fields(cls))):
-                lookup = 'id'
+            if any((f.name == "id" for f in fields(cls))):
+                lookup = "id"
             else:
                 raise Exception(
                     f"Pass a lookup field into tableclass on {cls} if there isn't an id field"
@@ -42,6 +46,7 @@ def tableclass(table, lookup=None, one_to_many=False, **kwargs):
 
             def create_key(self):
                 return getattr(self, lookup)
+
         else:
 
             def create_key(self):
@@ -56,31 +61,33 @@ def tableclass(table, lookup=None, one_to_many=False, **kwargs):
 
 def col(name, parser=None, nullable=False):
     """Marks a tableclass field as coming rom the named column on the table of the tableclass"""
-    metadata = {'column': name, 'nullable': nullable}
+    metadata = {"column": name, "nullable": nullable}
     if parser:
-        metadata['parser'] = parser
+        metadata["parser"] = parser
     return field(metadata=metadata)
 
 
 class ColumnMissing(Exception):
     """Raised when the col for a field on a tableclass isn't in a fetched row"""
+
     pass
 
 
 class ParsingFailed(Exception):
     """Raised when the parser on a col raises an exception on a value found in a row for the col name"""
+
     pass
 
 
 def _parse_col(dclass, field, row):
-    if field.metadata['column'] not in row:
+    if field.metadata["column"] not in row:
         raise ColumnMissing(
             f'{dclass} field {field.name} expected a column named {field.metadata["column"]} in the row {row}'
         )
-    val = row[field.metadata['column']]
-    parser = field.metadata.get('parser', field.type)
+    val = row[field.metadata["column"]]
+    parser = field.metadata.get("parser", field.type)
     if val is None:
-        if not field.metadata['nullable']:
+        if not field.metadata["nullable"]:
             raise ColumnMissing(
                 f'{dclass} field {field.name} expected a column named {field.metadata["column"]} in the row but got NULL from the db'
             )
@@ -97,7 +104,9 @@ def _parse_col(dclass, field, row):
 
 
 def _create_from_db(dclass, row):
-    return dclass(*[_parse_col(dclass, f, row) for f in fields(dclass) if 'column' in f.metadata])
+    return dclass(
+        *[_parse_col(dclass, f, row) for f in fields(dclass) if "column" in f.metadata]
+    )
 
 
 def load(conn, tablecls):
@@ -111,8 +120,10 @@ def load(conn, tablecls):
 
     If lookup isn't specified, it's assumed to be 'id'"""
 
-    columns = ', '.join([f.metadata['column'] for f in fields(tablecls) if 'column' in f.metadata])
-    query = f'SELECT {columns} FROM {tablecls.table}'
+    columns = ", ".join(
+        [f.metadata["column"] for f in fields(tablecls) if "column" in f.metadata]
+    )
+    query = f"SELECT {columns} FROM {tablecls.table}"
     results = {}
     if tablecls.one_to_many:
         results = collections.defaultdict(list)
@@ -124,6 +135,8 @@ def load(conn, tablecls):
             if tablecls.one_to_many:
                 results[key].append(instance)
             else:
-                assert key not in results, f"Was expecting a single item for {key} but got {instance} and {results[key]}"
+                assert (
+                    key not in results
+                ), f"Was expecting a single item for {key} but got {instance} and {results[key]}"
                 results[key] = instance
         return results

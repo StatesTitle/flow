@@ -1,7 +1,11 @@
 import subprocess
 from functools import wraps
 from flask import request, abort, render_template, Flask, Response
-from graph import generate_digraph_from_action_list, generate_digraph_from_group, build_action_list
+from graph import (
+    generate_digraph_from_action_list,
+    generate_digraph_from_group,
+    build_action_list,
+)
 from resware_model import build_models
 from settings import ACTION_LIST_DEF_ID, WEB_TOKEN
 
@@ -11,7 +15,7 @@ app = Flask(__name__)
 def auth_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if request.headers.get('Authorization', '') != WEB_TOKEN:
+        if request.headers.get("Authorization", "") != WEB_TOKEN:
             abort(401)
         return f(*args, **kwargs)
 
@@ -19,18 +23,20 @@ def auth_required(f):
 
 
 def graph(digraph):
-    run = subprocess.run(['dot', '-Tsvg'], stdout=subprocess.PIPE, input=bytes(digraph, 'utf-8'))
-    return Response(run.stdout, mimetype='image/svg+xml')
+    run = subprocess.run(
+        ["dot", "-Tsvg"], stdout=subprocess.PIPE, input=bytes(digraph, "utf-8")
+    )
+    return Response(run.stdout, mimetype="image/svg+xml")
 
 
-@app.route('/')
+@app.route("/")
 @auth_required
 def index():
     _, alist = build_action_list(build_models(), ACTION_LIST_DEF_ID)
-    return render_template('index.html', groups=alist.groups)
+    return render_template("index.html", groups=alist.groups)
 
 
-@app.route('/everything.svg')
+@app.route("/everything.svg")
 @auth_required
 def everything():
     _, alist = build_action_list(build_models(), ACTION_LIST_DEF_ID)
@@ -38,7 +44,7 @@ def everything():
     return graph(digraph)
 
 
-@app.route('/groups/<int:group_id>.svg')
+@app.route("/groups/<int:group_id>.svg")
 @auth_required
 def group(group_id):
     ctx, alist = build_action_list(build_models(), ACTION_LIST_DEF_ID)
