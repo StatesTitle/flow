@@ -37,7 +37,7 @@ You can also run `python graph.py` to produce the dot output from the database. 
 This app will run directly on Heroku. To set it up:
 
 1. Add `https://github.com/heroku/heroku-buildpack-apt.git`, `https://github.com/weibeld/heroku-buildpack-graphviz.git`, and `heroku/python` as buildpacks to your app in that order.
-1. Setup the keys in .env in the Heroku config for the app i.e. add your database and ssh tunnel
+1. Setup the keys in .env in the Heroku config for the app i.e. add your database
    configuration along with the action list you want to view and the token to prevent random viewers.
 1. `heroku git:remote -a st-flow` in a clone of this repo substituting your app name.
 

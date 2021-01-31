@@ -33,31 +33,14 @@ class Partner:
 class GroupLookupMixin:
     @property
     def group(self):
-        try:
-            return self._ctx.groups[self.group_id]
-        except KeyError:
-            if self.group_id not in missed:
-                missed.add(self.group_id)
-                # print(f'{self} tried to find {key} but failed')
-            return None
-
-
-# ResWare will leave dangling affects in a group for actions that have been deleted.
-# We're capturing them here to make it easier to print them and then clean them up
-missed = set()
+        return self._ctx.groups[self.group_id]
 
 
 class ActionLookupMixin(GroupLookupMixin):
     @property
     def action(self):
         key = (self.group_id, self.action_id)
-        try:
-            return self._ctx.actions[key]
-        except KeyError:
-            if key not in missed:
-                missed.add(key)
-                # print(f'{self} tried to find {key} but failed')
-            return None
+        return self._ctx.actions[key]
 
 
 @dataclass
@@ -120,8 +103,6 @@ class CreateGroupAffect(CtxHolder, GroupLookupMixin):
 
     @property
     def action(self):
-        if self.group is None:
-            return None
         # Somewhat arbitrarily say the action affected by creating a group is the first action
         # in the group. This gets the linkage in place in the graph
         return self.group.actions[0]
@@ -438,9 +419,8 @@ def _add_partner_restrictions(models, restricted, restrictions):
             restricted.excluded.append(partner)
 
 
-def _build_group(models, model_alist_group, ctx):
-    model_group = models.groups[model_alist_group.group_id]
-    group = Group(model_group.id, model_group.name, model_alist_group.optional)
+def _build_group(models, model_group, optional, ctx):
+    group = Group(model_group.id, model_group.name, optional)
     ctx.groups[group.id] = group
     for model_group_action in models.group_actions[group.id]:
         group.actions.append(_build_action(models, model_group_action, ctx))
@@ -457,9 +437,40 @@ def build_action_list(models, action_list_id):
 
     # Build the structure of all the groups, actions, affects, triggers, and emails
     ctx = Context()
+
+    # We build all the groups, not just the groups in the given action list. It's possible for
+    # an affect to create a group or action in a group even if that group isn't directly in the
+    # action list.
+    #
+    # For groups not in the action list, we mark them as optional just like other explicitly
+    # optional groups
+    nonoptional = set(
+        g.group_id for g in models.action_list_groups[action_list_id] if not g.optional
+    )
+    for model_group in models.groups.values():
+        _build_group(models, model_group, model_group.id not in nonoptional, ctx)
+
+    # It's possible for a group to be completely empty. If that's the case, we'll never display
+    # it as it has no actions. Affects can still reference that empty group though. To keep from
+    # trying to display arrows to nowhere, remove those affects
+    for group in ctx.groups.values():
+        if len(group.actions) == 0 and len(group.triggers) == 0:
+            for possibly_referencing_group in ctx.groups.values():
+                if group == possibly_referencing_group:
+                    continue
+                for action in possibly_referencing_group.actions:
+                    for affect in action.start_affects[:]:
+                        if affect.group_id == group.id:
+                            action.start_affects.remove(affect)
+                    for affect in action.complete_affects[:]:
+                        if affect.group_id == group.id:
+                            action.complete_affects.remove(affect)
+
+    # Now that we have a clean set of groups, create the action list with the ordered list of
+    # groups that are directly in it
     result = ActionList(model_alist.name)
     for model_alist_group in models.action_list_groups[action_list_id]:
-        result.groups.append(_build_group(models, model_alist_group, ctx))
+        result.groups.append(ctx.groups[model_alist_group.group_id])
 
     return ctx, result
 
@@ -537,14 +548,14 @@ def generate_digraph_from_group(alist: ActionList, group: Group):
     for g, act in incoming_action:
         yield f"{g.node_name} -> {act.node_name}"
     for trigger in group.triggers:
-        if trigger.affect.action is None or trigger.affect.action.group != group:
+        if trigger.affect.action.group != group:
             continue
         yield trigger.external_action.vertex
         yield f"{trigger.external_action.node_name} -> {trigger.affect.action.node_name}"
     for action in group.actions:
         yield action.vertex
         for affect in action.start_affects + action.complete_affects:
-            if affect.action is None or affect.action.group != group:
+            if affect.action.group != group:
                 continue
             yield f"{action.node_name} -> {affect.action.node_name}"
         for email in action.start_emails + action.complete_emails:
@@ -562,16 +573,12 @@ def generate_digraph_from_group(alist: ActionList, group: Group):
 def generate_digraph_from_action_list(action_list: ActionList):
     for group in action_list.groups:
         for trigger in group.triggers:
-            if trigger.affect.action is None:
-                continue
             yield trigger.external_action.vertex
             yield f"{trigger.external_action.node_name} -> {trigger.affect.action.node_name}"
 
         for action in group.actions:
             yield action.vertex
             for affect in action.start_affects + action.complete_affects:
-                if affect.action is None:
-                    continue
                 yield f"{action.node_name} -> {affect.action.node_name}"
             for email in action.start_emails + action.complete_emails:
                 yield email.vertex
