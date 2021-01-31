@@ -12,21 +12,24 @@
     <!-- Milligram CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
 
+    <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.5.0/dist/svg-pan-zoom.min.js">
+    </script>
+
+
     <title>{% block title %}{% endblock %} - Flow</title>
     {% endblock %}
 </head>
 
-<body class="container">
-    <div class="row">
-        <div class="column">
-            <h3>Flow</h3>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="column">
+                <h3>Flow</h3>
+            </div>
+            <div class="column column-offset-67"><a href="/">Home</a></div>
         </div>
-        <div class="column column-offset-67"><a href="/">Home</a></div>
     </div>
     {% block content %}{% endblock %}
-    <div class="row">
-        <a href="https://github.com/StatesTitle/flow">Flow</a>
-    </div>
 </body>
 
 </html>

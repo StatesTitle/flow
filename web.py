@@ -22,11 +22,21 @@ def auth_required(f):
     return decorated_function
 
 
-def graph(digraph):
+def svg(digraph):
     run = subprocess.run(
         ["dot", "-Tsvg"], stdout=subprocess.PIPE, input=bytes(digraph, "utf-8")
     )
-    return Response(run.stdout, mimetype="image/svg+xml")
+    return run.stdout
+
+
+def hack_graphviz_svg_for_embed(svg_bytes):
+    svg_str = svg_bytes.decode("utf-8")
+    svg_str = svg_str[svg_str.index("<title>") :]
+    return '<svg width="100%" id="graph"><g>' + svg_str
+
+
+def svg_response(digraph):
+    return Response(svg(digraph), mimetype="image/svg+xml")
 
 
 @app.route("/")
@@ -38,19 +48,38 @@ def index():
 
 @app.route("/everything.svg")
 @auth_required
+def everything_svg():
+    _, alist = build_action_list(build_models(), ACTION_LIST_DEF_ID)
+    digraph = generate_digraph_from_action_list(alist)
+    return svg_response(digraph)
+
+
+@app.route("/everything")
+@auth_required
 def everything():
     _, alist = build_action_list(build_models(), ACTION_LIST_DEF_ID)
     digraph = generate_digraph_from_action_list(alist)
-    return graph(digraph)
+    svg_str = hack_graphviz_svg_for_embed(svg(digraph))
+    return render_template("graph.html", title="Everything!", svg=svg_str)
 
 
 @app.route("/groups/<int:group_id>.svg")
+@auth_required
+def group_svg(group_id):
+    ctx, alist = build_action_list(build_models(), ACTION_LIST_DEF_ID)
+    group = ctx.groups[group_id]
+    digraph = generate_digraph_from_group(alist, group)
+    return svg_response(digraph)
+
+
+@app.route("/groups/<int:group_id>")
 @auth_required
 def group(group_id):
     ctx, alist = build_action_list(build_models(), ACTION_LIST_DEF_ID)
     group = ctx.groups[group_id]
     digraph = generate_digraph_from_group(alist, group)
-    return graph(digraph)
+    svg_str = hack_graphviz_svg_for_embed(svg(digraph))
+    return render_template("graph.html", title=group.name, svg=svg_str)
 
 
 if __name__ == "__main__":
