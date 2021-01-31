@@ -5,9 +5,39 @@
     <h3>{{ title }}</h3>
 </div>
 {{svg | safe}}
+<div class="container">
+    {% for group, affects in incoming.items() %}
+    {% if loop.first %}
+    <h3 class="row">Incoming Affects</h3>
+    {% endif %}
+    <h5 class="row"><a href="/groups/{{ group.id }}">{{ group.name}}</a></h4>
+    <ul>
+    {% for action, affect in affects %}
+    <li>
+        {{action.name}} <strong>{{affect.affect}}</strong> {{affect.affected_name}}
+    </li>
+    {% endfor %}
+    </ul>
+    {% endfor %}
+    
+    {% for group, affects in outgoing.items() %}
+    {% if loop.first %}
+    <h3 class="row">Outgoing Affects</h3>
+    {% endif %}
+    <h5 class="row"><a href="/groups/{{ group.id }}">{{ group.name}}</a></h4>
+    <ul>
+    {% for action, affect in affects %}
+    <li>
+        {{action.name}} <strong>{{affect.affect}}</strong> {{affect.affected_name}}
+    </li>
+    {% endfor %}
+    </ul>
+    {% endfor %}
+</div>
+
 <script>
     window.addEventListener('load', function() {
-        document.getElementById("graph").setAttribute('height', window.innerHeight - 150);
+        document.getElementById("graph").setAttribute('height', window.innerHeight - 200);
         svgPanZoom('#graph', {
             controlIconsEnabled: true,
             fit: false,

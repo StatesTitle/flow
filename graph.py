@@ -9,7 +9,7 @@ import re
 import sys
 
 from functools import wraps
-from typing import List, Set, Tuple, Dict
+from typing import Iterable, List, Set, Tuple, Dict
 
 from dataclasses import asdict, dataclass, field, InitVar
 
@@ -63,6 +63,10 @@ class Affect(CtxHolder, ActionLookupMixin):
     group_id: int
     action_id: int
 
+    @property
+    def affected_name(self):
+        return f"{self.action.name}"
+
 
 @dataclass(unsafe_hash=True)
 class AffectTaskAffect(Affect):
@@ -71,6 +75,10 @@ class AffectTaskAffect(Affect):
 
 @dataclass(unsafe_hash=True)
 class CompleteActionAffect(AffectTaskAffect):
+    @property
+    def affect(self):
+        return f"{self.task.name}"
+
     @property
     def desc(self):
         return f"{self.task.name} {self.action.path}"
@@ -81,15 +89,23 @@ class OffsetActionAffect(AffectTaskAffect):
     offset: float
 
     @property
+    def affect(self):
+        return f"Offset {self.task.name} by {self.offset} hours"
+
+    @property
     def desc(self):
-        return f"Offset {self.task.name} on {self.action.path} by {self.offset} hours"
+        return f"{self.affect} on {self.action.path}"
 
 
 @dataclass(unsafe_hash=True)
 class CreateActionAffect(Affect):
     @property
+    def affect(self):
+        return "Create Action"
+
+    @property
     def desc(self):
-        return f"Create {self.action.path}"
+        return f"Create Action {self.action.path}"
 
 
 @dataclass(unsafe_hash=True)
@@ -98,8 +114,16 @@ class CreateGroupAffect(CtxHolder, GroupLookupMixin):
     group_id: int
 
     @property
+    def affect(self):
+        return "Create Group"
+
+    @property
     def desc(self):
-        return f"Create {self.group}"
+        return f"Create Group {self.group.name}"
+
+    @property
+    def affected_name(self):
+        return f"{self.group.name}"
 
     @property
     def action(self):
@@ -521,11 +545,10 @@ def digraph(f):
     return decorated_function
 
 
-@digraph
-def generate_digraph_from_group(alist: ActionList, group: Group):
+def find_incoming(groups: Iterable[Group], group: Group):
     incoming_group = set()
     incoming_action = set()
-    for g in alist.groups:
+    for g in groups:
         if g == group:
             continue
         for act in g.actions:
@@ -535,15 +558,21 @@ def generate_digraph_from_group(alist: ActionList, group: Group):
                         incoming_group.add(g)
                     elif aff.action is not None:
                         incoming_action.add((g, aff.action))
+    return incoming_group, incoming_action
+
+
+@digraph
+def generate_digraph_from_group(groups: Iterable[Group], group: Group):
+    incoming_group, incoming_action = find_incoming(groups, group)
     if len(incoming_group) > 0:
         for g in incoming_group:
             yield g.vertex
         yield group.vertex
         for g in incoming_group:
             yield f"{g.node_name} -> {group.node_name}"
-    for g, act in incoming_action:
+    for g, _ in incoming_action:
         yield g.vertex
-    for g, act in incoming_action:
+    for _, act in incoming_action:
         yield act.vertex
     for g, act in incoming_action:
         yield f"{g.node_name} -> {act.node_name}"
@@ -564,7 +593,7 @@ def generate_digraph_from_group(alist: ActionList, group: Group):
 
     for act in group.actions:
         for aff in act.affects:
-            if aff.group is not None and aff.group != group:
+            if aff.group != group:
                 yield aff.group.vertex
                 yield f"{act.node_name} -> {aff.group.node_name}"
 
@@ -629,7 +658,7 @@ if __name__ == "__main__":
     elif action == "group":
         group_id = int(sys.argv[2])
         group = ctx.groups[group_id]
-        print(generate_digraph_from_group(alist, group))
+        print(generate_digraph_from_group(ctx.groups.values(), group))
     elif action == "partners":
         print(build_partners(models))
     elif action == "json":

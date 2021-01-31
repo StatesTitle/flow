@@ -1,3 +1,4 @@
+from collections import defaultdict
 import subprocess
 from functools import wraps
 from flask import request, abort, render_template, Flask, Response
@@ -60,26 +61,52 @@ def everything():
     _, alist = build_action_list(build_models(), ACTION_LIST_DEF_ID)
     digraph = generate_digraph_from_action_list(alist)
     svg_str = hack_graphviz_svg_for_embed(svg(digraph))
-    return render_template("graph.html", title="Everything!", svg=svg_str)
+    return render_template(
+        "graph.html", title="Everything!", svg=svg_str, incoming={}, outgoing={}
+    )
 
 
 @app.route("/groups/<int:group_id>.svg")
 @auth_required
 def group_svg(group_id):
-    ctx, alist = build_action_list(build_models(), ACTION_LIST_DEF_ID)
+    ctx, _ = build_action_list(build_models(), ACTION_LIST_DEF_ID)
     group = ctx.groups[group_id]
-    digraph = generate_digraph_from_group(alist, group)
+    digraph = generate_digraph_from_group(ctx.groups.values(), group)
     return svg_response(digraph)
 
 
 @app.route("/groups/<int:group_id>")
 @auth_required
 def group(group_id):
-    ctx, alist = build_action_list(build_models(), ACTION_LIST_DEF_ID)
+    ctx, _ = build_action_list(build_models(), ACTION_LIST_DEF_ID)
     group = ctx.groups[group_id]
-    digraph = generate_digraph_from_group(alist, group)
+    groups = ctx.groups.values()
+
+    digraph = generate_digraph_from_group(groups, group)
     svg_str = hack_graphviz_svg_for_embed(svg(digraph))
-    return render_template("graph.html", title=group.name, svg=svg_str)
+
+    incoming = defaultdict(list)
+    for g in groups:
+        if g == group:
+            continue
+        for act in g.actions:
+            for aff in act.affects:
+                if aff.group == group:
+                    incoming[g].append((act, aff))
+
+    outgoing = defaultdict(list)
+    for act in group.actions:
+        for aff in act.affects:
+            if aff.group != group:
+                outgoing[aff.group].append((act, aff))
+
+    return render_template(
+        "graph.html",
+        title=group.name,
+        svg=svg_str,
+        incoming=incoming,
+        outgoing=outgoing,
+    )
 
 
 if __name__ == "__main__":
